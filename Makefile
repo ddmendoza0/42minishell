@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/07/08 18:43:15 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/07/08 19:09:21 by dmendoza         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME	=	minishell
 HEADERS	=	-I ./include -I -I$(LIBFT)
 
 LIBFT	=	./lib/libft
-LIBS	=	$(LIBFT)/libft.a
+LIBS	=	$(LIBFT)/libft.a -lreadline
 
 SRC_DIR =	src/
 SRCS	=	$(SRC_DIR)main.c\
