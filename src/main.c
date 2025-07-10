@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:11 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/10 15:30:20 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/07/10 17:00:53 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,10 @@ static void input_loop(int history_fd)
 		{
 			add_history(input);
 			write_to_history_file(input, history_fd);
+			if (strcmp(input, "history") == 0)
+				cmd_history();
+			//valid command checker here
+			//execute command, else throw error
 		}
 		//logic
 
@@ -50,7 +54,7 @@ int	main(int argc, char *argv[])
 	(void)argc;
 	(void)argv;	
 
-	history_fd = open(HISTORY_FILE, O_CREAT | O_RDWR | O_APPEND , 0644);
+	history_fd = initialize_history();
 	input_loop(history_fd);
 	close(history_fd);
 	rl_clear_history();

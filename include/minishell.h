@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/10 14:42:30 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/07/10 16:57:48 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,6 @@
 
 
 void	write_to_history_file(char *input, int history_fd);
-
+int	initialize_history(void);
+void	cmd_history(void);
 #endif
