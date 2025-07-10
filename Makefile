@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/07/08 19:09:21 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/07/10 13:36:22 by dmaya-vi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ LIBS	=	$(LIBFT)/libft.a -lreadline
 
 SRC_DIR =	src/
 SRCS	=	$(SRC_DIR)main.c\
+		$(SRC_DIR)history.c\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
