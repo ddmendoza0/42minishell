@@ -6,13 +6,13 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:11 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/08 19:19:34 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:30:20 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void input_loop(void)
+static void input_loop(int history_fd)
 {
 	char *input;
 
@@ -30,8 +30,10 @@ static void input_loop(void)
 			break;
 		}
 		if (*input != '\0')//dont save empty
+		{
 			add_history(input);
-		
+			write_to_history_file(input, history_fd);
+		}
 		//logic
 
 		ft_printf("%s\n", input);//test placeholder
@@ -43,10 +45,14 @@ static void input_loop(void)
 
 int	main(int argc, char *argv[])
 {
+	int	history_fd;
 	//casting !CLEANUP!
 	(void)argc;
 	(void)argv;	
 
-	input_loop();
+	history_fd = open(HISTORY_FILE, O_CREAT | O_RDWR | O_APPEND , 0644);
+	input_loop(history_fd);
+	close(history_fd);
+	rl_clear_history();
 	return (0);
 }
