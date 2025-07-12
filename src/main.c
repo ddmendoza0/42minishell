@@ -47,13 +47,14 @@ static void input_loop(int history_fd)
 			break;
 		}
 		//MAIN LOGIC
-		add_history(input);
-		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
 			cmd_history();
-		//valid command checker here
-		//execute command, else throw error
+		//parse command
+		//if command is valid, execute it
+		//else print error message
 		ft_printf("%s\n", clean_input);//test placeholder
+		add_history(input);
+		write_to_history_file(input, history_fd);
 		free(clean_input);
 		free(input);
 	}

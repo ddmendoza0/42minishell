@@ -12,6 +12,7 @@
 
 #include "../include/minishell.h"
 
+/*Inicializar el historial, crea el archivo .minishell_history y lo carga en memoria*/
 int	initialize_history(void)
 {
 	int	hs_fd;
@@ -34,6 +35,7 @@ int	initialize_history(void)
 	return (open(HISTORY_FILE, O_RDWR | O_APPEND));
 }
 
+/*Escribir el historial en .minishell_history, falta añadir los timestamps*/
 void	write_to_history_file(char *input, int history_fd)
 {
 	if (history_fd == -1)
@@ -44,3 +46,5 @@ void	write_to_history_file(char *input, int history_fd)
 	write(history_fd, input, ft_strlen(input));
 	write(history_fd, "\n", 1);
 }
+
+

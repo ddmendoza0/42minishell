@@ -16,6 +16,9 @@
 /*			DEFINES					*/
 /****************************************************************/
 # define WHITESPACES " \t\n"
+# define HISTORY_FILE ".minishell_history"
+# define MAXHSFILE 1000 //Lineas maximas del archivo del historial
+# define MAXHSMEM 500 //Lineas maximas del historial en memoria
 
 typedef enum e_token_type
 {
@@ -54,7 +57,7 @@ typedef struct s_token
 /*			END LIBRARIES				*/
 /****************************************************************/
 
-# define HISTORY_FILE ".minishell_history"
+
 
 
 void	write_to_history_file(char *input, int history_fd);

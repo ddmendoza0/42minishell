@@ -34,7 +34,7 @@ CC	= cc
 
 RM	= rm -f
 
-CFLAGS 	= -Wall -Wextra -Werror
+CFLAGS 	= -Wall -Wextra 
 
 %.o:	%.c
 		@$(CC) $(CFLAGS) -c $< -o $(<:.c=.o)
