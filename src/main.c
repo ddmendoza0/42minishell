@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:11 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/11 18:41:59 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/13 17:35:06 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ static void input_loop(int history_fd)
 {
 	char	*input;
 	char	*clean_input;
+	t_token *token_lst;
 
 	while (1)
 	{
@@ -47,6 +48,7 @@ static void input_loop(int history_fd)
 			break;
 		}
 		//MAIN LOGIC
+		token_lst = lexer(clean_input);//lista de inputs
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
@@ -54,12 +56,11 @@ static void input_loop(int history_fd)
 		//valid command checker here
 		//execute command, else throw error
 		ft_printf("%s\n", clean_input);//test placeholder
+		free_token_lst(token_lst);
 		free(clean_input);
 		free(input);
 	}
 }
-
-
 
 int	main(int argc, char *argv[])
 {

@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/11 19:30:03 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/13 17:23:53 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ typedef struct s_token
 	char		*value;
 	t_token_type	type;
 	struct	s_token	*next;
-}t_toke;
+}t_token;
 
 /****************************************************************/
 /*			END DEFINES				*/
@@ -56,8 +56,20 @@ typedef struct s_token
 
 # define HISTORY_FILE ".minishell_history"
 
+/****************************************************************/
+/*			DECLARATIONS		 		*/
+/****************************************************************/
 
 void	write_to_history_file(char *input, int history_fd);
 int	initialize_history(void);
 void	cmd_history(void);
+t_token	*lexer(char *input);
+t_token	*create_token(void *value, t_token_type type);
+t_token	*last_token(t_token *token);
+void	addback_token(t_token **lst, t_token *new);
+void	free_token_lst(t_token *lst);
+
+/****************************************************************/
+/*			END DECLARATIONS	 		*/
+/****************************************************************/
 #endif

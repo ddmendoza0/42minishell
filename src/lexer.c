@@ -6,122 +6,158 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:46:37 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/11 20:01:40 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/13 17:27:39 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_token	*last_token(t_token *token)
+/*
+//testing
+const char *token_type_to_str(t_token_type type)
 {
-	t_token	*curr;
-
-	curr = token;
-	while (curr && curr->next)
-		curr = curr->next;
-	return (curr);
+        if (type == WORD)
+                return "WORD";
+        if (type == PIPE)
+                return "PIPE";
+        if (type == REDIRECT_IN)
+                return "REDIRECT_IN";
+        if (type == REDIRECT_OUT)
+                return "REDIRECT_OUT";
+        if (type == APPEND_OUT)
+                return "APPEND_OUT";
+        if (type == HEREDOC)
+                return "HEREDOC";
+        return "UNKNOWN";
 }
 
-static t_token *create_token(void *value, t_token_type type)
+void print_tokens(t_token *list)
 {
-	t_token	*new;
+        int i = 0;
 
-	new = (t_token *)malloc(sizeof(t_token));
-	if (!new)
-		return (NULL);
-	new->value = value;
-	new->type = type;
-	new->next = NULL;
-	return (new);
+        while (list)
+        {
+                printf("Token %d:\n", i);
+                printf("  Type : %s\n", token_type_to_str(list->type));
+                printf("  Value: [%s]\n\n", list->value);
+                list = list->next;
+                i++;
+        }
 }
-
-static void addback_token(t_token **lst, t_token *new)
+//end testing
+*/
+static void	ext_word_token(size_t *i, const char *input, t_token **lst)
 {
-	t_token	*last;
+	size_t	start;
+	char	*word;
+	char	quote;
 
-	if (!lst || !new)
+	start = *i;
+	while (input[*i] && input[*i] != ' ' && input[*i] != '\t' && \
+					input[*i] != '|' && input[*i] != '<' && input[*i] != '>')
+	{
+		if (input[*i] == '\'' || input[*i] == '"')
+		{
+			quote = input[*i];
+			(*i)++;
+			while (input[*i] && input[*i] != quote)
+				(*i)++;
+			if (input[*i])
+				(*i)++;
+		}
+		else
+			(*i)++;
+	}
+	word = ft_strndup(input + start, *i - start);
+	if (!word)
 		return ;
-	if (!*lst)
-		*lst = new;
-	else
-	{
-		last = last_token(*lst);
-		last->next = new;
-	}
+	addback_token(lst, create_token(word, WORD));
 }
 
-static t_toke_type detect_operat_type(const char *op)
+//gestionar el non closing quote
+static void	ext_quoted_token(size_t *i, const char *input, t_token **lst)
 {
-	if (!op)
-		return (WORD);
-	if (ft_strcmp(op, "|") == 0)
+	char	quote;
+	size_t	start;
+	char	*value;
+
+	quote = input[*i];
+	start = ++(*i);
+	while (input[*i] && input[*i] != quote)
+		(*i)++;
+	if (input[*i] != quote)
+	{
+		free(ft_strndup(input + start, *i - start));
+		return ;
+	}
+	value = ft_strndup(input + start, *i - start);
+	(*i)++;
+	if (!value)
+		return ;
+	addback_token(lst, create_token(value, WORD));
+}
+
+static t_token_type	det_op_type(const char *op)
+{
+	if (ft_strncmp(op, "|", 1) == 0)
 		return (PIPE);
-	else if (ft_strcmp(op, "<") == 0)
-		return (REDIRECT_IN);
-	else if (ft_strcmp(op, ">") == 0)
-		return (REDIRECT_OUT);
-	else if (ft_strcmp(op, ">>") == 0)
+	else if (ft_strncmp(op, ">>", 2) == 0)
 		return (APPEND_OUT);
-	else if (ft_strcmp(op, "<<") == 0)
+	else if (ft_strncmp(op, ">", 1) == 0)
+		return (REDIRECT_OUT);
+	else if (ft_strncmp(op, "<<", 2) == 0)
 		return (HEREDOC);
+	else if (ft_strncmp(op, "<", 1) == 0)
+		return (REDIRECT_IN);
+	else
+		return (WORD);
 }
 
-void free_tokens(t_token *list)
-{
-	t_token *tmp;
-
-	while (list)
-	{
-		tmp = list->next;
-		free(list->value);
-		free(list);
-		list = tmp;
-	}
-}
-
-static void ext_quoted_token(int *i, char *input, t_token **token_lst)
-{
-}
-
-static void ext_operat_token(int *i, char *input, t_token **token_lst)
+static void	ext_operator_token(size_t *i, const char *input, t_token **lst)
 {
 	char	*op;
-	t_token	*new_token;
 
 	op = NULL;
 	if (input[*i] == '>' && input[*i + 1] == '>')
-	{	op = strndup(">>", 2);
+	{
+		op = ft_strndup(">>", 2);
 		*i += 2;
 	}
 	else if (input[*i] == '<' && input[*i + 1] == '<')
 	{
-		op = strndup("<<", 2);
+		op = ft_strndup("<<", 2);
 		*i += 2;
 	}
 	else
 	{
-		op = strndup(&input[*i], 1);
+		op = ft_strndup(&input[*i], 1);
 		(*i)++;
 	}
-	*new_token = create_token(op, detect_operator_type(op));
-	token_addback(token_lst, new_token);
-	free(op);
+	if (!op)
+		return ;
+	addback_token(lst, create_token(op, det_op_type(op)));
 }
 
 t_token	*lexer(char *input)
 {
-	int	i;
+	size_t	i;
 	t_token	*token_lst;
 
 	token_lst = NULL;
-	i = -1;
-	while (input[++i])
+	i = 0;
+	while (input[i])
 	{
+		while (ft_isspace(input[i]))
+			i++;
+		if (!input[i])
+			break ;
 		if (input[i] == '\'' || input[i] == '"')
-			//ext_quoted_token(&i, input, &token_list);
-		else if (iniput[i] == '|' || input[i] == '<' || input[i] == '>')//se puede hacer un issoperator para readability.
-			ext_operat_token(&i, input, &token_list);
+			ext_quoted_token(&i, input, &token_lst);
+		else if (input[i] == '|' || input[i] == '<' || input[i] == '>')
+			ext_operator_token(&i, input, &token_lst);
 		else
-			//ext_word_token(&i, input, &token_list);
+			ext_word_token(&i, input, &token_lst);
 	}
+	//print_tokens(token_lst);
+	return (token_lst);
 }
