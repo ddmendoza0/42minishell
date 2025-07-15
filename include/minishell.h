@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/15 17:31:13 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/15 17:44:39 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,26 @@ typedef enum e_token_type
 	REDIRECT_IN,
 	REDIRECT_OUT,
 	APPEND_OUT,
-	HEREDOC
+	HEREDOC,
+	DELIM_EOF,
+	AND,
+	OR,
+	SEMICOLON,
+	INVALID
 }t_token_type;
+
+typedef enum e_quote_type {
+	QUOTE_NONE,
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE
+} t_quote_type;
 
 typedef struct s_token
 {
 	char		*value;
+	t_quote_type quote_type;
 	t_token_type	type;
+	int		fd;
 	struct	s_token	*next;
 }t_token;
 
