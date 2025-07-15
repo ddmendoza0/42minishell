@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/15 17:44:39 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/15 17:56:19 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ typedef enum e_token_type
 	REDIRECT_OUT,
 	APPEND_OUT,
 	HEREDOC,
-	DELIM_EOF,
 	AND,
 	OR,
 	SEMICOLON,

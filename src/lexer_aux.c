@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 17:01:46 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/13 17:20:22 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/15 18:21:57 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ t_token	*create_token(void *value, t_token_type type)
 		return (NULL);
 	new->value = value;
 	new->type = type;
+	new->quote_type = QUOTE_NONE;
 	new->next = NULL;
 	return (new);
 }
