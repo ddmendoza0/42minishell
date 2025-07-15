@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/13 17:23:53 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/07/15 17:31:13 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,11 @@ typedef struct s_token
 void	write_to_history_file(char *input, int history_fd);
 int	initialize_history(void);
 void	cmd_history(void);
+
+//error
+void error_exit();
+
+//tokenizador
 t_token	*lexer(char *input);
 t_token	*create_token(void *value, t_token_type type);
 t_token	*last_token(t_token *token);

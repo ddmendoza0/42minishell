@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/07/13 17:28:43 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/07/15 17:31:41 by dmendoza         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ LIBS	=	$(LIBFT)/libft.a -lreadline
 
 SRC_DIR =	src/
 SRCS	=	$(SRC_DIR)main.c\
+		$(SRC_DIR)error.c\
 		$(SRC_DIR)lexer.c\
 		$(SRC_DIR)lexer_aux.c\
 		$(SRC_DIR)history.c\
