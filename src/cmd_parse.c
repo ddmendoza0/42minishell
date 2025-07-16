@@ -50,8 +50,6 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             if (!add_to_argv(cmd, current->value))
                 return 0;
         }
-        //Gestionar que si hay mas de un redirect, se guarde solo el ultimo
-        //sin inportar que el anterior sea invalido
         else if (current->type == REDIRECT_IN || current->type == HEREDOC)
         {
             if (!add_redir_in(cmd, current))
@@ -65,16 +63,12 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
         else if (current->type == PIPE || current->type == SEMICOLON)
         {
             if (!create_cmd(cmd->next))
-            {
-                //Funcion de liberar los comandos aqui
                 return 0;
-            }
             cmd = cmd->next;
         }
         else if (current->type == INVALID)
         {
             printf("Unexpected or invalid token: %s\n", current->value);
-            //Funcion de liberar los comandos aqui
             return 0;
         }
         current = current->next;
@@ -97,6 +91,9 @@ t_command *cmd_builder(t_token **tkn_list)
     head = cmd;
     current = *tkn_list;
     if (!cmd_parse_tokens(cmd, current))
+    {
+        free_cmd_list(head);
         return NULL;
+    }
     return head;
 }
