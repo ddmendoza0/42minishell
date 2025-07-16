@@ -46,6 +46,16 @@ typedef struct s_token
 	struct	s_token	*next;
 }t_token;
 
+typedef struct s_command {
+    char **argv;
+    char *input_file;
+    char *output_file;
+    int append_output;
+    int heredoc;
+    struct s_command *next;
+} t_command;
+
+
 /****************************************************************/
 /*			END DEFINES				*/
 /****************************************************************/
