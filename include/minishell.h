@@ -27,8 +27,9 @@ typedef enum e_token_type
 	HEREDOC,
 	AND,
 	OR,
-	SEMICOLON,
-	INVALID
+	LPAREN,
+	RPAREN,
+	EXPAND
 }t_token_type;
 
 typedef enum e_quote_type {

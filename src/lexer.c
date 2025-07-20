@@ -13,59 +13,63 @@
 #include "minishell.h"
 
 //testing
-const char *token_type_to_str(t_token_type type)
+const char* token_type_to_str(t_token_type type)
 {
-        if (type == WORD)
-                return "WORD";
-        if (type == PIPE)
-                return "PIPE";
-        if (type == REDIRECT_IN)
-                return "REDIRECT_IN";
-        if (type == REDIRECT_OUT)
-                return "REDIRECT_OUT";
-        if (type == APPEND_OUT)
-                return "APPEND_OUT";
-        if (type == HEREDOC)
-                return "HEREDOC";
+	if (type == WORD)
+		return "WORD";
+	if (type == PIPE)
+		return "PIPE";
+	if (type == REDIRECT_IN)
+		return "REDIRECT_IN";
+	if (type == REDIRECT_OUT)
+		return "REDIRECT_OUT";
+	if (type == APPEND_OUT)
+		return "APPEND_OUT";
+	if (type == HEREDOC)
+		return "HEREDOC";
 	if (type == AND)
 		return "AND";
 	if (type == OR)
 		return "OR";
-	if (type == SEMICOLON)
-		return "SEMICOLON";
-        return "UNKNOWN";
+	if (type == LPAREN)
+		return "LPAREN";
+	if (type == RPAREN)
+		return "RPAREN";
+	if (type == EXPAND)
+		return "EXPAND";
+	return "UNKNOWN";
 }
 
-const char *quote_type_to_str(t_quote_type type)
+const char* quote_type_to_str(t_quote_type type)
 {
-        if (type == QUOTE_NONE)
-                return "NONE";
-        if (type == QUOTE_SINGLE)
-                return "SINGLE";
-        if (type == QUOTE_DOUBLE)
-                return "DOUBLE";
-        return "UNKNOWN";
+	if (type == QUOTE_NONE)
+		return "NONE";
+	if (type == QUOTE_SINGLE)
+		return "SINGLE";
+	if (type == QUOTE_DOUBLE)
+		return "DOUBLE";
+	return "UNKNOWN";
 }
 
-void print_tokens(t_token *list)
+void print_tokens(t_token* list)
 {
-        int i = 0;
+	int i = 0;
 
-        while (list)
-        {
-                printf("Token %d:\n", i);
-                printf("  Type : %s\n", token_type_to_str(list->type));
-                printf("  Value: [%s]\n", list->value);
-                if (list->type == WORD)
-                        printf("  Quote: %s\n", quote_type_to_str(list->quote_type));
-                printf("\n");
-                list = list->next;
-                i++;
-        }
+	while (list)
+	{
+		printf("Token %d:\n", i);
+		printf("  Type : %s\n", token_type_to_str(list->type));
+		printf("  Value: [%s]\n", list->value);
+		if (list->type == WORD)
+			printf("  Quote: %s\n", quote_type_to_str(list->quote_type));
+		printf("\n");
+		list = list->next;
+		i++;
+	}
 }
 //end testing
 
-static int is_operator(const char *input)
+static int is_operator(const char* input)
 {
 	if (!input)
 		return (0);
@@ -77,8 +81,7 @@ static int is_operator(const char *input)
 		return (1);
 	if (strncmp(input, "<<", 2) == 0)
 		return (1);
-	if (*input == '|' || *input == '<' || *input == '>' || *input == ';' ||	\
-		*input == '(' || *input == ')' || *input == ';')
+	if (*input == '|' || *input == '<' || *input == '>' || *input == '(' || *input == ')')
 		return (1);
 	return (0);
 }
@@ -88,7 +91,7 @@ static int is_word_boundary(char c)
 	return (ft_isspace(c) || is_operator(&c) || c == '\0');
 }
 
-static void	skip_quotes(size_t *i, const char *input)
+static void	skip_quotes(size_t* i, const char* input)
 {
 	char	quote;
 
@@ -100,33 +103,32 @@ static void	skip_quotes(size_t *i, const char *input)
 		(*i)++;
 }
 
-static void	ext_word_token(size_t *i, const char *input, t_token **lst)
+static void	extract_word_token(size_t* i, const char* input, t_token** lst)
 {
 	size_t	start;
-	char	*word;
+	char* word;
 
 	start = *i;
 	while (input[*i] && !is_word_boundary(input[*i]))
 	{
 		if (input[*i] == '\'' || input[*i] == '"')
-			skip_quotes(i,input);
+			skip_quotes(i, input);
 		else
 			(*i)++;
 	}
 	word = ft_strndup(input + start, *i - start);
 	if (!word)
-		return ;
+		return;
 	addback_token(lst, create_token(word, WORD));
 }
 
-//gestionar el non closing quote
-static void	ext_quoted_token(size_t *i, const char *input, t_token **lst)
+static void	extract_quoted_token(size_t* i, const char* input, t_token** lst)
 {
 	size_t	start;
-	char	*word;
+	char* word;
 	char	quote;
 	t_quote_type	q_type;
-	t_token	*token;
+	t_token* token;
 
 	quote = input[*i];
 	if (quote == '\'')
@@ -142,17 +144,56 @@ static void	ext_quoted_token(size_t *i, const char *input, t_token **lst)
 		word = ft_strndup(input + start, *i - start);
 		(*i)++;
 	}
-	else
+	else //handle a global error flag or sth like that
 		word = ft_strndup(input + start, *i - start);
 	if (!word)
-		return ;
+		return;
 	token = create_token(word, WORD);
 	if (token)
 		token->quote_type = q_type;
 	addback_token(lst, token);
 }
 
-static t_token_type	det_op_type(const char *op)
+static void extract_dollar_token(size_t* i, const char* input, t_token** lst)
+{
+	size_t start;
+	char* var_name;
+
+	start = *i;
+	(*i)++; // Skip the '$'
+
+	// Handle $? specially
+	if (input[*i] == '?')
+	{
+		(*i)++;
+		var_name = ft_strndup(input + start, *i - start);
+		if (!var_name)
+			return;
+		addback_token(lst, create_token(var_name, EXPAND));
+		return;
+	}
+	// Extract variable name (alphanumeric + underscore)
+	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
+		(*i)++;
+
+	// If no valid variable name after $, treat $ as literal
+	if (*i == start + 1)
+	{
+		var_name = ft_strndup("$", 1);
+		if (!var_name)
+			return;
+		addback_token(lst, create_token(var_name, WORD));
+	}
+	else
+	{
+		var_name = ft_strndup(input + start, *i - start);
+		if (!var_name)
+			return;
+		addback_token(lst, create_token(var_name, EXPAND));
+	}
+}
+
+static t_token_type	det_op_type(const char* op)
 {
 	if (ft_strncmp(op, "||", 2) == 0)
 		return (OR);
@@ -168,15 +209,17 @@ static t_token_type	det_op_type(const char *op)
 		return (REDIRECT_IN);
 	else if (ft_strncmp(op, "&&", 2) == 0)
 		return (AND);
-	else if (ft_strncmp(op, ";", 1) == 0)
-		return (SEMICOLON);
+	else if (ft_strncmp(op, "(", 1) == 0)
+		return (LPAREN);
+	else if (ft_strncmp(op, ")", 1) == 0)
+		return (RPAREN);
 	else
 		return (WORD);
 }
 
-static void	ext_operator_token(size_t *i, const char *input, t_token **lst)
+static void	extract_operator_token(size_t* i, const char* input, t_token** lst)
 {
-	char	*op;
+	char* op;
 
 	op = NULL;
 	if (input[*i] == '>' && input[*i + 1] == '>')
@@ -205,14 +248,14 @@ static void	ext_operator_token(size_t *i, const char *input, t_token **lst)
 		(*i)++;
 	}
 	if (!op)
-		return ;
+		return;
 	addback_token(lst, create_token(op, det_op_type(op)));
 }
 
-t_token	*lexer(char *input)
+t_token* lexer(char* input)
 {
 	size_t	i;
-	t_token	*token_lst;
+	t_token* token_lst;
 
 	token_lst = NULL;
 	i = 0;
@@ -221,14 +264,16 @@ t_token	*lexer(char *input)
 		while (ft_isspace(input[i]))
 			i++;
 		if (!input[i])
-			break ;
+			break;
 		if (input[i] == '\'' || input[i] == '"')
-			ext_quoted_token(&i, input, &token_lst);
+			extract_quoted_token(&i, input, &token_lst);
+		else if (input[i] == '$')
+			extract_dollar_token(&i, input, &token_lst);
 		else if (input[i] == '|' || input[i] == '<' || input[i] == '>' \
-				|| input[i] == '&' || input[i] == ';')
-			ext_operator_token(&i, input, &token_lst);
+			|| input[i] == '&')
+			extract_operator_token(&i, input, &token_lst);
 		else
-			ext_word_token(&i, input, &token_lst);
+			extract_word_token(&i, input, &token_lst);
 	}
 	print_tokens(token_lst);
 	return (token_lst);
