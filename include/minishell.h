@@ -91,7 +91,7 @@ void	cmd_history(void);
 void error_exit();
 
 //tokenizador
-t_token	*lexer(char *input);
+int		lexer(char *input, t_token **token_lst);
 t_token	*create_token(void *value, t_token_type type);
 t_token	*last_token(t_token *token);
 void	addback_token(t_token **lst, t_token *new);

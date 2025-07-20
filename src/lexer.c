@@ -51,19 +51,20 @@ const char* quote_type_to_str(t_quote_type type)
 	return "UNKNOWN";
 }
 
-void print_tokens(t_token* list)
+void print_tokens(t_token **list)
 {
 	int i = 0;
 
-	while (list)
+	t_token* curr = *list;
+	while (curr)
 	{
 		printf("Token %d:\n", i);
-		printf("  Type : %s\n", token_type_to_str(list->type));
-		printf("  Value: [%s]\n", list->value);
-		if (list->type == WORD)
-			printf("  Quote: %s\n", quote_type_to_str(list->quote_type));
+		printf("  Type : %s\n", token_type_to_str(curr->type));
+		printf("  Value: [%s]\n", curr->value);
+		if (curr->type == WORD)
+			printf("  Quote: %s\n", quote_type_to_str(curr->quote_type));
 		printf("\n");
-		list = list->next;
+		curr = curr->next;
 		i++;
 	}
 }
@@ -103,7 +104,7 @@ static void	skip_quotes(size_t* i, const char* input)
 		(*i)++;
 }
 
-static void	extract_word_token(size_t* i, const char* input, t_token** lst)
+static int	extract_word_token(size_t* i, const char* input, t_token** lst)
 {
 	size_t	start;
 	char* word;
@@ -118,11 +119,12 @@ static void	extract_word_token(size_t* i, const char* input, t_token** lst)
 	}
 	word = ft_strndup(input + start, *i - start);
 	if (!word)
-		return;
+		return (1);
 	addback_token(lst, create_token(word, WORD));
+	return (1);
 }
 
-static void	extract_quoted_token(size_t* i, const char* input, t_token** lst)
+static int	extract_quoted_token(size_t* i, const char* input, t_token** lst)
 {
 	size_t	start;
 	char* word;
@@ -142,19 +144,29 @@ static void	extract_quoted_token(size_t* i, const char* input, t_token** lst)
 	if (input[*i] == quote)
 	{
 		word = ft_strndup(input + start, *i - start);
+		if (!word)
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+			return (0);
+		}
 		(*i)++;
 	}
 	else //handle a global error flag or sth like that
-		word = ft_strndup(input + start, *i - start);
+	{
+		printf("minishell: syntax error: unclosed quote\n");
+		return (0);
+	}
 	if (!word)
-		return;
+		return (1);
 	token = create_token(word, WORD);
 	if (token)
 		token->quote_type = q_type;
 	addback_token(lst, token);
+	return (1);
 }
 
-static void extract_dollar_token(size_t* i, const char* input, t_token** lst)
+static int extract_dollar_token(size_t* i, const char* input, t_token** lst)
 {
 	size_t start;
 	char* var_name;
@@ -168,9 +180,9 @@ static void extract_dollar_token(size_t* i, const char* input, t_token** lst)
 		(*i)++;
 		var_name = ft_strndup(input + start, *i - start);
 		if (!var_name)
-			return;
+			return (1);
 		addback_token(lst, create_token(var_name, EXPAND));
-		return;
+		return (1);
 	}
 	// Extract variable name (alphanumeric + underscore)
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
@@ -181,16 +193,17 @@ static void extract_dollar_token(size_t* i, const char* input, t_token** lst)
 	{
 		var_name = ft_strndup("$", 1);
 		if (!var_name)
-			return;
+			return (1);
 		addback_token(lst, create_token(var_name, WORD));
 	}
 	else
 	{
 		var_name = ft_strndup(input + start, *i - start);
 		if (!var_name)
-			return;
+			return (1);
 		addback_token(lst, create_token(var_name, EXPAND));
 	}
+	return (1);
 }
 
 static t_token_type	det_op_type(const char* op)
@@ -217,7 +230,7 @@ static t_token_type	det_op_type(const char* op)
 		return (WORD);
 }
 
-static void	extract_operator_token(size_t* i, const char* input, t_token** lst)
+static int	extract_operator_token(size_t* i, const char* input, t_token** lst)
 {
 	char* op;
 
@@ -248,16 +261,17 @@ static void	extract_operator_token(size_t* i, const char* input, t_token** lst)
 		(*i)++;
 	}
 	if (!op)
-		return;
+		return (1);
 	addback_token(lst, create_token(op, det_op_type(op)));
+	return (1);
 }
 
-t_token* lexer(char* input)
+int lexer(char* input, t_token **token_lst)
 {
 	size_t	i;
-	t_token* token_lst;
+	int		error;
 
-	token_lst = NULL;
+	*token_lst = NULL;
 	i = 0;
 	while (input[i])
 	{
@@ -266,15 +280,20 @@ t_token* lexer(char* input)
 		if (!input[i])
 			break;
 		if (input[i] == '\'' || input[i] == '"')
-			extract_quoted_token(&i, input, &token_lst);
+			error = extract_quoted_token(&i, input, token_lst);
 		else if (input[i] == '$')
-			extract_dollar_token(&i, input, &token_lst);
+			error = extract_dollar_token(&i, input, token_lst);
 		else if (input[i] == '|' || input[i] == '<' || input[i] == '>' \
 			|| input[i] == '&')
-			extract_operator_token(&i, input, &token_lst);
+			error = extract_operator_token(&i, input, token_lst);
 		else
-			extract_word_token(&i, input, &token_lst);
+			error = extract_word_token(&i, input, token_lst);
+		if (!error)
+		{
+			printf("minishell: memory allocation failure.\n");
+			return (0);
+		}
 	}
 	print_tokens(token_lst);
-	return (token_lst);
+	return (1);
 }

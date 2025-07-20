@@ -48,7 +48,13 @@ static void input_loop(int history_fd)
 			break;
 		}
 		//MAIN LOGIC
-		token_lst = lexer(clean_input);//lista de inputs
+		if (!lexer(clean_input, &token_lst))
+		{
+			// Lexer failed - don't proceed to parser
+			free(clean_input);
+			free(input);
+			continue; // Return to prompt
+		}
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
