@@ -15,7 +15,7 @@ NAME	=	minishell
 HEADERS	=	-I ./include -I -I$(LIBFT)
 
 LIBFT	=	./lib/libft
-LIBS	=	$(LIBFT)/libft.a -lreadline
+LIBS = $(LIBFT)/libft.a -L/mingw64/lib -lreadline
 
 SRC_DIR =	src/
 SRCS	=	$(SRC_DIR)main.c\
@@ -32,7 +32,7 @@ INCLUDE =	include/minishell.h Makefile
 
 CC	=	cc
 CFLAGS	=	-g -Wall -Wextra -Werror -Wunreachable-code -Ofast -I./libft \
-		-I./include -I$(LIBFT)
+		-I./include -I$(LIBFT) -I/mingw64/include
 RM	=	rm -f
 
 all:	libft $(NAME)

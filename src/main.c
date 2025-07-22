@@ -20,7 +20,7 @@ static char	*trim_input(const char *input)
 	return (ft_strtrim(input, WHITESPACES));
 }
 
-static void input_loop(int history_fd)
+static void input_loop(int history_fd, t_shell_state* shell)
 {
 	char	*input;
 	char	*clean_input;
@@ -48,9 +48,10 @@ static void input_loop(int history_fd)
 			break;
 		}
 		//MAIN LOGIC
-		if (!lexer(clean_input, &token_lst))
+		if (!lexer(clean_input, &token_lst, shell))
 		{
-			// Lexer failed - don't proceed to parser
+			// Lexer failed - print error and continue
+			print_error(shell);
 			free(clean_input);
 			free(input);
 			continue; // Return to prompt
@@ -71,13 +72,17 @@ static void input_loop(int history_fd)
 int	main(int argc, char *argv[])
 {
 	int	history_fd;
+	t_shell_state shell;
 	//casting !CLEANUP!
 	(void)argc;
-	(void)argv;	
-
+	(void)argv;
+	init_shell_state(&shell);
 	history_fd = initialize_history();
-	input_loop(history_fd);
+	input_loop(history_fd, &shell);
 	close(history_fd);
 	rl_clear_history();
-	return (0);
+	// Cleanup shell state
+	cleanup_shell_state(&shell);
+	// Return appropriate exit code
+	return (shell.exit_code);
 }
