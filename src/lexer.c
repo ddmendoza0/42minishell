@@ -147,7 +147,7 @@ static int extract_operator_token(size_t* i, const char* input, t_token** lst, t
 		return (0);
 	}
 	addback_token(lst, token);
-	return 1;
+	return (1);
 }
 
 int lexer(char* input, t_token** token_lst, t_shell_state* shell)
