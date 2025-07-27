@@ -166,8 +166,7 @@ static char* extract_content(const char* input, size_t start, size_t end)
 	return (ft_strndup(input + start, len));
 }
 
-static int	handle_quoted_section(size_t* i, const char* input,
-	t_shell_state* shell, t_token** lst)
+static int	handle_quoted_section(size_t* i, const char* input,	t_shell* shell, t_token** lst)
 {
 	char	quote_char;
 
@@ -179,7 +178,7 @@ static int	handle_quoted_section(size_t* i, const char* input,
 		(*i)++;
 	else
 	{
-		set_error(shell, ERR_UNCLOSED_QUOTE, "unclosed quote");
+		handle_error(shell, ERR_UNCLOSED_QUOTE, "unclosed quote");
 		free_token_lst(*lst);
 		*lst = NULL;
 		return (0);
@@ -187,8 +186,7 @@ static int	handle_quoted_section(size_t* i, const char* input,
 	return (1);
 }
 
-static int	find_word_end(size_t* i, const char* input,
-	t_shell_state* shell, t_token** lst)
+static int	find_word_end(size_t* i, const char* input, t_shell* shell, t_token** lst)
 {
 	while (input[*i] && !is_single_char_operator(input[*i]))
 	{
@@ -247,7 +245,7 @@ static int	add_quoted_segment(t_token* token, const char* word,
 	return (1);
 }
 
-static int	process_word_segments(t_token* token, char* word, t_shell_state* shell)
+static int	process_word_segments(t_token* token, char* word, t_shell* shell)
 {
 	size_t	j;
 	size_t	word_len;
@@ -266,7 +264,7 @@ static int	process_word_segments(t_token* token, char* word, t_shell_state* shel
 			closing_pos = find_closing_quote(word, word[j], j);
 			if (closing_pos == -1)
 			{
-				set_error(shell, ERR_UNCLOSED_QUOTE, "unclosed quote");
+				handle_error(shell, ERR_UNCLOSED_QUOTE, "unclosed quote");
 				return (0);
 			}
 			if (!add_quoted_segment(token, word, j, closing_pos))
@@ -300,8 +298,7 @@ static int	create_default_segment(t_token* token, char* word)
 	return (1);
 }
 
-static int	extract_word_token(size_t* i, const char* input,
-	t_token** lst, t_shell_state* shell)
+static int	extract_word_token(size_t* i, const char* input, t_token** lst, t_shell* shell)
 {
 	size_t	start;
 	char* word;
@@ -313,7 +310,7 @@ static int	extract_word_token(size_t* i, const char* input,
 	word = ft_strndup(input + start, *i - start);
 	if (!word)
 	{
-		set_error(shell, ERR_MALLOC, "word token");
+		handle_error(shell, ERR_MALLOC, "word token");
 		free_token_lst(*lst);
 		*lst = NULL;
 		return (0);
@@ -321,7 +318,7 @@ static int	extract_word_token(size_t* i, const char* input,
 	token = create_token(word, WORD);
 	if (!token)
 	{
-		set_error(shell, ERR_MALLOC, "word token");
+		handle_error(shell, ERR_MALLOC, "word token");
 		free(word);
 		free_token_lst(*lst);
 		*lst = NULL;
@@ -337,7 +334,7 @@ static int	extract_word_token(size_t* i, const char* input,
 	{
 		if (!create_default_segment(token, word))
 		{
-			set_error(shell, ERR_MALLOC, "segment processing");
+			handle_error(shell, ERR_MALLOC, "segment processing");
 			free_token_lst(*lst);
 			*lst = NULL;
 			return (0);
@@ -347,8 +344,7 @@ static int	extract_word_token(size_t* i, const char* input,
 	return (1);
 }
 
-static int	extract_operator_token(size_t* i, const char* input,
-	t_token** lst, t_shell_state* shell)
+static int	extract_operator_token(size_t* i, const char* input, t_token** lst, t_shell* shell)
 {
 	char* op;
 	t_token* token;
@@ -365,7 +361,7 @@ static int	extract_operator_token(size_t* i, const char* input,
 	}
 	if (!op)
 	{
-		set_error(shell, ERR_MALLOC, "operator token");
+		handle_error(shell, ERR_MALLOC, "operator token");
 		free_token_lst(*lst);
 		*lst = NULL;
 		return (0);
@@ -373,7 +369,7 @@ static int	extract_operator_token(size_t* i, const char* input,
 	token = create_token(op, det_op_type(op));
 	if (!token)
 	{
-		set_error(shell, ERR_MALLOC, "operator token");
+		handle_error(shell, ERR_MALLOC, "operator token");
 		free(op);
 		free_token_lst(*lst);
 		*lst = NULL;
@@ -383,7 +379,7 @@ static int	extract_operator_token(size_t* i, const char* input,
 	return (1);
 }
 
-int	lexer(char* input, t_token** token_lst, t_shell_state* shell)
+int	lexer(char* input, t_token** token_lst, t_shell* shell)
 {
 	size_t	i;
 	int		success;
@@ -391,7 +387,6 @@ int	lexer(char* input, t_token** token_lst, t_shell_state* shell)
 	if (!input || !token_lst || !shell)
 		return (0);
 	*token_lst = NULL;
-	clear_error(shell);
 	i = 0;
 	while (input[i])
 	{

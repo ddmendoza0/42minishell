@@ -12,6 +12,69 @@
 
 #include "minishell.h"
 
+/* Initialize shell structure */
+static void	init_shell(t_shell* shell, char** envp)
+{
+	int	i;
+	int	env_count;
+
+	// Count environment variables
+	env_count = 0;
+	while (envp[env_count])
+		env_count++;
+
+	// Copy environment variables
+	shell->env = malloc(sizeof(char*) * (env_count + 1));
+	if (!shell->env)
+	{
+		perror("minishell: malloc");
+		exit(EXIT_FAILURE);
+	}
+
+	i = 0;
+	while (i < env_count)
+	{
+		shell->env[i] = ft_strdup(envp[i]);
+		if (!shell->env[i])
+		{
+			perror("minishell: malloc");
+			exit(EXIT_FAILURE);
+		}
+		i++;
+	}
+	shell->env[i] = NULL;
+
+	// Initialize other fields
+	shell->cwd = getcwd(NULL, 0);
+	shell->last_exit_status = 0;
+	shell->stdin_backup = dup(STDIN_FILENO);
+	shell->stdout_backup = dup(STDOUT_FILENO);
+}
+
+/* Cleanup shell structure */
+static void	cleanup_shell(t_shell* shell)
+{
+	int	i;
+
+	if (shell->env)
+	{
+		i = 0;
+		while (shell->env[i])
+		{
+			free(shell->env[i]);
+			i++;
+		}
+		free(shell->env);
+	}
+
+	if (shell->cwd)
+		free(shell->cwd);
+
+	if (shell->stdin_backup >= 0)
+		close(shell->stdin_backup);
+	if (shell->stdout_backup >= 0)
+		close(shell->stdout_backup);
+}
 
 static char	*trim_input(const char *input)
 {
@@ -20,7 +83,7 @@ static char	*trim_input(const char *input)
 	return (ft_strtrim(input, WHITESPACES));
 }
 
-static void input_loop(int history_fd, t_shell_state* shell)
+static void input_loop(int history_fd, t_shell* shell)
 {
 	char	*input;
 	char	*clean_input;
@@ -51,7 +114,6 @@ static void input_loop(int history_fd, t_shell_state* shell)
 		if (!lexer(clean_input, &token_lst, shell))
 		{
 			// Lexer failed - print error and continue
-			print_error(shell);
 			free(clean_input);
 			free(input);
 			continue; // Return to prompt
@@ -69,20 +131,21 @@ static void input_loop(int history_fd, t_shell_state* shell)
 	}
 }
 
-int	main(int argc, char *argv[])
+int	main(int argc, char *argv[], char *envp[])
 {
 	int	history_fd;
-	t_shell_state shell;
+	t_shell shell;
+
 	//casting !CLEANUP!
 	(void)argc;
 	(void)argv;
-	init_shell_state(&shell);
+	init_shell(&shell, envp);
 	history_fd = initialize_history();
 	input_loop(history_fd, &shell);
 	close(history_fd);
 	rl_clear_history();
 	// Cleanup shell state
-	cleanup_shell_state(&shell);
+	cleanup_shell(&shell);
 	// Return appropriate exit code
-	return (shell.exit_code);
+	return (shell.last_exit_status);
 }
