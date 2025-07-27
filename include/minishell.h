@@ -165,27 +165,27 @@ typedef struct s_command {
 /****************************************************************/
 
 void	write_to_history_file(char *input, int history_fd);
-int	initialize_history(void);
+int		initialize_history(void);
 void	cmd_history(void);
 
 //error
-void		set_error(t_shell_state* shell, t_error_code code, char* context);
-void		clear_error(t_shell_state* shell);
-void		print_error(t_shell_state* shell);
-char* get_error_message(t_error_code code);
-int			has_error(t_shell_state* shell);
-int			get_exit_code(t_error_code code);
-void cleanup_shell_state(t_shell_state* shell);
-void init_shell_state(t_shell_state* shell);
+void	set_error(t_shell_state* shell, t_error_code code, char* context);
+void	clear_error(t_shell_state* shell);
+void	print_error(t_shell_state* shell);
+char*	get_error_message(t_error_code code);
+int		has_error(t_shell_state* shell);
+int		get_exit_code(t_error_code code);
+void	cleanup_shell_state(t_shell_state* shell);
+void	init_shell_state(t_shell_state* shell);
 
 //lexer
 	//tokenizador
-int lexer(char* input, t_token** token_lst, t_shell_state* shell);
+int		lexer(char* input, t_token** token_lst, t_shell_state* shell);
 t_token	*create_token(void *value, t_token_type type);
 t_token	*last_token(t_token *token);
 void	addback_token(t_token **lst, t_token *new);
 void	free_token_lst(t_token *lst);
-void free_segments(t_token_segment* segments);
+void	free_segments(t_token_segment* segments);
 
 
 /****************************************************************/
