@@ -19,11 +19,12 @@ LIBS = $(LIBFT)/libft.a -L/mingw64/lib -lreadline
 
 SRC_DIR =	src/
 SRCS	=	$(SRC_DIR)main.c\
-		$(SRC_DIR)error_manager.c\
-		$(SRC_DIR)lexer.c\
-		$(SRC_DIR)lexer_aux.c\
-		$(SRC_DIR)history.c\
-		$(SRC_DIR)history_commands.c\
+			$(SRC_DIR)shell_state.c\
+			$(SRC_DIR)error_manager.c\
+			$(SRC_DIR)lexer.c\
+			$(SRC_DIR)lexer_aux.c\
+			$(SRC_DIR)history.c\
+			$(SRC_DIR)history_commands.c\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)

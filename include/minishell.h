@@ -109,6 +109,11 @@ typedef struct s_command {
 void	write_to_history_file(char *input, int history_fd);
 int		initialize_history(void);
 void	cmd_history(void);
+
+//shell
+int		init_shell(t_shell * shell, char** envp);
+void	cleanup_shell(t_shell* shell);
+
 //lexer
 int		lexer(char* input, t_token** token_lst, t_shell* shell);
 t_token	*create_token(void *value, t_token_type type);
