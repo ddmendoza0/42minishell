@@ -111,10 +111,16 @@ typedef enum e_quote_type {
 	QUOTE_DOUBLE
 } t_quote_type;
 
+typedef struct s_token_segment {
+	char* content;
+	t_quote_type quote_type;
+	struct s_token_segment* next;
+} t_token_segment;
+
 typedef struct s_token
 {
 	char		*value;
-	t_quote_type quote_type;
+	t_token_segment *segments;
 	t_token_type	type;
 	int		fd;
 	struct	s_token	*next;
@@ -172,12 +178,15 @@ int			get_exit_code(t_error_code code);
 void cleanup_shell_state(t_shell_state* shell);
 void init_shell_state(t_shell_state* shell);
 
-//tokenizador
+//lexer
+	//tokenizador
 int lexer(char* input, t_token** token_lst, t_shell_state* shell);
 t_token	*create_token(void *value, t_token_type type);
 t_token	*last_token(t_token *token);
 void	addback_token(t_token **lst, t_token *new);
 void	free_token_lst(t_token *lst);
+void free_segments(t_token_segment* segments);
+
 
 /****************************************************************/
 /*			END DECLARATIONS	 		*/
