@@ -35,8 +35,6 @@ static const char* token_type_to_str(t_token_type type)
 		return "LPAREN";
 	if (type == RPAREN)
 		return "RPAREN";
-	if (type == EXPAND)
-		return "EXPAND";
 	return "UNKNOWN";
 }
 
