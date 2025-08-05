@@ -29,8 +29,7 @@ typedef enum e_token_type
 	AND,
 	OR,
 	LPAREN,
-	RPAREN,
-	EXPAND
+	RPAREN
 }t_token_type;
 
 typedef enum e_quote_type {
