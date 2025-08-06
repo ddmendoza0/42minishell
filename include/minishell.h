@@ -66,12 +66,21 @@ typedef struct s_shell
 /*SEHLL STRUCTURE*/
 
 /*AST Builder*/
+typedef enum e_cmd_logic
+{
+    CMD_NONE,
+    CMD_AND,
+    CMD_OR
+}   t_cmd_logic;
+
 typedef struct s_command {
     char **argv;
     char *input_file;
     char *output_file;
     int append_output;
     int heredoc;
+	t_cmd_logic logic;
+	struct s_command *subshell;
     struct s_command *next;
 } t_command;
 /*AST Builder*/
