@@ -154,8 +154,7 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             if (!add_redir_out(cmd, &current))
                 return 0;
         }
-        else if (current->type == PIPE || current->type == SEMICOLON ||
-                 current->type == AND || current->type == OR)
+        else if (current->type == PIPE || current->type == AND || current->type == OR)
         {
             if (current->type == AND)
                 cmd->logic = CMD_AND;
