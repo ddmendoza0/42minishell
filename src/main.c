@@ -54,6 +54,17 @@ static void input_loop(int history_fd, t_shell* shell)
 			free(input);
 			continue; // Return to prompt
 		}
+		//call the command parser
+		t_command *cmd_tree = cmd_builder(&token_lst);
+        if (!cmd_tree)
+        {
+            printf("Parser failed\n");
+            free_token_lst(token_lst);
+            free(clean_input);
+            free(input);
+            continue;
+        }
+		print_command_tree(cmd_tree, 0); //print commands (TESTING)
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)

@@ -1,5 +1,46 @@
 #include "minishell.h"
 
+//TESTING
+void print_command_tree(t_command *cmd, int depth)
+{
+    int i;
+    while (cmd)
+    {
+        for (i = 0; i < depth; i++)
+            printf("  ");
+        printf("Command:\n");
+        for (i = 0; cmd->argv && cmd->argv[i]; i++)
+        {
+            for (int j = 0; j < depth; j++)
+                printf("  ");
+            printf("  argv[%d]: %s\n", i, cmd->argv[i]);
+        }
+        if (cmd->input_file)
+        {
+            for (i = 0; i < depth; i++)
+                printf("  ");
+            printf("  input_file: %s\n", cmd->input_file);
+        }
+        if (cmd->output_file)
+        {
+            for (i = 0; i < depth; i++)
+                printf("  ");
+            printf("  output_file: %s\n", cmd->output_file);
+        }
+        for (i = 0; i < depth; i++)
+            printf("  ");
+        printf("  logic: %d\n", cmd->logic);
+        if (cmd->subshell)
+        {
+            for (i = 0; i < depth; i++)
+                printf("  ");
+            printf("  subshell:\n");
+            print_command_tree(cmd->subshell, depth + 1);
+        }
+        cmd = cmd->next;
+    }
+}
+// END TESTING
 void	free_cmd_list(t_command *cmd)
 {
     t_command *tmp;
@@ -41,12 +82,12 @@ int create_cmd(t_command **cmd)
     (*cmd)->heredoc = 0;
     (*cmd)->next = NULL;
     (*cmd)->subshell = NULL;
-    (*cmd)->logic = NULL;
+    (*cmd)->logic = CMD_NONE;
     return 1;
 }
 
 // Helper: extract tokens between LPAREN and matching RPAREN
-static t_token *extract_subshell_tokens(t_token **current)
+t_token *extract_subshell_tokens(t_token **current)
 {
     t_token *start;
     t_token *end;
@@ -78,7 +119,7 @@ static t_token *extract_subshell_tokens(t_token **current)
     return start;
 }
 
-static int handle_lparen(t_command *cmd, t_token **current)
+int handle_lparen(t_command *cmd, t_token **current)
 {
     t_token *sub_tokens;
     
@@ -87,7 +128,7 @@ static int handle_lparen(t_command *cmd, t_token **current)
     {
         printf("Syntax error: unmatched parenthesis\n");
         return 0;
-    }
+    }   
     cmd->subshell = cmd_builder(&sub_tokens);
     return 1;
 }
@@ -101,45 +142,46 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
         {
             if (!add_to_argv(cmd, current->value))
                 return 0;
+            current = current->next;
         }
         else if (current->type == REDIRECT_IN || current->type == HEREDOC)
         {
-            if (!add_redir_in(cmd, current))
+            if (!add_redir_in(cmd, &current))
                 return 0;
         }
         else if (current->type == REDIRECT_OUT || current->type == APPEND_OUT)
         {
-            if (!add_redir_out(cmd, current))
+            if (!add_redir_out(cmd, &current))
                 return 0;
         }
-        else if (current->type == PIPE || current->type == SEMICOLON)
+        else if (current->type == PIPE || current->type == SEMICOLON ||
+                 current->type == AND || current->type == OR)
         {
+            if (current->type == AND)
+                cmd->logic = CMD_AND;
+            else if (current->type == OR)
+                cmd->logic = CMD_OR;
+            else if (current->type == PIPE)
+                cmd->logic = CMD_PIPE;
+            else
+                cmd->logic = CMD_NONE;
+
             if (!create_cmd(&new_cmd))
                 return 0;
             cmd->next = new_cmd;
             cmd = new_cmd;
+            current = current->next;
+            //continue;
         }
         else if (current->type == LPAREN)
         {
             if (!handle_lparen(cmd, &current))
                 return 0;
+        }
+        else if (current->type == RPAREN)
+        {
+            current = current->next;
             continue;
-        }
-        else if (current->type == AND)
-        {
-            cmd->logic = CMD_AND;
-            if (!create_cmd(&new_cmd))
-                return 0;
-            cmd->next = new_cmd;
-            cmd = new_cmd;
-        }
-        else if (current->type == OR)
-        {
-            cmd->logic = CMD_OR;
-            if (!create_cmd(&new_cmd))
-                return 0;
-            cmd->next = new_cmd;
-            cmd = new_cmd;
         }
         else if (current->type == INVALID)
         {
@@ -154,7 +196,8 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             printf("\n");
             return 0;
         }
-        current = current->next;
+        // if (current && current->type != LPAREN)
+        //     current = current->next;
     }
     return 1;
 }
