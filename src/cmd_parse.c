@@ -41,7 +41,7 @@ int create_cmd(t_command **cmd)
     (*cmd)->heredoc = 0;
     (*cmd)->next = NULL;
     (*cmd)->subshell = NULL;
-    (*cmd)->logic = NULL;
+    (*cmd)->logic = CMD_NONE;
     return 1;
 }
 
@@ -112,7 +112,7 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             if (!add_redir_out(cmd, current))
                 return 0;
         }
-        else if (current->type == PIPE || current->type == SEMICOLON)
+        else if (current->type == PIPE)
         {
             if (!create_cmd(&new_cmd))
                 return 0;
@@ -140,11 +140,6 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
                 return 0;
             cmd->next = new_cmd;
             cmd = new_cmd;
-        }
-        else if (current->type == INVALID)
-        {
-            printf("Unexpected or invalid token: %s\n", current->value);
-            return 0;
         }
         else
         {

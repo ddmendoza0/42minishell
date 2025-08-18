@@ -130,6 +130,22 @@ void	addback_token(t_token **lst, t_token *new);
 void	free_token_lst(t_token *lst);
 void	free_segments(t_token_segment* segments);
 
+// Command builder functions
+t_command* cmd_builder(t_token** tkn_list);
+void free_cmd_list(t_command* cmd);
+int lexical_review(t_command* cmd_list, t_shell* shell);
+int add_to_argv(t_command* cmd, char* value);
+int add_redir_in(t_command* cmd, t_token* token);
+int add_redir_out(t_command* cmd, t_token* token);
+
+//cmd reviewer
+int lexical_review(t_command* cmd_list, t_shell* shell);
+
+// Environment utilities
+char* get_env_value(t_shell* shell, char* var_name);
+char* get_special_var(t_shell* shell, char* var_name);
+char* expand_variable(t_shell* shell, char* var_name);
+
 
 /****************************************************************/
 /*			END DECLARATIONS	 		*/

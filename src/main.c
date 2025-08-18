@@ -24,6 +24,7 @@ static void input_loop(int history_fd, t_shell* shell)
 	char	*input;
 	char	*clean_input;
 	t_token *token_lst;
+	t_command* cmd_list;
 
 	while (1)
 	{
@@ -54,6 +55,29 @@ static void input_loop(int history_fd, t_shell* shell)
 			free(input);
 			continue; // Return to prompt
 		}
+		cmd_list = cmd_builder(&token_lst);
+		if (!cmd_list)
+		{
+			// Command building failed
+			printf("Error: Failed to build command structure\n");
+			free_token_lst(token_lst);
+			free(clean_input);
+			free(input);
+			continue;
+		}
+		// Lexical review - expand variables, handle quotes, validate
+		if (!lexical_review(cmd_list, shell))
+		{
+			// Lexical review failed
+			printf("Error: Lexical review failed\n");
+			free_cmd_list(cmd_list);
+			free_token_lst(token_lst);
+			free(clean_input);
+			free(input);
+			continue;
+		}
+
+
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)

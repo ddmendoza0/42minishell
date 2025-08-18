@@ -25,6 +25,11 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)lexer_aux.c\
 			$(SRC_DIR)history.c\
 			$(SRC_DIR)history_commands.c\
+			src/cmd_parse.c \
+			src/cmd_parse_argv.c \
+			src/cmd_parse_redir.c \
+			src/cmd_reviewer.c \
+			src/env_utils.c\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
