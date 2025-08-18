@@ -133,14 +133,18 @@ void	addback_token(t_token **lst, t_token *new);
 void	free_token_lst(t_token *lst);
 void	free_segments(t_token_segment* segments);
 
-<<<<<<< HEAD
 // Command builder functions
+void print_command_tree(t_command* cmd, int depth);
 t_command* cmd_builder(t_token** tkn_list);
 void free_cmd_list(t_command* cmd);
 int lexical_review(t_command* cmd_list, t_shell* shell);
 int add_to_argv(t_command* cmd, char* value);
-int add_redir_in(t_command* cmd, t_token* token);
-int add_redir_out(t_command* cmd, t_token* token);
+int add_redir_in(t_command* cmd, t_token** token);
+int add_redir_out(t_command* cmd, t_token** token);
+int add_to_argv(t_command* cmd, char* value);
+int add_to_argv(t_command* cmd, char* value);
+int handle_lparen(t_command* cmd, t_token** current);
+t_token* extract_subshell_tokens(t_token** current);
 
 //cmd reviewer
 int lexical_review(t_command* cmd_list, t_shell* shell);
@@ -150,20 +154,6 @@ char* get_env_value(t_shell* shell, char* var_name);
 char* get_special_var(t_shell* shell, char* var_name);
 char* expand_variable(t_shell* shell, char* var_name);
 
-
-=======
-//Parse commands
-void print_command_tree(t_command *cmd, int depth);
-t_command	*cmd_builder(t_token **token_lst);
-int		create_cmd(t_command **cmd);
-void	free_cmd_list(t_command *cmd);
-int add_redir_in(t_command *cmd, t_token **token);
-int add_redir_out(t_command *cmd, t_token **token);
-int add_to_argv(t_command *cmd, char *value);
-int add_to_argv(t_command *cmd, char *value);
-int handle_lparen(t_command *cmd, t_token **current);
-t_token *extract_subshell_tokens(t_token **current);
->>>>>>> 550df54f020ba0608eccb7a37eb37702735185a1
 /****************************************************************/
 /*			END DECLARATIONS	 		*/
 /****************************************************************/

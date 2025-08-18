@@ -154,11 +154,7 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             if (!add_redir_out(cmd, &current))
                 return 0;
         }
-<<<<<<< HEAD
-        else if (current->type == PIPE)
-=======
         else if (current->type == PIPE || current->type == AND || current->type == OR)
->>>>>>> 550df54f020ba0608eccb7a37eb37702735185a1
         {
             if (current->type == AND)
                 cmd->logic = CMD_AND;
@@ -186,7 +182,6 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             current = current->next;
             continue;
         }
-<<<<<<< HEAD
         else if (current->type == AND)
         {
             cmd->logic = CMD_AND;
@@ -202,12 +197,6 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
                 return 0;
             cmd->next = new_cmd;
             cmd = new_cmd;
-=======
-        else if (current->type == INVALID)
-        {
-            printf("Unexpected or invalid token: %s\n", current->value);
-            return 0;
->>>>>>> 550df54f020ba0608eccb7a37eb37702735185a1
         }
         else
         {
@@ -217,8 +206,6 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
             printf("\n");
             return 0;
         }
-        // if (current && current->type != LPAREN)
-        //     current = current->next;
     }
     return 1;
 }
