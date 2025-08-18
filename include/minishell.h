@@ -29,7 +29,9 @@ typedef enum e_token_type
 	AND,
 	OR,
 	LPAREN,
-	RPAREN
+	RPAREN,
+	SEMICOLON,
+	INVALID
 }t_token_type;
 
 typedef enum e_quote_type {
@@ -70,7 +72,8 @@ typedef enum e_cmd_logic
 {
     CMD_NONE,
     CMD_AND,
-    CMD_OR
+    CMD_OR,
+	CMD_PIPE
 }   t_cmd_logic;
 
 typedef struct s_command {
@@ -130,6 +133,7 @@ void	addback_token(t_token **lst, t_token *new);
 void	free_token_lst(t_token *lst);
 void	free_segments(t_token_segment* segments);
 
+<<<<<<< HEAD
 // Command builder functions
 t_command* cmd_builder(t_token** tkn_list);
 void free_cmd_list(t_command* cmd);
@@ -147,6 +151,19 @@ char* get_special_var(t_shell* shell, char* var_name);
 char* expand_variable(t_shell* shell, char* var_name);
 
 
+=======
+//Parse commands
+void print_command_tree(t_command *cmd, int depth);
+t_command	*cmd_builder(t_token **token_lst);
+int		create_cmd(t_command **cmd);
+void	free_cmd_list(t_command *cmd);
+int add_redir_in(t_command *cmd, t_token **token);
+int add_redir_out(t_command *cmd, t_token **token);
+int add_to_argv(t_command *cmd, char *value);
+int add_to_argv(t_command *cmd, char *value);
+int handle_lparen(t_command *cmd, t_token **current);
+t_token *extract_subshell_tokens(t_token **current);
+>>>>>>> 550df54f020ba0608eccb7a37eb37702735185a1
 /****************************************************************/
 /*			END DECLARATIONS	 		*/
 /****************************************************************/
