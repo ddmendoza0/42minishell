@@ -1,35 +1,70 @@
 #include "minishell.h"
 
 //TESTING
-void print_command_tree(t_command *cmd, int depth)
+void print_command_tree(t_command* cmd, int depth)
 {
     int i;
+    t_arg_token* arg;
+
     while (cmd)
     {
         for (i = 0; i < depth; i++)
             printf("  ");
         printf("Command:\n");
-        for (i = 0; cmd->argv && cmd->argv[i]; i++)
+
+        // Print arguments
+        if (cmd->args)
         {
-            for (int j = 0; j < depth; j++)
-                printf("  ");
-            printf("  argv[%d]: %s\n", i, cmd->argv[i]);
+            arg = cmd->args;
+            i = 0;
+            while (arg)
+            {
+                for (int j = 0; j < depth; j++)
+                    printf("  ");
+                printf("  arg[%d]: %s", i, arg->original_token->value);
+                if (arg->expanded_value)
+                    printf(" (expanded: %s)", arg->expanded_value);
+                printf("\n");
+                arg = arg->next;
+                i++;
+            }
         }
-        if (cmd->input_file)
+
+        // Print input redirection
+        if (cmd->input_redir)
         {
             for (i = 0; i < depth; i++)
                 printf("  ");
-            printf("  input_file: %s\n", cmd->input_file);
+            printf("  input: %s", cmd->input_redir->original_token->value);
+            if (cmd->input_redir->expanded_path)
+                printf(" (expanded: %s)", cmd->input_redir->expanded_path);
+            if (cmd->input_redir->is_heredoc)
+                printf(" (heredoc)");
+            printf("\n");
         }
-        if (cmd->output_file)
+
+        // Print output redirection
+        if (cmd->output_redir)
         {
             for (i = 0; i < depth; i++)
                 printf("  ");
-            printf("  output_file: %s\n", cmd->output_file);
+            printf("  output: %s", cmd->output_redir->original_token->value);
+            if (cmd->output_redir->expanded_path)
+                printf(" (expanded: %s)", cmd->output_redir->expanded_path);
+            if (cmd->output_redir->append_mode)
+                printf(" (append)");
+            printf("\n");
         }
+
+        // Print logic
         for (i = 0; i < depth; i++)
             printf("  ");
-        printf("  logic: %d\n", cmd->logic);
+        printf("  logic: %s\n",
+            cmd->logic == CMD_PIPE ? "PIPE" :
+            cmd->logic == CMD_AND ? "AND" :
+            cmd->logic == CMD_OR ? "OR" : "NONE");
+
+        // Print subshell
         if (cmd->subshell)
         {
             for (i = 0; i < depth; i++)
@@ -37,32 +72,27 @@ void print_command_tree(t_command *cmd, int depth)
             printf("  subshell:\n");
             print_command_tree(cmd->subshell, depth + 1);
         }
+
         cmd = cmd->next;
     }
 }
 // END TESTING
-void	free_cmd_list(t_command *cmd)
+void free_cmd_list(t_command* cmd)
 {
-    t_command *tmp;
-    int i;
+    t_command* tmp;
 
     while (cmd)
     {
         tmp = cmd->next;
-        if (cmd->argv)
-        {
-            i = 0;
-            while (cmd->argv[i])
-            {
-                free(cmd->argv[i]);
-                i++;
-            }
-            free(cmd->argv);
-        }
-        if (cmd->input_file)
-            free(cmd->input_file);
-        if (cmd->output_file)
-            free(cmd->output_file);
+        // Free arguments
+        if (cmd->args)
+            free_arg_tokens(cmd->args);
+        // Free redirections
+        if (cmd->input_redir)
+            free_redir_file(cmd->input_redir);
+        if (cmd->output_redir)
+            free_redir_file(cmd->output_redir);
+        // Free subshell
         if (cmd->subshell)
             free_cmd_list(cmd->subshell);
         free(cmd);
@@ -70,20 +100,18 @@ void	free_cmd_list(t_command *cmd)
     }
 }
 
-int create_cmd(t_command **cmd)
+static int create_cmd(t_command** cmd)
 {
     *cmd = malloc(sizeof(t_command));
     if (!*cmd)
-        return 0;
-    (*cmd)->argv = NULL;
-    (*cmd)->input_file = NULL;
-    (*cmd)->output_file = NULL;
-    (*cmd)->append_output = 0;
-    (*cmd)->heredoc = 0;
-    (*cmd)->next = NULL;
-    (*cmd)->subshell = NULL;
+        return (0);
+    (*cmd)->args = NULL;
+    (*cmd)->input_redir = NULL;
+    (*cmd)->output_redir = NULL;
     (*cmd)->logic = CMD_NONE;
-    return 1;
+    (*cmd)->subshell = NULL;
+    (*cmd)->next = NULL;
+    return (1);
 }
 
 // Helper: extract tokens between LPAREN and matching RPAREN
@@ -130,28 +158,29 @@ int handle_lparen(t_command *cmd, t_token **current)
         return 0;
     }   
     cmd->subshell = cmd_builder(&sub_tokens);
-    return 1;
+    return (cmd->subshell != NULL);
 }
 
-static int	cmd_parse_tokens(t_command *cmd, t_token *current)
+static int cmd_parse_tokens(t_command* cmd, t_token* current)
 {
-    t_command *new_cmd = NULL;
+    t_command* new_cmd;
+
     while (current)
     {
         if (current->type == WORD)
         {
-            if (!add_to_argv(cmd, current->value))
+            if (!add_token_to_args(cmd, current))
                 return 0;
             current = current->next;
         }
         else if (current->type == REDIRECT_IN || current->type == HEREDOC)
         {
-            if (!add_redir_in(cmd, &current))
+            if (!add_token_redir_in(cmd, &current))
                 return 0;
         }
         else if (current->type == REDIRECT_OUT || current->type == APPEND_OUT)
         {
-            if (!add_redir_out(cmd, &current))
+            if (!add_token_redir_out(cmd, &current))
                 return 0;
         }
         else if (current->type == PIPE || current->type == AND || current->type == OR)
@@ -162,15 +191,11 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
                 cmd->logic = CMD_OR;
             else if (current->type == PIPE)
                 cmd->logic = CMD_PIPE;
-            else
-                cmd->logic = CMD_NONE;
-
             if (!create_cmd(&new_cmd))
                 return 0;
             cmd->next = new_cmd;
             cmd = new_cmd;
             current = current->next;
-            //continue;
         }
         else if (current->type == LPAREN)
         {
@@ -178,26 +203,7 @@ static int	cmd_parse_tokens(t_command *cmd, t_token *current)
                 return 0;
         }
         else if (current->type == RPAREN)
-        {
             current = current->next;
-            continue;
-        }
-        else if (current->type == AND)
-        {
-            cmd->logic = CMD_AND;
-            if (!create_cmd(&new_cmd))
-                return 0;
-            cmd->next = new_cmd;
-            cmd = new_cmd;
-        }
-        else if (current->type == OR)
-        {
-            cmd->logic = CMD_OR;
-            if (!create_cmd(&new_cmd))
-                return 0;
-            cmd->next = new_cmd;
-            cmd = new_cmd;
-        }
         else
         {
             printf("Syntax error: unexpected token");

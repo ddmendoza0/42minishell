@@ -1,197 +1,302 @@
 #include "minishell.h"
 
-// Helper function to expand variables in a string
-static char* expand_variables(char* str, t_shell* shell)
+/*
+ * SEGMENT PROCESSING
+ * Processes individual segments based on quote type
+ */
+
+static char* process_segment(t_token_segment* segment, t_shell* shell)
 {
+    if (!segment || !segment->content)
+        return ft_strdup("");
+
+    switch (segment->quote_type)
+    {
+    case QUOTE_SINGLE:
+        // Single quotes: NO variable expansion
+        return ft_strdup(segment->content);
+
+    case QUOTE_DOUBLE:
+        // Double quotes: expand variables only
+        return expand_variables_in_string(segment->content, shell);
+
+    case QUOTE_NONE:
+        // No quotes: expand everything
+        return expand_variables_in_string(segment->content, shell);
+
+    default:
+        return ft_strdup(segment->content);
+    }
+}
+
+/*
+ * TOKEN EXPANSION
+ * Expands a complete token using its segments
+ */
+
+static char* expand_token(t_token* token, t_shell* shell)
+{
+    t_token_segment* current;
     char* result;
-    char* var_name;
-    char* var_value;
-    char* expanded;
-    int i, j, k, var_start;
+    char* temp;
+    char* processed_segment;
 
-    if (!str || !shell)
-        return (NULL);
+    if (!token || !token->segments)
+    {
+        // Fallback: use direct value if no segments
+        if (token && token->value)
+            return expand_variables_in_string(token->value, shell);
+        return ft_strdup("");
+    }
 
-    result = malloc(ft_strlen(str) * 4); // Allocate for expansion
+    result = ft_strdup("");
     if (!result)
-        return (NULL);
+        return NULL;
 
-    i = 0;
-    j = 0;
-    while (str[i])
+    current = token->segments;
+    while (current)
     {
-        if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i + 1] == '_' || str[i + 1] == '?' || str[i + 1] == '$'))
+        processed_segment = process_segment(current, shell);
+        if (!processed_segment)
         {
-            i++; // Skip $
-            var_start = i;
-
-            // Handle special case $?
-            if (str[i] == '?' || str[i] == '$')
-            {
-                i++;
-                var_name = ft_strndup(&str[var_start], 1);
-            }
-            else
-            {
-                // Find end of variable name
-                while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-                    i++;
-
-                // Extract variable name
-                var_name = ft_strndup(&str[var_start], i - var_start);
-            }
-
-            if (!var_name)
-            {
-                free(result);
-                return (NULL);
-            }
-
-            // Get variable value
-            var_value = expand_variable(shell, var_name);
-            if (var_value)
-            {
-                // Copy variable value to result
-                k = 0;
-                while (var_value[k])
-                    result[j++] = var_value[k++];
-                free(var_value);
-            }
-
-            free(var_name);
+            free(result);
+            return NULL;
         }
-        else
-        {
-            result[j++] = str[i++];
-        }
-    }
-    result[j] = '\0';
 
-    // Realloc to exact size
-    expanded = ft_strdup(result);
-    free(result);
-    printf("DEBUG: Original: [%s]\n", str);
-    printf("DEBUG: Expanded: [%s]\n", expanded);
-    return (expanded);
-}
+        temp = ft_strjoin(result, processed_segment);
+        free(result);
+        free(processed_segment);
 
-// Review and process arguments in a command
-static int review_command_args(t_command* cmd, t_shell* shell)
-{
-    int i;
-    char* expanded;
+        if (!temp)
+            return NULL;
 
-    if (!cmd || !cmd->argv || !shell)
-        return (1);
-
-    i = 0;
-    while (cmd->argv[i])
-    {
-        // Expand variables in each argument
-        expanded = expand_variables(cmd->argv[i], shell);
-        if (!expanded)
-            return (0);
-
-        // Replace the old argument with expanded one
-        free(cmd->argv[i]);
-        cmd->argv[i] = expanded;
-
-        i++;
+        result = temp;
+        current = current->next;
     }
 
-    return (1);
+    return result;
 }
 
-// Review and process redirection files
-static int review_redirections(t_command* cmd, t_shell* shell)
+/*
+ * COMMAND EXPANSION
+ * Expands all arguments in a command
+ */
+
+static int expand_command_args(t_command* cmd, t_shell* shell)
 {
-    char* expanded;
+    t_arg_token* current;
 
     if (!cmd || !shell)
-        return (0);
+        return 0;
 
-    // Process input file
-    if (cmd->input_file)
+    current = cmd->args;
+    while (current)
     {
-        expanded = expand_variables(cmd->input_file, shell);
-        if (!expanded)
-            return (0);
-        free(cmd->input_file);
-        cmd->input_file = expanded;
+        if (!current->expanded_value && current->original_token)
+        {
+            current->expanded_value = expand_token(current->original_token, shell);
+            if (!current->expanded_value)
+                return 0;
+        }
+        current = current->next;
     }
 
-    // Process output file
-    if (cmd->output_file)
-    {
-        expanded = expand_variables(cmd->output_file, shell);
-        if (!expanded)
-            return (0);
-        free(cmd->output_file);
-        cmd->output_file = expanded;
-    }
-
-    return (1);
+    return 1;
 }
 
-// Validate command syntax
+/*
+ * REDIRECTION EXPANSION
+ * Expands redirection file paths
+ */
+
+static int expand_command_redirections(t_command* cmd, t_shell* shell)
+{
+    if (!cmd || !shell)
+        return 0;
+
+    // Expand input redirection
+    if (cmd->input_redir && !cmd->input_redir->expanded_path &&
+        cmd->input_redir->original_token)
+    {
+        cmd->input_redir->expanded_path = expand_token(
+            cmd->input_redir->original_token, shell);
+        if (!cmd->input_redir->expanded_path)
+            return 0;
+    }
+
+    // Expand output redirection
+    if (cmd->output_redir && !cmd->output_redir->expanded_path &&
+        cmd->output_redir->original_token)
+    {
+        cmd->output_redir->expanded_path = expand_token(
+            cmd->output_redir->original_token, shell);
+        if (!cmd->output_redir->expanded_path)
+            return 0;
+    }
+
+    return 1;
+}
+
+/*
+ * COMMAND VALIDATION
+ * Validates command syntax after expansion
+ */
+
 static int validate_command(t_command* cmd)
 {
     if (!cmd)
-        return (0);
+        return 0;
 
-    // Check if command has arguments or redirections
-    if (!cmd->argv && !cmd->input_file && !cmd->output_file && !cmd->subshell)
+    // A command must have at least arguments, redirections, or subshell
+    if (!cmd->args && !cmd->input_redir && !cmd->output_redir && !cmd->subshell)
     {
         printf("Error: empty command\n");
-        return (0);
+        return 0;
     }
 
-    return (1);
+    // Validate input redirection filename
+    if (cmd->input_redir && cmd->input_redir->expanded_path)
+    {
+        if (ft_strlen(cmd->input_redir->expanded_path) == 0)
+        {
+            printf("Error: empty input redirection filename\n");
+            return 0;
+        }
+    }
+
+    // Validate output redirection filename
+    if (cmd->output_redir && cmd->output_redir->expanded_path)
+    {
+        if (ft_strlen(cmd->output_redir->expanded_path) == 0)
+        {
+            printf("Error: empty output redirection filename\n");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
-// Main lexical review function for a single command
-static int review_single_command(t_command* cmd, t_shell* shell)
+/*
+ * SINGLE COMMAND PROCESSING
+ * Processes a single command: expansion and validation
+ */
+
+static int process_single_command(t_command* cmd, t_shell* shell)
 {
     if (!cmd || !shell)
-        return (0);
+        return 0;
 
-    // Process subshell recursively
+    // Process subshell recursively if exists
     if (cmd->subshell)
     {
         if (!lexical_review(cmd->subshell, shell))
-            return (0);
+            return 0;
     }
 
-    // Review arguments
-    if (!review_command_args(cmd, shell))
-        return (0);
+    // Expand arguments using segments
+    if (!expand_command_args(cmd, shell))
+        return 0;
 
-    // Review redirections
-    if (!review_redirections(cmd, shell))
-        return (0);
+    // Expand redirections using segments
+    if (!expand_command_redirections(cmd, shell))
+        return 0;
 
-    // Validate command
+    // Validate command syntax
     if (!validate_command(cmd))
-        return (0);
+        return 0;
 
-    return (1);
+    return 1;
 }
 
-// Main lexical review function - processes entire command list
+/*
+ * MAIN LEXICAL REVIEW FUNCTION
+ * Processes entire command list
+ */
+
 int lexical_review(t_command* cmd_list, t_shell* shell)
 {
     t_command* current;
 
     if (!shell)
-        return (0);
+        return 0;
 
     current = cmd_list;
     while (current)
     {
-        if (!review_single_command(current, shell))
-            return (0);
+        if (!process_single_command(current, shell))
+            return 0;
         current = current->next;
     }
 
-    return (1);
+    return 1;
+}
+
+/*
+ * DEBUG FUNCTIONS
+ * For development and testing purposes
+ */
+
+void print_expansion_debug(t_command* cmd)
+{
+    t_arg_token* arg;
+
+    if (!cmd)
+        return;
+
+    printf("=== EXPANSION DEBUG ===\n");
+
+    // Debug arguments
+    arg = cmd->args;
+    while (arg)
+    {
+        printf("Original: [%s]\n", arg->original_token->value);
+        if (arg->expanded_value)
+            printf("Expanded: [%s]\n", arg->expanded_value);
+        else
+            printf("Expanded: [NOT YET EXPANDED]\n");
+
+        // Debug segments
+        if (arg->original_token->segments)
+        {
+            t_token_segment* seg = arg->original_token->segments;
+            int seg_num = 0;
+            printf("Segments:\n");
+            while (seg)
+            {
+                const char* quote_type_str =
+                    seg->quote_type == QUOTE_SINGLE ? "SINGLE" :
+                    seg->quote_type == QUOTE_DOUBLE ? "DOUBLE" : "NONE";
+                printf("  [%d] '%s' (type: %s)\n", seg_num, seg->content, quote_type_str);
+                seg = seg->next;
+                seg_num++;
+            }
+        }
+        printf("---\n");
+        arg = arg->next;
+    }
+
+    // Debug input redirection
+    if (cmd->input_redir)
+    {
+        printf("Input redir: [%s]", cmd->input_redir->original_token->value);
+        if (cmd->input_redir->expanded_path)
+            printf(" -> [%s]", cmd->input_redir->expanded_path);
+        if (cmd->input_redir->is_heredoc)
+            printf(" (heredoc)");
+        printf("\n");
+    }
+
+    // Debug output redirection
+    if (cmd->output_redir)
+    {
+        printf("Output redir: [%s]", cmd->output_redir->original_token->value);
+        if (cmd->output_redir->expanded_path)
+            printf(" -> [%s]", cmd->output_redir->expanded_path);
+        if (cmd->output_redir->append_mode)
+            printf(" (append)");
+        printf("\n");
+    }
+
+    printf("=== END DEBUG ===\n");
 }

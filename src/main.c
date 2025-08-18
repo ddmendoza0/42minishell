@@ -11,6 +11,89 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+//TESTING
+static void display_processed_command(t_command* cmd_tree)
+{
+    t_command* current;
+    t_arg_token* arg;
+    char** argv;
+    int i;
+
+    printf("\n=== PROCESSED COMMANDS ===\n");
+
+    current = cmd_tree;
+    i = 0;
+    while (current)
+    {
+        printf("Command %d:\n", i);
+
+        // Show arguments
+        if (current->args)
+        {
+            printf("  Arguments: ");
+            arg = current->args;
+            while (arg)
+            {
+                printf("'%s'", arg->expanded_value ?
+                    arg->expanded_value : arg->original_token->value);
+                if (arg->next)
+                    printf(" ");
+                arg = arg->next;
+            }
+            printf("\n");
+        }
+
+        // Show redirections
+        if (current->input_redir)
+        {
+            printf("  Input: %s%s\n",
+                current->input_redir->expanded_path ?
+                current->input_redir->expanded_path :
+                current->input_redir->original_token->value,
+                current->input_redir->is_heredoc ? " (heredoc)" : "");
+        }
+
+        if (current->output_redir)
+        {
+            printf("  Output: %s%s\n",
+                current->output_redir->expanded_path ?
+                current->output_redir->expanded_path :
+                current->output_redir->original_token->value,
+                current->output_redir->append_mode ? " (append)" : "");
+        }
+
+        // Show logic
+        if (current->logic != CMD_NONE)
+        {
+            printf("  Logic: %s\n",
+                current->logic == CMD_PIPE ? "PIPE" :
+                current->logic == CMD_AND ? "AND" : "OR");
+        }
+
+        // Show argv for compatibility testing
+        argv = get_argv_from_args(current);
+        if (argv)
+        {
+            printf("  Argv: ");
+            for (int j = 0; argv[j]; j++)
+            {
+                printf("'%s'", argv[j]);
+                if (argv[j + 1])
+                    printf(" ");
+                free(argv[j]);
+            }
+            free(argv);
+            printf("\n");
+        }
+
+        printf("\n");
+        current = current->next;
+        i++;
+    }
+
+    printf("=== END PROCESSED COMMANDS ===\n\n");
+}
+//END TESTING
 
 static char	*trim_input(const char *input)
 {
@@ -24,6 +107,7 @@ static void input_loop(int history_fd, t_shell* shell)
 	char	*input;
 	char	*clean_input;
 	t_token *token_lst;
+    t_command* cmd_tree;
 
 	while (1)
 	{
@@ -46,36 +130,50 @@ static void input_loop(int history_fd, t_shell* shell)
 			free(input);
 			break;
 		}
+        /*if (ft_strcmp(clean_input, "history") == 0)
+        {
+            cmd_history();
+            add_history(input);
+            write_to_history_file(input, history_fd);
+            free(clean_input);
+            free(input);
+            continue;
+        }*/
 		//MAIN LOGIC
 		if (!lexer(clean_input, &token_lst, shell))
 		{
-			// Lexer failed - print error and continue
+            printf("Error: Lexical analysis failed\n");
 			free(clean_input);
 			free(input);
 			continue; // Return to prompt
 		}
 		//call the command parser
-		t_command *cmd_tree = cmd_builder(&token_lst);
+        cmd_tree = cmd_builder(&token_lst);
         if (!cmd_tree)
         {
-            printf("Parser failed\n");
+            printf("Error: Syntax analysis failed\n");
             free_token_lst(token_lst);
             free(clean_input);
             free(input);
             continue;
         }
-		print_command_tree(cmd_tree, 0); //print commands (TESTING)
-		// Lexical review - expand variables, handle quotes, validate
-		if (!lexical_review(cmd_tree, shell))
-		{
-			// Lexical review failed
-			printf("Error: Lexical review failed\n");
-			free_cmd_list(cmd_tree);
-			free_token_lst(token_lst);
-			free(clean_input);
-			free(input);
-			continue;
-		}
+        if (!lexical_review(cmd_tree, shell))
+        {
+            printf("Error: Lexical review failed\n");
+            free_cmd_list(cmd_tree);
+            free_token_lst(token_lst);
+            free(clean_input);
+            free(input);
+            continue;
+        }
+        // DISPLAY RESULTS (for testing)
+        printf("\n=== ORIGINAL COMMAND TREE ===\n");
+        print_command_tree(cmd_tree, 0);
+        printf("=== END COMMAND TREE ===\n");
+        display_processed_command(cmd_tree);
+
+
+
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
@@ -97,13 +195,24 @@ int	main(int argc, char *argv[], char *envp[])
 	//casting !CLEANUP!
 	(void)argc;
 	(void)argv;
-	init_shell(&shell, envp);
-	history_fd = initialize_history();
+    // Initialize shell state
+    if (!init_shell(&shell, envp))
+    {
+        fprintf(stderr, "Error: Failed to initialize shell\n");
+        return EXIT_FAILURE;
+    }
+    // Initialize history
+    history_fd = initialize_history();
+    if (history_fd == -1)
+    {
+        fprintf(stderr, "Warning: Could not initialize history\n");
+    }
 	input_loop(history_fd, &shell);
-	close(history_fd);
-	rl_clear_history();
-	// Cleanup shell state
-	cleanup_shell(&shell);
+    // Cleanup
+    if (history_fd >= 0)
+        close(history_fd);
+    rl_clear_history();
+    cleanup_shell(&shell);
 	// Return appropriate exit code
 	return (shell.last_exit_status);
 }
