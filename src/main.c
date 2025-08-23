@@ -11,89 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-//TESTING
-static void display_processed_command(t_command* cmd_tree)
-{
-    t_command* current;
-    t_arg_token* arg;
-    char** argv;
-    int i;
-
-    printf("\n=== PROCESSED COMMANDS ===\n");
-
-    current = cmd_tree;
-    i = 0;
-    while (current)
-    {
-        printf("Command %d:\n", i);
-
-        // Show arguments
-        if (current->args)
-        {
-            printf("  Arguments: ");
-            arg = current->args;
-            while (arg)
-            {
-                printf("'%s'", arg->expanded_value ?
-                    arg->expanded_value : arg->original_token->value);
-                if (arg->next)
-                    printf(" ");
-                arg = arg->next;
-            }
-            printf("\n");
-        }
-
-        // Show redirections
-        if (current->input_redir)
-        {
-            printf("  Input: %s%s\n",
-                current->input_redir->expanded_path ?
-                current->input_redir->expanded_path :
-                current->input_redir->original_token->value,
-                current->input_redir->is_heredoc ? " (heredoc)" : "");
-        }
-
-        if (current->output_redir)
-        {
-            printf("  Output: %s%s\n",
-                current->output_redir->expanded_path ?
-                current->output_redir->expanded_path :
-                current->output_redir->original_token->value,
-                current->output_redir->append_mode ? " (append)" : "");
-        }
-
-        // Show logic
-        if (current->logic != CMD_NONE)
-        {
-            printf("  Logic: %s\n",
-                current->logic == CMD_PIPE ? "PIPE" :
-                current->logic == CMD_AND ? "AND" : "OR");
-        }
-
-        // Show argv for compatibility testing
-        argv = get_argv_from_args(current);
-        if (argv)
-        {
-            printf("  Argv: ");
-            for (int j = 0; argv[j]; j++)
-            {
-                printf("'%s'", argv[j]);
-                if (argv[j + 1])
-                    printf(" ");
-                free(argv[j]);
-            }
-            free(argv);
-            printf("\n");
-        }
-
-        printf("\n");
-        current = current->next;
-        i++;
-    }
-
-    printf("=== END PROCESSED COMMANDS ===\n\n");
-}
-//END TESTING
 
 static char	*trim_input(const char *input)
 {
@@ -166,21 +83,15 @@ static void input_loop(int history_fd, t_shell* shell)
             free(input);
             continue;
         }
-        // DISPLAY RESULTS (for testing)
-        printf("\n=== ORIGINAL COMMAND TREE ===\n");
-        print_command_tree(cmd_tree, 0);
-        printf("=== END COMMAND TREE ===\n");
-        display_processed_command(cmd_tree);
-
-
 
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
 			cmd_history();
-		//valid command checker here
+
 		//execute command, else throw error
-		ft_printf("%s\n", clean_input);//test placeholder
+        shell->last_exit_status = execute_command_tree(cmd_tree, shell);
+
 		free_token_lst(token_lst);
 		free(clean_input);
 		free(input);

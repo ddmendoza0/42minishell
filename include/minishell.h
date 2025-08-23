@@ -108,6 +108,18 @@ typedef struct s_command {
 /*			LIBRARIES		 		*/
 /****************************************************************/
 
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include "libft.h"
+# include "error_manager.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <sys/types.h>
+
+/*
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -119,6 +131,9 @@ typedef struct s_command {
 # include <readline/history.h>
 //error manager
 # include "error_manager.h" 
+//executor
+#include <sys/wait.h>
+*/
 /****************************************************************/
 /*			END LIBRARIES				*/
 /****************************************************************/
@@ -173,16 +188,30 @@ char* get_env_value(t_shell* shell, char* var_name);
 char* get_special_var(t_shell* shell, char* var_name);
 char* expand_variable(t_shell* shell, char* var_name);
 
-// Utility functions
-void print_command_tree(t_command* cmd, int depth);
-void print_expansion_debug(t_command* cmd);
-
 // Execution helper functions (implemented in token_management.c)
 char** get_argv_from_args(t_command* cmd);
 char* get_input_file(t_command* cmd);
 char* get_output_file(t_command* cmd);
 int is_append_mode(t_command* cmd);
 int is_heredoc_mode(t_command* cmd);
+
+ // Executor
+int		execute_command_tree(t_command* cmd_tree, t_shell* shell);
+
+
+// builtin commands
+/*
+int		builtin_echo(char** argv);
+int		builtin_cd(char** argv, t_shell* shell);
+int		builtin_pwd(void);
+int		builtin_export(char** argv, t_shell* shell);
+int		builtin_unset(char** argv, t_shell* shell);
+int		builtin_env(t_shell* shell);
+int		builtin_exit(char** argv, t_shell* shell);
+*/
+
+// Utility function used by other modules
+void	free_argv(char** argv);
 
 /****************************************************************/
 /*			END DECLARATIONS	 		*/
