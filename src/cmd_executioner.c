@@ -79,7 +79,7 @@ static int	execute_builtin(char** argv, t_shell* shell)
 
 	(void)argv;
 	(void)shell;
-	ft_putstr_fd("minishell: builtin not implemented\n", STDERR_FILENO);
+	ft_putstr_fd("minishell: builtin not implemented xd\n", STDERR_FILENO);
 	return (EXIT_FAILURE);
 }
 
@@ -163,8 +163,6 @@ static char* find_executable(char* cmd, t_shell* shell)
 		return (NULL);
 	}
 	path_env = get_env_value(shell, "PATH");
-	printf("DEBUG: Looking for command: [%s]\n", cmd);
-	printf("DEBUG: PATH = [%s]\n", path_env ? path_env : "NULL");
 	if (!path_env)
 		return (NULL);
 	path_dirs = ft_split(path_env, ':');
@@ -539,6 +537,8 @@ static int	execute_pipeline(t_command* cmd_list, t_shell* shell)
 static int	execute_logical_sequence(t_command* cmd_list, t_shell* shell)
 {
 	t_command* current;
+	t_command* pipeline_start;
+	t_command* pipeline_end;
 	int			exit_status;
 
 	current = cmd_list;
@@ -547,8 +547,8 @@ static int	execute_logical_sequence(t_command* cmd_list, t_shell* shell)
 	{
 		if (current->logic == CMD_PIPE)
 		{
-			t_command* pipeline_start = current;
-			t_command* pipeline_end = current;
+			pipeline_start = current;
+			pipeline_end = current;
 			while (pipeline_end->next && pipeline_end->logic == CMD_PIPE)
 				pipeline_end = pipeline_end->next;
 			exit_status = execute_pipeline(pipeline_start, shell);
@@ -557,10 +557,10 @@ static int	execute_logical_sequence(t_command* cmd_list, t_shell* shell)
 		else
 			exit_status = execute_single_command(current, shell);
 		if (current && current->logic == CMD_AND && exit_status != EXIT_SUCCESS)
-			break;
-		else if (current && current->logic == CMD_OR
+			break ;
+		else if (current && current->logic == CMD_OR \
 			&& exit_status == EXIT_SUCCESS)
-			break;
+			break ;
 		if (current)
 			current = current->next;
 	}
