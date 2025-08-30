@@ -25,27 +25,25 @@ void	free_argv(char** argv)
  */
 static int	is_builtin(char* cmd)
 {
-	/*
-	if (!cmd)
-		return (0);
-	if (ft_strncmp(cmd, "echo", 5) == 0 && cmd[4] == '\0')
-		return (1);
+	
+	//if (!cmd)
+	//	return (0);
+	//if (ft_strncmp(cmd, "echo", 5) == 0 && cmd[4] == '\0')
+	//	return (1);
 	if (ft_strncmp(cmd, "cd", 3) == 0 && cmd[2] == '\0')
 		return (1);
-	if (ft_strncmp(cmd, "pwd", 4) == 0 && cmd[3] == '\0')
-		return (1);
-	if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
-		return (1);
-	if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
-		return (1);
-	if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
-		return (1);
-	if (ft_strncmp(cmd, "exit", 5) == 0 && cmd[4] == '\0')
-		return (1);
-	return (0);
-	*/
-
-	(void)cmd;
+	//if (ft_strncmp(cmd, "pwd", 4) == 0 && cmd[3] == '\0')
+	//	return (1);
+	//if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
+	//	return (1);
+	//if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
+	//	return (1);
+	//if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
+	//	return (1);
+	//if (ft_strncmp(cmd, "exit", 5) == 0 && cmd[4] == '\0')
+	//	return (1);
+	//return (0);
+	
 	return (0); // Treat everything as external for now
 }
 
@@ -54,9 +52,9 @@ static int	is_builtin(char* cmd)
  */
 static int	execute_builtin(char** argv, t_shell* shell)
 {
-	/*
 	char* cmd;
 
+	/*
 	if (!argv || !argv[0] || !shell)
 		return (EXIT_FAILURE);
 	cmd = argv[0];
@@ -77,6 +75,8 @@ static int	execute_builtin(char** argv, t_shell* shell)
 	return (EXIT_FAILURE);
 	*/
 
+	if (ft_strncmp(cmd, "cd", 3) == 0 && cmd[2] == '\0')
+		return (builtin_cd(argv, shell));
 	(void)argv;
 	(void)shell;
 	ft_putstr_fd("minishell: builtin not implemented xd\n", STDERR_FILENO);

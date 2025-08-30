@@ -1,0 +1,184 @@
+
+#include "minishell.h"
+
+#include "minishell.h"
+
+/*
+ * UPDATE ENVIRONMENT VARIABLES
+ * Updates PWD after successful directory change
+ */
+static int update_pwd_var(t_shell* shell, char* new_pwd)
+{
+    char* pwd_var;
+
+    if (!shell || !new_pwd)
+        return 0;
+
+    // Create PWD=new_path string
+    pwd_var = malloc(strlen("PWD=") + strlen(new_pwd) + 1);
+    if (!pwd_var)
+        return 0;
+    sprintf(pwd_var, "PWD=%s", new_pwd);
+
+    // Update PWD in environment
+    if (!set_env_var(shell, pwd_var))
+    {
+        free(pwd_var);
+        return 0;
+    }
+    free(pwd_var);
+
+    // Update shell's cwd
+    if (shell->cwd)
+        free(shell->cwd);
+    shell->cwd = ft_strdup(new_pwd);
+
+    return 1;
+}
+
+/*
+ * CANONICALIZE PATH
+ * Resolves . and .. components and converts to absolute path
+ */
+static char* canonicalize_path(char* path)
+{
+    char* resolved_path;
+
+    // Use realpath to resolve the canonical path
+    resolved_path = realpath(path, NULL);
+    return resolved_path; // realpath returns NULL on error
+}
+
+/*
+ * SIMPLIFIED CD BUILTIN FUNCTION
+ * Only handles relative or absolute paths
+ */
+int builtin_cd(char** argv, t_shell* shell)
+{
+    char* target_path;
+    char* canonical_path;
+
+    if (!shell)
+        return EXIT_FAILURE;
+
+    // Check if path argument is provided
+    if (!argv[1])
+    {
+        print_error("minishell: cd", NULL, "missing argument");
+        return set_exit_status(shell, EXIT_FAILURE);
+    }
+
+    // Check for too many arguments
+    if (argv[2])
+    {
+        print_error("minishell: cd", NULL, "too many arguments");
+        return set_exit_status(shell, EXIT_FAILURE);
+    }
+
+    target_path = argv[1];
+
+    // Get canonical path (resolves . and .. components)
+    canonical_path = canonicalize_path(target_path);
+    if (!canonical_path)
+    {
+        // If canonicalize fails, try the original path
+        canonical_path = ft_strdup(target_path);
+        if (!canonical_path)
+            return handle_error(shell, ERR_MEMORY, "cd path resolution");
+    }
+
+    // Actually change directory
+    if (chdir(canonical_path) != 0)
+    {
+        int error_type = errno;
+        free(canonical_path);
+        return cd_error(shell, target_path, error_type);
+    }
+
+    // Update PWD environment variable
+    if (!update_pwd_var(shell, canonical_path))
+    {
+        free(canonical_path);
+        return handle_error(shell, ERR_MEMORY, "updating PWD variable");
+    }
+
+    free(canonical_path);
+    return set_exit_status(shell, EXIT_SUCCESS);
+}
+
+/*
+ * ENVIRONMENT VARIABLE SETTER
+ * This function updates or adds a variable in shell->env
+ */
+int set_env_var(t_shell* shell, char* var_assignment)
+{
+    char* var_name;
+    char* equals_pos;
+    int var_name_len;
+    int i;
+    int env_count;
+    char** new_env;
+
+    if (!shell || !var_assignment)
+        return 0;
+
+    equals_pos = ft_strchr(var_assignment, '=');
+    if (!equals_pos)
+        return 0;
+
+    var_name_len = equals_pos - var_assignment;
+    var_name = ft_strndup(var_assignment, var_name_len);
+    if (!var_name)
+        return 0;
+
+    // Look for existing variable
+    i = 0;
+    while (shell->env[i])
+    {
+        if (ft_strncmp(shell->env[i], var_name, var_name_len) == 0 &&
+            shell->env[i][var_name_len] == '=')
+        {
+            // Replace existing variable
+            free(shell->env[i]);
+            shell->env[i] = ft_strdup(var_assignment);
+            free(var_name);
+            return (shell->env[i] != NULL);
+        }
+        i++;
+    }
+
+    // Add new variable
+    env_count = i;
+    new_env = malloc(sizeof(char*) * (env_count + 2));
+    if (!new_env)
+    {
+        free(var_name);
+        return 0;
+    }
+
+    // Copy existing environment
+    i = 0;
+    while (i < env_count)
+    {
+        new_env[i] = shell->env[i];
+        i++;
+    }
+
+    // Add new variable
+    new_env[env_count] = ft_strdup(var_assignment);
+    new_env[env_count + 1] = NULL;
+
+    if (!new_env[env_count])
+    {
+        free(new_env);
+        free(var_name);
+        return 0;
+    }
+
+    // Replace old environment
+    free(shell->env);
+    shell->env = new_env;
+    free(var_name);
+
+    return 1;
+}

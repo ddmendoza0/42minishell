@@ -34,6 +34,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)token_management.c \
 			$(SRC_DIR)env_utils.c\
 			$(SRC_DIR)cmd_executioner.c\
+			$(SRC_DIR)builtin_cd.c\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)

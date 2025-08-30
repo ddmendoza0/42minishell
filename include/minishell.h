@@ -159,8 +159,8 @@ int		initialize_history(void);
 void	cmd_history(void);
 
 //shell
-int		init_shell(t_shell * shell, char** envp);
-void	cleanup_shell(t_shell* shell);
+int		init_shell(t_shell *shell, char **envp);
+void	cleanup_shell(t_shell *shell);
 
 //lexer
 int				lexer(char *input, t_token **token_lst, t_shell *shell);
@@ -182,48 +182,50 @@ int				process_segments(t_token *token, char *word, t_shell *shell, t_token **ls
 int				handle_q_sctn(size_t *i, const char *input, t_shell *shell, t_token **lst);
 
 // Token and argument management
-t_arg_token* create_arg_token(t_token* original);
-void add_arg_token(t_arg_token** list, t_arg_token* new_arg);
-void free_arg_tokens(t_arg_token* args);
+t_arg_token		*create_arg_token(t_token *original);
+void			add_arg_token(t_arg_token **list, t_arg_token *new_arg);
+void			free_arg_tokens(t_arg_token *args);
 
 // Redirection management
-t_redir_file* create_redir_file(t_token* original, int append_mode, int is_heredoc);
-void free_redir_file(t_redir_file* redir);
+t_redir_file	*create_redir_file(t_token *original, int append_mode, int is_heredoc);
+void			free_redir_file(t_redir_file *redir);
 
 // Parser functions
-t_command* cmd_builder(t_token** tkn_list);
-void free_cmd_list(t_command* cmd);
-int add_token_to_args(t_command* cmd, t_token* token);
-int add_token_redir_in(t_command* cmd, t_token** token);
-int add_token_redir_out(t_command* cmd, t_token** token);
-int handle_lparen(t_command* cmd, t_token** current);
-t_token* extract_subshell_tokens(t_token** current);
+t_command		*cmd_builder(t_token **tkn_list);
+void			free_cmd_list(t_command *cmd);
+int				add_token_to_args(t_command *cmd, t_token *token);
+int				add_token_redir_in(t_command *cmd, t_token **token);
+int				add_token_redir_out(t_command *cmd, t_token **token);
+int				handle_lparen(t_command *cmd, t_token **current);
+t_token			*extract_subshell_tokens(t_token **current);
 
 // Expansion and review functions
-int lexical_review(t_command* cmd_list, t_shell* shell);
-char* expand_from_segments(t_token_segment* segments, t_shell* shell);
-char* expand_variables_in_string(char* str, t_shell* shell);
+int				lexical_review(t_command *cmd_list, t_shell *shell);
+char			*expand_from_segments(t_token_segment *segments, t_shell *shell);
+char			*expand_variables_in_string(char *str, t_shell *shell);
 
 // Environment utilities
-char* get_env_value(t_shell* shell, char* var_name);
-char* get_special_var(t_shell* shell, char* var_name);
-char* expand_variable(t_shell* shell, char* var_name);
+char			*get_env_value(t_shell *shell, char *var_name);
+char			*get_special_var(t_shell *shell, char *var_name);
+char			*expand_variable(t_shell *shell, char *var_name);
 
 // Execution helper functions (implemented in token_management.c)
-char** get_argv_from_args(t_command* cmd);
-char* get_input_file(t_command* cmd);
-char* get_output_file(t_command* cmd);
-int is_append_mode(t_command* cmd);
-int is_heredoc_mode(t_command* cmd);
+char			**get_argv_from_args(t_command *cmd);
+char			*get_input_file(t_command *cmd);
+char			*get_output_file(t_command *cmd);
+int				is_append_mode(t_command *cmd);
+int				is_heredoc_mode(t_command *cmd);
 
  // Executor
-int		execute_command_tree(t_command* cmd_tree, t_shell* shell);
+int				execute_command_tree(t_command *cmd_tree, t_shell *shell);
+
+//Builtins
+int				builtin_cd(char **argv, t_shell *shell);
 
 
 // builtin commands
 /*
 int		builtin_echo(char** argv);
-int		builtin_cd(char** argv, t_shell* shell);
 int		builtin_pwd(void);
 int		builtin_export(char** argv, t_shell* shell);
 int		builtin_unset(char** argv, t_shell* shell);
@@ -231,8 +233,8 @@ int		builtin_env(t_shell* shell);
 int		builtin_exit(char** argv, t_shell* shell);
 */
 
-// Utility function used by other modules
-void	free_argv(char** argv);
+// Utility function
+void			free_argv(char **argv);
 
 /****************************************************************/
 /*			END DECLARATIONS	 		*/
