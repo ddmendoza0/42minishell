@@ -204,7 +204,7 @@ int				lexical_review(t_command *cmd_list, t_shell *shell);
 char			*expand_from_segments(t_token_segment *segments, t_shell *shell);
 char			*expand_variables_in_string(char *str, t_shell *shell);
 char			*expand_token(t_token *token, t_shell *shell);
-static char		*process_segment(t_token_segment *segment, t_shell *shell);
+char			*process_segment(t_token_segment *segment, t_shell *shell);
 
 // Environment utilities
 char			*get_env_value(t_shell *shell, char *var_name);

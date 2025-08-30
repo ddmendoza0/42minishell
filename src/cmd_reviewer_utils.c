@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static char	*process_segment(t_token_segment *segment, t_shell *shell)
+char	*process_segment(t_token_segment *segment, t_shell *shell)
 {
 	if (!segment || !segment->content)
 		return (ft_strdup(""));
