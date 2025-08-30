@@ -67,28 +67,23 @@ t_redir_file* create_redir_file(t_token* original, int append_mode, int is_hered
     t_redir_file* redir;
 
     if (!original)
-        return NULL;
-
+        return (NULL);
     redir = malloc(sizeof(t_redir_file));
     if (!redir)
-        return NULL;
-
+        return (NULL);
     redir->original_token = original;
     redir->expanded_path = NULL;
     redir->append_mode = append_mode;
     redir->is_heredoc = is_heredoc;
-
-    return redir;
+    return (redir);
 }
 
 void free_redir_file(t_redir_file* redir)
 {
     if (!redir)
-        return;
-
+        return ;
     if (redir->expanded_path)
         free(redir->expanded_path);
-
     free(redir);
 }
 
@@ -101,78 +96,76 @@ int add_token_to_args(t_command* cmd, t_token* token)
     t_arg_token* arg_token;
 
     if (!cmd || !token)
-        return 0;
-
+        return (0);
     arg_token = create_arg_token(token);
     if (!arg_token)
-        return 0;
-
+        return (0);
     add_arg_token(&cmd->args, arg_token);
-    return 1;
+    return (1);
 }
 
-int add_token_redir_in(t_command* cmd, t_token** token)
+static int	get_heredoc_mode(t_token* redir_token)
+{
+    if (redir_token->type == HEREDOC)
+        return (1);
+    return (0);
+}
+
+int	add_token_redir_in(t_command* cmd, t_token** token)
 {
     t_token* redir_token;
     t_token* file_token;
-    int is_heredoc;
+    int		is_heredoc;
 
     if (!cmd || !token || !*token)
-        return 0;
-
+        return (0);
     redir_token = *token;
     file_token = redir_token->next;
-
     if (!file_token || file_token->type != WORD)
     {
         printf("Error: Expected a file name after redirection token.\n");
-        return 0;
+        return (0);
     }
-
-    is_heredoc = (redir_token->type == HEREDOC) ? 1 : 0;
-
-    // Free previous redirection if exists
+    is_heredoc = get_heredoc_mode(redir_token);
     if (cmd->input_redir)
         free_redir_file(cmd->input_redir);
-
     cmd->input_redir = create_redir_file(file_token, 0, is_heredoc);
     if (!cmd->input_redir)
-        return 0;
-
+        return (0);
     *token = file_token->next;
-    return 1;
+    return (1);
 }
 
-int add_token_redir_out(t_command* cmd, t_token** token)
+static int	get_append_mode(t_token* redir_token)
+{
+    if (redir_token->type == APPEND_OUT)
+        return (1);
+    return (0);
+}
+
+int	add_token_redir_out(t_command* cmd, t_token** token)
 {
     t_token* redir_token;
     t_token* file_token;
-    int append_mode;
+    int		append_mode;
 
     if (!cmd || !token || !*token)
-        return 0;
-
+        return (0);
     redir_token = *token;
     file_token = redir_token->next;
-
     if (!file_token || file_token->type != WORD)
     {
         printf("Error: Expected a file name after redirection token.\n");
-        return 0;
+        return (0);
     }
-
-    append_mode = (redir_token->type == APPEND_OUT) ? 1 : 0;
-
-    // Free previous redirection if exists
+    append_mode = get_append_mode(redir_token);
     if (cmd->output_redir)
         free_redir_file(cmd->output_redir);
-
     cmd->output_redir = create_redir_file(file_token, append_mode, 0);
     if (!cmd->output_redir)
-        return 0;
-
+        return (0);
     *token = file_token->next;
-    return 1;
+    return (1);
 }
 
 /*
@@ -188,26 +181,19 @@ char* expand_variables_in_string(char* str, t_shell* shell)
     size_t result_size;
 
     if (!str || !shell)
-        return NULL;
-
-    // Calculate approximate size
+        return (NULL);
     result_size = ft_strlen(str) * 4; // Generous buffer
     result = malloc(result_size);
     if (!result)
-        return NULL;
-
+        return (NULL);
     i = 0;
     j = 0;
     while (str[i] && j < result_size - 1)
     {
-        if (str[i] == '$' && str[i + 1] &&
-            (ft_isalnum(str[i + 1]) || str[i + 1] == '_' ||
-                str[i + 1] == '?' || str[i + 1] == '$'))
+        if (str[i] == '$' && str[i + 1] && (ft_isalnum(str[i + 1]) || str[i + 1] == '_' || str[i + 1] == '?' || str[i + 1] == '$'))
         {
             i++; // Skip $
             var_start = i;
-
-            // Handle special variables
             if (str[i] == '?' || str[i] == '$')
             {
                 i++;
@@ -219,7 +205,6 @@ char* expand_variables_in_string(char* str, t_shell* shell)
                     i++;
                 var_name = ft_strndup(&str[var_start], i - var_start);
             }
-
             if (var_name)
             {
                 var_value = expand_variable(shell, var_name);
@@ -234,16 +219,12 @@ char* expand_variables_in_string(char* str, t_shell* shell)
             }
         }
         else
-        {
             result[j++] = str[i++];
-        }
     }
     result[j] = '\0';
-
-    // Adjust to actual size
     char* final_result = ft_strdup(result);
     free(result);
-    return final_result;
+    return (final_result);
 }
 
 char* expand_from_segments(t_token_segment* segments, t_shell* shell)
@@ -254,61 +235,49 @@ char* expand_from_segments(t_token_segment* segments, t_shell* shell)
     char* expanded_segment;
 
     if (!segments)
-        return ft_strdup("");
-
+        return (ft_strdup(""));
     result = ft_strdup("");
     if (!result)
-        return NULL;
-
+        return (NULL);
     current = segments;
     while (current)
     {
         if (current->quote_type == QUOTE_SINGLE)
-        {
-            // Single quotes: no variable expansion
             expanded_segment = ft_strdup(current->content);
-        }
         else
-        {
-            // Double quotes or no quotes: expand variables
             expanded_segment = expand_variables_in_string(current->content, shell);
-        }
-
         if (!expanded_segment)
         {
             free(result);
-            return NULL;
+            return (NULL);
         }
-
         temp = ft_strjoin(result, expanded_segment);
         free(result);
         free(expanded_segment);
-
         if (!temp)
-            return NULL;
-
+            return (NULL);
         result = temp;
         current = current->next;
     }
-
-    return result;
+    return (result);
 }
 
-/*
- * UTILITY FUNCTIONS FOR EXECUTOR - Clean Version
- */
+static char* get_arg_value(t_arg_token* arg)
+{
+    if (arg->expanded_value)
+        return (arg->expanded_value);
+    return (arg->original_token->value);
+}
 
 char** get_argv_from_args(t_command* cmd)
 {
     t_arg_token* arg;
     char** argv;
-    int argc;
-    int i;
+    int			argc;
+    int			i;
 
     if (!cmd || !cmd->args)
-        return NULL;
-
-    // Count arguments
+        return (NULL);
     argc = 0;
     arg = cmd->args;
     while (arg)
@@ -316,67 +285,68 @@ char** get_argv_from_args(t_command* cmd)
         argc++;
         arg = arg->next;
     }
-
-    // Allocate argv array
     argv = malloc(sizeof(char*) * (argc + 1));
     if (!argv)
-        return NULL;
-
-    // Fill argv with expanded values
+        return (NULL);
     arg = cmd->args;
     i = 0;
     while (arg)
     {
-        argv[i] = ft_strdup(arg->expanded_value ?
-            arg->expanded_value : arg->original_token->value);
+        argv[i] = ft_strdup(get_arg_value(arg));
         if (!argv[i])
         {
-            // Free on error
             while (--i >= 0)
                 free(argv[i]);
             free(argv);
-            return NULL;
+            return (NULL);
         }
         arg = arg->next;
         i++;
     }
     argv[i] = NULL;
+    return (argv);
+}
 
-    return argv;
+static char* get_input_path(t_command* cmd)
+{
+    if (cmd->input_redir->expanded_path)
+        return (cmd->input_redir->expanded_path);
+    return (cmd->input_redir->original_token->value);
 }
 
 char* get_input_file(t_command* cmd)
 {
     if (!cmd || !cmd->input_redir)
-        return NULL;
+        return (NULL);
+    return (ft_strdup(get_input_path(cmd)));
+}
 
-    return ft_strdup(cmd->input_redir->expanded_path ?
-        cmd->input_redir->expanded_path :
-        cmd->input_redir->original_token->value);
+static char* get_output_path(t_command* cmd)
+{
+    if (cmd->output_redir->expanded_path)
+        return (cmd->output_redir->expanded_path);
+    return (cmd->output_redir->original_token->value);
 }
 
 char* get_output_file(t_command* cmd)
 {
     if (!cmd || !cmd->output_redir)
-        return NULL;
-
-    return ft_strdup(cmd->output_redir->expanded_path ?
-        cmd->output_redir->expanded_path :
-        cmd->output_redir->original_token->value);
+        return (NULL);
+    return (ft_strdup(get_output_path(cmd)));
 }
 
 int is_append_mode(t_command* cmd)
 {
     if (!cmd || !cmd->output_redir)
-        return 0;
+        return (0);
 
-    return cmd->output_redir->append_mode;
+    return (cmd->output_redir->append_mode);
 }
 
 int is_heredoc_mode(t_command* cmd)
 {
     if (!cmd || !cmd->input_redir)
-        return 0;
+        return (0);
 
-    return cmd->input_redir->is_heredoc;
+    return (cmd->input_redir->is_heredoc);
 }
