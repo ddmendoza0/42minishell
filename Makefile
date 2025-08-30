@@ -22,7 +22,11 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
 			$(SRC_DIR)error_manager.c\
 			$(SRC_DIR)lexer.c\
+			$(SRC_DIR)lexer_word.c\
+			$(SRC_DIR)lexer_operator.c\
+			$(SRC_DIR)lexer_segments.c\
 			$(SRC_DIR)lexer_aux.c\
+			$(SRC_DIR)lexer_utils.c\
 			$(SRC_DIR)history.c\
 			$(SRC_DIR)history_commands.c\
 			$(SRC_DIR)cmd_parse.c \

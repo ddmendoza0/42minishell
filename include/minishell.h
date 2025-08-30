@@ -12,6 +12,41 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+/****************************************************************/
+/*			LIBRARIES		 		*/
+/****************************************************************/
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include "libft.h"
+# include "error_manager.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <sys/types.h>
+
+/*
+# include <unistd.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include "libft.h"
+# include <fcntl.h>
+//for the readline function and functioning history
+# include <readline/readline.h>
+# include <readline/history.h>
+//error manager
+# include "error_manager.h"
+//executor
+#include <sys/wait.h>
+*/
+/****************************************************************/
+/*			END LIBRARIES				*/
+/****************************************************************/
+
 /****************************************************************/
 /*			DEFINES					*/
 /****************************************************************/
@@ -54,6 +89,13 @@ typedef struct s_token
 	int		fd;
 	struct	s_token	*next;
 }t_token;
+
+typedef struct s_segment_data
+{
+	size_t	j;
+	size_t	word_len;
+	size_t	segment_start;
+}	t_segment_data;
 /*END TOKEN*/
 
 /*SEHLL STRUCTURE*/
@@ -104,39 +146,7 @@ typedef struct s_command {
 /****************************************************************/
 /*			END DEFINES				*/
 /****************************************************************/
-/****************************************************************/
-/*			LIBRARIES		 		*/
-/****************************************************************/
 
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <fcntl.h>
-# include <unistd.h>
-# include "libft.h"
-# include "error_manager.h"
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <sys/types.h>
-
-/*
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include "libft.h"
-# include <fcntl.h>
-//for the readline function and functioning history
-# include <readline/readline.h>
-# include <readline/history.h>
-//error manager
-# include "error_manager.h" 
-//executor
-#include <sys/wait.h>
-*/
-/****************************************************************/
-/*			END LIBRARIES				*/
-/****************************************************************/
 
 # define HISTORY_FILE ".minishell_history"
 
@@ -153,12 +163,23 @@ int		init_shell(t_shell * shell, char** envp);
 void	cleanup_shell(t_shell* shell);
 
 //lexer
-int		lexer(char* input, t_token** token_lst, t_shell* shell);
-t_token	*create_token(void *value, t_token_type type);
-t_token	*last_token(t_token *token);
-void	addback_token(t_token **lst, t_token *new);
-void	free_token_lst(t_token *lst);
-void	free_segments(t_token_segment* segments);
+int				lexer(char *input, t_token **token_lst, t_shell *shell);
+t_token			*create_token(void *value, t_token_type type);
+t_token			*last_token(t_token *token);
+void			addback_token(t_token **lst, t_token *new);
+void			free_token_lst(t_token *lst);
+void			free_segments(t_token_segment *segments);
+int				extract_word(size_t *i, const char *input, t_token **lst, t_shell *shell);
+int				extract_oprtr(size_t *i, const char *input, t_token **lst, t_shell *shell);
+int				is_single_char_operator(char c);
+t_token_segment	*create_segment(char *content, t_quote_type quote_type);
+void			add_segment(t_token_segment **sgmnts, t_token_segment *n_sgmnt);
+int				find_closing_quote(const char *input, char quote_char, size_t start);
+char			*extract_content(const char *input, size_t start, size_t end);
+int				create_default_segment(t_token *token, char *word);
+int				process_word_segments(t_token *token, char *word, t_shell* shell);
+int				process_segments(t_token *token, char *word, t_shell *shell, t_token **lst);
+int				handle_q_sctn(size_t *i, const char *input, t_shell *shell, t_token **lst);
 
 // Token and argument management
 t_arg_token* create_arg_token(t_token* original);
