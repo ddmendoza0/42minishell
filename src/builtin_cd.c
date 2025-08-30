@@ -1,6 +1,3 @@
-
-#include "minishell.h"
-
 #include "minishell.h"
 
 /*
@@ -37,16 +34,12 @@ static int update_pwd_var(t_shell* shell, char* new_pwd)
 }
 
 /*
- * CANONICALIZE PATH
- * Resolves . and .. components and converts to absolute path
+ * GET CURRENT WORKING DIRECTORY
+ * Gets the current working directory after chdir
  */
-static char* canonicalize_path(char* path)
+static char* get_current_directory(void)
 {
-    char* resolved_path;
-
-    // Use realpath to resolve the canonical path
-    resolved_path = realpath(path, NULL);
-    return resolved_path; // realpath returns NULL on error
+    return getcwd(NULL, 0);
 }
 
 /*
@@ -56,7 +49,7 @@ static char* canonicalize_path(char* path)
 int builtin_cd(char** argv, t_shell* shell)
 {
     char* target_path;
-    char* canonical_path;
+    char* new_pwd;
 
     if (!shell)
         return EXIT_FAILURE;
@@ -77,32 +70,28 @@ int builtin_cd(char** argv, t_shell* shell)
 
     target_path = argv[1];
 
-    // Get canonical path (resolves . and .. components)
-    canonical_path = canonicalize_path(target_path);
-    if (!canonical_path)
-    {
-        // If canonicalize fails, try the original path
-        canonical_path = ft_strdup(target_path);
-        if (!canonical_path)
-            return handle_error(shell, ERR_MEMORY, "cd path resolution");
-    }
-
     // Actually change directory
-    if (chdir(canonical_path) != 0)
+    if (chdir(target_path) != 0)
     {
         int error_type = errno;
-        free(canonical_path);
         return cd_error(shell, target_path, error_type);
     }
 
-    // Update PWD environment variable
-    if (!update_pwd_var(shell, canonical_path))
+    // Get the actual current directory after chdir
+    new_pwd = get_current_directory();
+    if (!new_pwd)
     {
-        free(canonical_path);
+        return handle_error(shell, ERR_MEMORY, "getting current directory");
+    }
+
+    // Update PWD environment variable
+    if (!update_pwd_var(shell, new_pwd))
+    {
+        free(new_pwd);
         return handle_error(shell, ERR_MEMORY, "updating PWD variable");
     }
 
-    free(canonical_path);
+    free(new_pwd);
     return set_exit_status(shell, EXIT_SUCCESS);
 }
 

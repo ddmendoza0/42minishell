@@ -220,6 +220,7 @@ int				is_heredoc_mode(t_command *cmd);
 int				execute_command_tree(t_command *cmd_tree, t_shell *shell);
 
 //Builtins
+int				set_env_var(t_shell *shell, char *var_assignment);
 int				builtin_cd(char **argv, t_shell *shell);
 
 
