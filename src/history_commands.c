@@ -86,9 +86,9 @@ char *expand_history_substitution(const char *pattern)
     while (args && args[argc])
         argc++;
     result = NULL;
-    if (ft_strcmp(pattern, "!$") == 0 && argc > 1)
+    if (ft_strncmp(pattern, "!$", 3) == 0 && argc > 1)
         result = strdup(args[argc - 1]);
-    else if (ft_strcmp(pattern, "!*") == 0 && argc > 1)
+    else if (ft_strncmp(pattern, "!*", 3) == 0 && argc > 1)
         result = join_args(args + 1, argc - 1);
     i = 0;
     while (args && args[i])
