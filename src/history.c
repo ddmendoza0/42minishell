@@ -18,19 +18,26 @@ int	initialize_history(void)
 	char	*line;
 	size_t	len;
 
-	hs_fd = open(HISTORY_FILE, O_CREAT | O_RDWR , 0644);
+	hs_fd = open(HISTORY_FILE, O_CREAT | O_RDWR, 0644);
+	if (hs_fd == -1)
+	{
+		perror("Error opening history file");
+		return -1;
+	}
 	while (1)
 	{
 		line = get_next_line(hs_fd);
 		if (!line)
 			break ;
 		len = ft_strlen(line);
-		if (line [len - 1] == '\n')
+		if (len > 0 && line[len - 1] == '\n')
 			line[len - 1] = '\0';
 		add_history(line);
 		free(line);
 	}
 	close(hs_fd);
+	while (history_length > MAX_HISTORY)
+        remove_history(0);
 	return (open(HISTORY_FILE, O_RDWR | O_APPEND));
 }
 
@@ -43,4 +50,59 @@ void	write_to_history_file(char *input, int history_fd)
 	}
 	write(history_fd, input, ft_strlen(input));
 	write(history_fd, "\n", 1);
+	trim_history_file();
+}
+
+// Trims the history file to the maximum allowed history size.
+void trim_history_file(void)
+{
+    int fd;
+    char **lines;
+    size_t count;
+    size_t i;
+    char *line;
+
+    count = 0;
+    i = 0;
+    lines = NULL;
+    fd = open(HISTORY_FILE, O_RDONLY);
+    if (fd == -1)
+        return;
+    while ((line = get_next_line(fd)))
+    {
+        lines = realloc(lines, sizeof(char*) * (count + 1));
+        lines[count++] = line;
+    }
+    close(fd);
+    if (count > MAX_HISTORY)
+    {
+        fd = open(HISTORY_FILE, O_WRONLY | O_TRUNC);
+        if (fd == -1)
+        {
+            i = 0;
+            while (i < count)
+                free(lines[i++]);
+            free(lines);
+            return;
+        }
+        i = count - MAX_HISTORY;
+        while (i < count)
+        {
+            write(fd, lines[i], ft_strlen(lines[i]));
+            write(fd, "\n", 1);
+            free(lines[i]);
+            i++;
+        }
+        close(fd);
+        i = 0;
+        while (i < count - MAX_HISTORY)
+            free(lines[i++]);
+    }
+    else
+    {
+        i = 0;
+        while (i < count)
+            free(lines[i++]);
+    }
+    free(lines);
 }
