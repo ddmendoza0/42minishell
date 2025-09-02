@@ -230,6 +230,8 @@ int				builtin_pwd(t_shell *shell);
 void	write_to_history_file(char *input, int history_fd);
 int	initialize_history(void);
 void     cmd_history(void);
+//mendo express repairs
+void trim_history_file(void);
 
 // builtin commands
 /*
