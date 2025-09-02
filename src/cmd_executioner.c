@@ -77,7 +77,7 @@ static int	execute_builtin(char** argv, t_shell* shell)
 	if (ft_strncmp(cmd, "cd", 3) == 0 && cmd[2] == '\0')
 		return (builtin_cd(argv, shell));
 	else if (ft_strncmp(cmd, "pwd", 4) == 0 && cmd[3] == '\0')
-		return (builtin_pwd(shell));
+		return (builtin_pwd(argv, shell));
 	ft_putstr_fd("minishell: builtin not implemented xd\n", STDERR_FILENO);
 	return (EXIT_FAILURE);
 }
