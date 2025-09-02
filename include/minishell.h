@@ -51,6 +51,8 @@
 /*			DEFINES					*/
 /****************************************************************/
 # define WHITESPACES " \t\n"
+# define MAX_HISTORY 1000
+# define HISTORY_FILE ".minishell_history"
 
 /*BEGIN TOKEN*/
 typedef enum e_token_type
@@ -125,7 +127,7 @@ typedef struct s_arg_token {
 	struct s_arg_token* next;
 } t_arg_token;
 
-// Nueva estructura para archivos de redirección
+// Nueva estructura para archivos de redirecciï¿½n
 typedef struct s_redir_file {
 	t_token* original_token;     // Token og
 	char* expanded_path;         // Ruta expandida
@@ -135,8 +137,8 @@ typedef struct s_redir_file {
 
 typedef struct s_command {
 	t_arg_token* args;           // Lista de args con segmentos
-	t_redir_file* input_redir;   // Redirección de entrada
-	t_redir_file* output_redir;  // Redirección de salida
+	t_redir_file* input_redir;   // Redirecciï¿½n de entrada
+	t_redir_file* output_redir;  // Redirecciï¿½n de salida
 	t_cmd_logic logic;
 	struct s_command* subshell;
 	struct s_command* next;
@@ -147,8 +149,6 @@ typedef struct s_command {
 /*			END DEFINES				*/
 /****************************************************************/
 
-
-# define HISTORY_FILE ".minishell_history"
 
 /****************************************************************/
 /*			DECLARATIONS		 		*/
@@ -225,6 +225,10 @@ int				execute_command_tree(t_command *cmd_tree, t_shell *shell);
 int				set_env_var(t_shell *shell, char *var_assignment);
 int				builtin_cd(char **argv, t_shell *shell);
 
+// History commands
+void	write_to_history_file(char *input, int history_fd);
+int	initialize_history(void);
+void     cmd_history(void);
 
 // builtin commands
 /*
