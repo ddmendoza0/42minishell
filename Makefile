@@ -35,6 +35,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)token_management.c \
 			$(SRC_DIR)env_utils.c\
 			$(SRC_DIR)builtin_cd.c\
+			$(SRC_DIR)builtin_pwd.c\
 			$(SRC_DIR)builtin_utils.c\
 			$(SRC_DIR)cmd_executioner.c\
 
