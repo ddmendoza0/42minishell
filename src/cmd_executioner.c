@@ -34,8 +34,8 @@ static int	is_builtin(char* cmd)
 		return (1);
 	if (ft_strncmp(cmd, "pwd", 4) == 0 && cmd[3] == '\0')
 		return (1);
-	//if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
-	//	return (1);
+	if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
+		return (1);
 	//if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
 	//	return (1);
 	//if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
@@ -80,6 +80,8 @@ static int	execute_builtin(char** argv, t_shell* shell)
 		return (builtin_pwd(argv, shell));
 	else if (ft_strncmp(cmd, "echo", 5) == 0 && cmd[4] == '\0')
 		return (builtin_echo(argv, shell));
+	else if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
+		return (builtin_export(argv, shell));
 	ft_putstr_fd("minishell: builtin not implemented xd\n", STDERR_FILENO);
 	return (EXIT_FAILURE);
 }
