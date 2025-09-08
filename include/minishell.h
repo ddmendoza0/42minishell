@@ -225,7 +225,7 @@ int				execute_command_tree(t_command *cmd_tree, t_shell *shell);
 int				set_env_var(t_shell *shell, char *var_assignment);
 int				builtin_cd(char **argv, t_shell *shell);
 int				builtin_pwd(char **argv, t_shell *shell);
-int				builtin_echo(char **argv, t_shell *shell)
+int				builtin_echo(char **argv, t_shell *shell);
 
 // History commands
 void	write_to_history_file(char *input, int history_fd);
