@@ -32,7 +32,6 @@ static void	print_all_exports(t_shell *shell)
 		print_export_format(shell->env[i]);
 		i++;
 	}
-	set_exit_status(shell, EXIT_SUCCESS);
 }
 
 static int	is_valid_identifier(char *str)
@@ -59,7 +58,10 @@ int	builtin_export(char **argv, t_shell *shell)
 	if (!shell)
 		return (EXIT_FAILURE);
 	if (!argv[1])
-		return (print_all_exports(shell));
+	{
+		print_all_exports(shell);
+		return (set_exit_status(shell, EXIT_SUCCESS));
+	}
 	exit_status = EXIT_SUCCESS;
 	i = 0;
 	while (argv[++i])
