@@ -5,7 +5,7 @@
 /*
  * UTILITY FUNCTIONS
  */
-void	free_argv(char** argv)
+void	free_argv(char **argv)
 {
 	int	i;
 
@@ -23,7 +23,7 @@ void	free_argv(char** argv)
 /*
  * BUILTIN COMMAND DETECTION
  */
-static int	is_builtin(char* cmd)
+static int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
@@ -47,9 +47,9 @@ static int	is_builtin(char* cmd)
 /*
  * BUILTIN COMMAND DISPATCHER
  */
-static int	execute_builtin(char** argv, t_shell* shell)
+static int	execute_builtin(char **argv, t_shell *shell)
 {
-	char* cmd;
+	char	*cmd;
 	
 	if (!argv || !argv[0] || !shell)
 		return (EXIT_FAILURE);
@@ -74,10 +74,10 @@ static int	execute_builtin(char** argv, t_shell* shell)
 /*
  * HEREDOC IMPLEMENTATION
  */
-static int	setup_heredoc(char* delimiter, t_shell* shell)
+static int	setup_heredoc(char *delimiter, t_shell *shell)
 {
 	int		pipe_fd[2];
-	char* line;
+	char	*line;
 	pid_t	pid;
 
 	(void)shell;
@@ -120,10 +120,10 @@ static int	setup_heredoc(char* delimiter, t_shell* shell)
 /*
  * PATH RESOLUTION HELPERS
  */
-static char* create_full_path(char* dir, char* cmd)
+static char	*create_full_path(char *dir, char *cmd)
 {
-	char* temp;
-	char* result;
+	char	*temp;
+	char	*result;
 
 	if (!dir || !cmd)
 		return (NULL);
@@ -135,11 +135,11 @@ static char* create_full_path(char* dir, char* cmd)
 	return (result);
 }
 
-static char* find_executable(char* cmd, t_shell* shell)
+static char	*find_executable(char *cmd, t_shell *shell)
 {
-	char* path_env;
-	char** path_dirs;
-	char* full_path;
+	char	*path_env;
+	char	**path_dirs;
+	char	*full_path;
 	int		i;
 
 	if (!cmd || !shell)
@@ -176,9 +176,9 @@ static char* find_executable(char* cmd, t_shell* shell)
 /*
  * EXTERNAL COMMAND EXECUTION
  */
-static int	execute_external(char** argv, t_shell* shell)
+static int	execute_external(char **argv, t_shell *shell)
 {
-	char* executable_path;
+	char	*executable_path;
 	pid_t	pid;
 	int		status;
 
@@ -212,7 +212,7 @@ static int	execute_external(char** argv, t_shell* shell)
 /*
  * REDIRECTION SETUP FUNCTIONS
  */
-static int	setup_input_redirection(t_redir_file* input_redir, t_shell* shell)
+static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 {
 	int	fd;
 
@@ -235,7 +235,7 @@ static int	setup_input_redirection(t_redir_file* input_redir, t_shell* shell)
 	return (1);
 }
 
-static int	setup_output_redirection(t_redir_file* output_redir, t_shell* shell)
+static int	setup_output_redirection(t_redir_file *output_redir, t_shell *shell)
 {
 	int	fd;
 	int	flags;
@@ -275,12 +275,11 @@ static void	restore_redirections(int saved_stdin, int saved_stdout)
 	}
 }
 
-static int	setup_redirections(t_command* cmd, int* saved_stdin, int* saved_stdout,
-	t_shell* shell)
+static int	setup_redirections(t_command *cmd, int *s_stdin, int *s_stdout,	t_shell *shell)
 {
-	*saved_stdin = dup(STDIN_FILENO);
-	*saved_stdout = dup(STDOUT_FILENO);
-	if (*saved_stdin == -1 || *saved_stdout == -1)
+	*s_stdin = dup(STDIN_FILENO);
+	*s_stdout = dup(STDOUT_FILENO);
+	if (*s_stdin == -1 || *s_stdout == -1)
 	{
 		handle_system_error(shell, "dup");
 		return (0);
@@ -301,8 +300,7 @@ static int	setup_redirections(t_command* cmd, int* saved_stdin, int* saved_stdou
 /*
  * PIPELINE FUNCTIONS
  */
-static void	setup_pipeline_redirections(t_command* cmd, int prev_pipe_read,
-	int* pipe_fd)
+static void	setup_pipeline_redirections(t_command *cmd, int prev_pipe_read,	int *pipe_fd)
 {
 	if (prev_pipe_read != -1)
 	{
@@ -342,9 +340,9 @@ static void	setup_pipeline_redirections(t_command* cmd, int prev_pipe_read,
 	}
 }
 
-static int	execute_pipeline_command(t_command* cmd, t_shell* shell)
+static int	execute_pipeline_command(t_command *cmd, t_shell *shell)
 {
-	char** argv;
+	char	**argv;
 	int		exit_status;
 
 	if (cmd->subshell)
@@ -367,9 +365,9 @@ static int	execute_pipeline_command(t_command* cmd, t_shell* shell)
 /*
  * HELPER FUNCTIONS
  */
-static int	has_pipeline(t_command* cmd_list)
+static int	has_pipeline(t_command *cmd_list)
 {
-	t_command* current;
+	t_command	*current;
 
 	current = cmd_list;
 	while (current)
@@ -381,9 +379,9 @@ static int	has_pipeline(t_command* cmd_list)
 	return (0);
 }
 
-static int	has_logical_ops(t_command* cmd_list)
+static int	has_logical_ops(t_command *cmd_list)
 {
-	t_command* current;
+	t_command	*current;
 
 	current = cmd_list;
 	while (current)
@@ -395,9 +393,9 @@ static int	has_logical_ops(t_command* cmd_list)
 	return (0);
 }
 
-static int	count_pipeline_commands(t_command* cmd_list)
+static int	count_pipeline_commands(t_command *cmd_list)
 {
-	t_command* current;
+	t_command	*current;
 	int			count;
 
 	current = cmd_list;
@@ -415,9 +413,9 @@ static int	count_pipeline_commands(t_command* cmd_list)
 /*
  * SINGLE COMMAND EXECUTION
  */
-static int	execute_single_command(t_command* cmd, t_shell* shell)
+static int	execute_single_command(t_command *cmd, t_shell *shell)
 {
-	char** argv;
+	char	**argv;
 	int		saved_stdin;
 	int		saved_stdout;
 	int		exit_status;
@@ -452,12 +450,12 @@ static int	execute_single_command(t_command* cmd, t_shell* shell)
 /*
  * PIPELINE EXECUTION
  */
-static int	execute_pipeline(t_command* cmd_list, t_shell* shell)
+static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 {
-	t_command* current;
+	t_command	*current;
 	int			pipe_fd[2];
 	int			prev_pipe_read;
-	pid_t* pids;
+	pid_t		*pids;
 	int			cmd_count;
 	int			i;
 	int			status;
@@ -522,11 +520,11 @@ static int	execute_pipeline(t_command* cmd_list, t_shell* shell)
 /*
  * LOGICAL SEQUENCE EXECUTION
  */
-static int	execute_logical_sequence(t_command* cmd_list, t_shell* shell)
+static int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
 {
-	t_command* current;
-	t_command* pipeline_start;
-	t_command* pipeline_end;
+	t_command	*current;
+	t_command	*pipeline_start;
+	t_command	*pipeline_end;
 	int			exit_status;
 
 	current = cmd_list;
@@ -558,7 +556,7 @@ static int	execute_logical_sequence(t_command* cmd_list, t_shell* shell)
 /*
  * MAIN EXECUTION DISPATCHER
  */
-int	execute_command_tree(t_command* cmd_tree, t_shell* shell)
+int	execute_command_tree(t_command *cmd_tree, t_shell *shell)
 {
 	if (!cmd_tree || !shell)
 		return (EXIT_FAILURE);
