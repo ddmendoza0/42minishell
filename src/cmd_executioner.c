@@ -38,8 +38,8 @@ static int	is_builtin(char* cmd)
 		return (1);
 	if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
 		return (1);
-	//if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
-	//	return (1);
+	if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
+		return (1);
 	//if (ft_strncmp(cmd, "exit", 5) == 0 && cmd[4] == '\0')
 	//	return (1);
 	return (0);
@@ -84,6 +84,8 @@ static int	execute_builtin(char** argv, t_shell* shell)
 		return (builtin_export(argv, shell));
 	else if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
 		return (builtin_unset(argv, shell));
+	else if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
+		return (builtin_env(shell));
 	return (EXIT_FAILURE);
 }
 
