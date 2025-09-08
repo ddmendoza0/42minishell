@@ -36,8 +36,8 @@ static int	is_builtin(char* cmd)
 		return (1);
 	if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
 		return (1);
-	//if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
-	//	return (1);
+	if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
+		return (1);
 	//if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
 	//	return (1);
 	//if (ft_strncmp(cmd, "exit", 5) == 0 && cmd[4] == '\0')
@@ -56,7 +56,7 @@ static int	execute_builtin(char** argv, t_shell* shell)
 	if (!argv || !argv[0] || !shell)
 		return (EXIT_FAILURE);
 	cmd = argv[0];
-	/* uncoment this
+	/*	erase after completion
 	if (ft_strncmp(cmd, "echo", 5) == 0 && cmd[4] == '\0')
 		return (builtin_echo(argv));
 	else if (ft_strncmp(cmd, "cd", 3) == 0 && cmd[2] == '\0')
@@ -72,7 +72,7 @@ static int	execute_builtin(char** argv, t_shell* shell)
 	else if (ft_strncmp(cmd, "exit", 5) == 0 && cmd[4] == '\0')
 		return (builtin_exit(argv, shell));
 	return (EXIT_FAILURE);
-	erase all bellow*/
+	*/
 
 	if (ft_strncmp(cmd, "cd", 3) == 0 && cmd[2] == '\0')
 		return (builtin_cd(argv, shell));
@@ -82,7 +82,8 @@ static int	execute_builtin(char** argv, t_shell* shell)
 		return (builtin_echo(argv, shell));
 	else if (ft_strncmp(cmd, "export", 7) == 0 && cmd[6] == '\0')
 		return (builtin_export(argv, shell));
-	ft_putstr_fd("minishell: builtin not implemented xd\n", STDERR_FILENO);
+	else if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
+		return (builtin_unset(argv, shell));
 	return (EXIT_FAILURE);
 }
 

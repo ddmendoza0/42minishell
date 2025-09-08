@@ -38,6 +38,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)builtin_pwd.c\
 			$(SRC_DIR)builtin_echo.c\
 			$(SRC_DIR)builtin_export.c\
+			$(SRC_DIR)builtin_unset.c\
 			$(SRC_DIR)builtin_utils.c\
 			$(SRC_DIR)cmd_executioner.c\
 
