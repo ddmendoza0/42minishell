@@ -229,6 +229,7 @@ int				builtin_echo(char **argv, t_shell *shell);
 int				builtin_export(char **argv, t_shell *shell);
 int				builtin_unset(char **argv, t_shell *shell);
 int				builtin_env(char **argv, t_shell *shell);
+int				builtin_exit(char **argv, t_shell *shell);
 
 // History commands
 void	write_to_history_file(char *input, int history_fd);
@@ -236,11 +237,6 @@ int	initialize_history(void);
 void     cmd_history(void);
 //mendo express repairs
 void trim_history_file(void);
-
-// builtin commands
-/*
-int		builtin_exit(char** argv, t_shell* shell);
-*/
 
 // Utility function
 void			free_argv(char **argv);

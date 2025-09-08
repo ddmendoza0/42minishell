@@ -40,6 +40,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)builtin_export.c\
 			$(SRC_DIR)builtin_unset.c\
 			$(SRC_DIR)builtin_env.c\
+			$(SRC_DIR)builtin_exit.c\
 			$(SRC_DIR)builtin_utils.c\
 			$(SRC_DIR)cmd_executioner.c\
 
