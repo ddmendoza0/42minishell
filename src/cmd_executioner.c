@@ -85,7 +85,7 @@ static int	execute_builtin(char** argv, t_shell* shell)
 	else if (ft_strncmp(cmd, "unset", 6) == 0 && cmd[5] == '\0')
 		return (builtin_unset(argv, shell));
 	else if (ft_strncmp(cmd, "env", 4) == 0 && cmd[3] == '\0')
-		return (builtin_env(shell));
+		return (builtin_env(argv, shell));
 	return (EXIT_FAILURE);
 }
 
