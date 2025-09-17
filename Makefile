@@ -43,6 +43,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)builtin_exit.c\
 			$(SRC_DIR)builtin_utils.c\
 			$(SRC_DIR)cmd_executioner.c\
+			$(SRC_DIR)redirections.c\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)

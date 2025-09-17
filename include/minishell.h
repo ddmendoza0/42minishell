@@ -28,7 +28,7 @@
 # include <readline/history.h>
 # include <sys/types.h>
 
-/*
+
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -42,7 +42,7 @@
 # include "error_manager.h"
 //executor
 #include <sys/wait.h>
-*/
+
 /****************************************************************/
 /*			END LIBRARIES				*/
 /****************************************************************/
@@ -53,6 +53,9 @@
 # define WHITESPACES " \t\n"
 # define MAX_HISTORY 1000
 # define HISTORY_FILE ".minishell_history"
+#define TMP_IN_FILE  "/tmp/minishell_tmp_in"
+#define TMP_OUT_FILE "/tmp/minishell_tmp_out"
+#define TMP_HEREDOC_FILE "/tmp/minishell_tmp_heredoc"
 
 /*BEGIN TOKEN*/
 typedef enum e_token_type
@@ -133,6 +136,7 @@ typedef struct s_redir_file {
 	char* expanded_path;         // Ruta expandida
 	int append_mode;             // 1 para >>, 0 para >
 	int is_heredoc;              // 1 para <<, 0 para <
+	int fd;                      // Descriptor de archivo
 } t_redir_file;
 
 typedef struct s_command {
@@ -198,6 +202,7 @@ int				add_token_redir_in(t_command *cmd, t_token **token);
 int				add_token_redir_out(t_command *cmd, t_token **token);
 int				handle_lparen(t_command *cmd, t_token **current);
 t_token			*extract_subshell_tokens(t_token **current);
+int				validate_command_redirections(t_command *cmd);
 
 // Expansion and review functions
 int				lexical_review(t_command *cmd_list, t_shell *shell);
@@ -237,6 +242,15 @@ int	initialize_history(void);
 void     cmd_history(void);
 //mendo express repairs
 void trim_history_file(void);
+
+// builtin commands
+
+int		builtin_echo(char** argv);
+int		builtin_export(char** argv, t_shell* shell);
+int		builtin_unset(char** argv, t_shell* shell);
+int		builtin_env(t_shell* shell);
+int		builtin_exit(char** argv, t_shell* shell);
+
 
 // Utility function
 void			free_argv(char **argv);

@@ -374,6 +374,7 @@ static int	execute_pipeline_command(t_command *cmd, t_shell *shell)
 	return (exit_status);
 }
 
+
 /*
  * HELPER FUNCTIONS
  */

@@ -22,11 +22,19 @@ void free_cmd_list(t_command* cmd)
         // Free arguments
         if (cmd->args)
             free_arg_tokens(cmd->args);
-        // Free redirections
+        // Free redirections and close their fds
         if (cmd->input_redir)
+        {
+            if (cmd->input_redir->fd >= 0)
+                close(cmd->input_redir->fd);
             free_redir_file(cmd->input_redir);
+        }
         if (cmd->output_redir)
+        {
+            if (cmd->output_redir->fd >= 0)
+                close(cmd->output_redir->fd);
             free_redir_file(cmd->output_redir);
+        }
         // Free subshell
         if (cmd->subshell)
             free_cmd_list(cmd->subshell);

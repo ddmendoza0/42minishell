@@ -83,6 +83,15 @@ static void input_loop(int history_fd, t_shell* shell)
             free(input);
             continue;
         }
+		if (!validate_command_redirections(cmd_tree))
+		{
+   	 		printf("Error: Redirection validation failed\n");
+   	 		free_cmd_list(cmd_tree);
+    		free_token_lst(token_lst);
+    		free(clean_input);
+    		free(input);
+    		continue;
+		}
 
 		add_history(input);
 		write_to_history_file(input, history_fd);

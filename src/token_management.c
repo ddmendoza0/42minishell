@@ -87,6 +87,7 @@ t_redir_file* create_redir_file(t_token* original, int append_mode, int is_hered
     redir->expanded_path = NULL;
     redir->append_mode = append_mode;
     redir->is_heredoc = is_heredoc;
+    redir->fd = -1; // Initialize fd to -1
     return (redir);
 }
 
@@ -94,8 +95,19 @@ void free_redir_file(t_redir_file* redir)
 {
     if (!redir)
         return ;
+    if (redir->fd >= 0)
+        close(redir->fd);
     if (redir->expanded_path)
+    {
+        // If this is a temp file, delete it
+        if (ft_strcmp(redir->expanded_path, TMP_IN_FILE) == 0 ||
+            ft_strcmp(redir->expanded_path, TMP_OUT_FILE) == 0 ||
+            ft_strcmp(redir->expanded_path, TMP_HEREDOC_FILE) == 0)
+        {
+            unlink(redir->expanded_path);
+        }
         free(redir->expanded_path);
+    }
     free(redir);
 }
 
