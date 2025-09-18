@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/15 17:56:19 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/09/18 12:20:50 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,13 +244,13 @@ void     cmd_history(void);
 void trim_history_file(void);
 
 // builtin commands
-
+/*
 int		builtin_echo(char** argv);
 int		builtin_export(char** argv, t_shell* shell);
 int		builtin_unset(char** argv, t_shell* shell);
 int		builtin_env(t_shell* shell);
 int		builtin_exit(char** argv, t_shell* shell);
-
+*/
 
 // Utility function
 void			free_argv(char **argv);

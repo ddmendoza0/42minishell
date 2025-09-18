@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:30:21 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:30:23 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/09/18 12:24:09 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,10 @@ void free_redir_file(t_redir_file* redir)
     if (redir->expanded_path)
     {
         // If this is a temp file, delete it
-        if (ft_strcmp(redir->expanded_path, TMP_IN_FILE) == 0 ||
-            ft_strcmp(redir->expanded_path, TMP_OUT_FILE) == 0 ||
-            ft_strcmp(redir->expanded_path, TMP_HEREDOC_FILE) == 0)
+	// hay que hacer nuestro strcmp (en el libft solo hay strncmp)
+        if (strcmp(redir->expanded_path, TMP_IN_FILE) == 0 ||
+            strcmp(redir->expanded_path, TMP_OUT_FILE) == 0 ||
+            strcmp(redir->expanded_path, TMP_HEREDOC_FILE) == 0)
         {
             unlink(redir->expanded_path);
         }
