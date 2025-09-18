@@ -42,6 +42,9 @@
 # include "error_manager.h"
 //executor
 #include <sys/wait.h>
+//signals
+#include <signal.h>
+extern volatile sig_atomic_t g_signal_received;
 
 /****************************************************************/
 /*			END LIBRARIES				*/
@@ -242,6 +245,13 @@ int	initialize_history(void);
 void     cmd_history(void);
 //mendo express repairs
 void trim_history_file(void);
+
+//signals
+void	setup_signals_interactive(void);
+void	setup_signals_execution(void);
+void	setup_signals_default(void);
+void	handle_interactive_signals(t_shell *shell);
+int		get_signal_exit_status(int sig);
 
 // builtin commands
 /*

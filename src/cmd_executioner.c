@@ -205,6 +205,7 @@ static int	execute_external(char **argv, t_shell *shell)
 	}
 	else if (pid == 0)
 	{
+		setup_signals_default();
 		execve(executable_path, argv, shell->env);
 		handle_system_error(shell, argv[0]);
 		exit(EXIT_CANNOT_EXECUTE);
@@ -216,7 +217,14 @@ static int	execute_external(char **argv, t_shell *shell)
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
-			return (EXIT_SIGNAL_BASE + WTERMSIG(status));
+		{
+			int sig = WTERMSIG(status);
+			if (sig == SIGINT)
+				write(STDOUT_FILENO, "\n", 1);
+			else if (sig == SIGQUIT)
+				write(STDOUT_FILENO, "Quit: 3\n", 8);
+			return (128 + sig);
+		}
 	}
 	return (EXIT_FAILURE);
 }
@@ -366,6 +374,7 @@ static int	execute_pipeline_command(t_command *cmd, t_shell *shell)
 			free_argv(argv);
 		return (EXIT_SUCCESS);
 	}
+	setup_signals_default();
 	if (is_builtin(argv[0]))
 		exit_status = execute_builtin(argv, shell);
 	else
@@ -501,6 +510,7 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 		}
 		else if (pids[i] == 0)
 		{
+			setup_signals_default();
 			setup_pipeline_redirections(current, prev_pipe_read, pipe_fd);
 			exit(execute_pipeline_command(current, shell));
 		}
@@ -523,7 +533,19 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 	{
 		waitpid(pids[i], &status, 0);
 		if (i == cmd_count - 1)
-			exit_status = WEXITSTATUS(status);
+		{
+			if (WIFEXITED(status))
+				exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+			{
+				int sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					write(STDOUT_FILENO, "\n", 1);
+				else if (sig == SIGQUIT)
+					write(STDOUT_FILENO, "Quit: 3\n", 8);
+				exit_status = 128 + sig;
+			}
+		}
 		i++;
 	}
 	free(pids);

@@ -19,49 +19,34 @@ static char	*trim_input(const char *input)
 	return (ft_strtrim(input, WHITESPACES));
 }
 
-static void input_loop(int history_fd, t_shell* shell)
+static void input_loop(int history_fd, t_shell *shell)
 {
-	char	*input;
-	char	*clean_input;
-	t_token *token_lst;
-    t_command* cmd_tree;
+	char		*input;
+	char		*clean_input;
+	t_token		*token_lst;
+    t_command	*cmd_tree;
 
 	while (1)
 	{
+		setup_signals_interactive();
 		input = readline("$minishell:");
-		//VALIDATIONS
 		if (input == NULL)//Ctrl+D
+		{
+			printf("exit\n");
 			break;
+		}
+		handle_interactive_signals(shell);
 		clean_input = trim_input(input);
+		free(input);
 		if (!clean_input || *clean_input == '\0')//this skips empty line
 		{
-			free(input);
 			free(clean_input);
 			continue;
 		}
-		if(strcmp(clean_input, "exit") == 0)
-		{
-			//working history file logic
-			//write_history(HISTORY_FILE);
-			free(clean_input);
-			free(input);
-			break;
-		}
-        /*if (ft_strcmp(clean_input, "history") == 0)
-        {
-            cmd_history();
-            add_history(input);
-            write_to_history_file(input, history_fd);
-            free(clean_input);
-            free(input);
-            continue;
-        }*/
-		//MAIN LOGIC
 		if (!lexer(clean_input, &token_lst, shell))
 		{
-            printf("Error: Lexical analysis failed\n");
+			printf("Error: Lexical analysis failed\n");
 			free(clean_input);
-			free(input);
 			continue; // Return to prompt
 		}
 		//call the command parser
@@ -71,7 +56,6 @@ static void input_loop(int history_fd, t_shell* shell)
             printf("Error: Syntax analysis failed\n");
             free_token_lst(token_lst);
             free(clean_input);
-            free(input);
             continue;
         }
         if (!lexical_review(cmd_tree, shell))
@@ -80,7 +64,6 @@ static void input_loop(int history_fd, t_shell* shell)
             free_cmd_list(cmd_tree);
             free_token_lst(token_lst);
             free(clean_input);
-            free(input);
             continue;
         }
 		if (!validate_command_redirections(cmd_tree))
@@ -89,21 +72,24 @@ static void input_loop(int history_fd, t_shell* shell)
    	 		free_cmd_list(cmd_tree);
     		free_token_lst(token_lst);
     		free(clean_input);
-    		free(input);
     		continue;
 		}
-
 		add_history(input);
 		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
 			cmd_history();
-
+		setup_signals_execution();
 		//execute command, else throw error
         shell->last_exit_status = execute_command_tree(cmd_tree, shell);
-
+		/* Check if command was terminated by signal */
+		if (g_signal_received)
+		{
+			shell->last_exit_status = get_signal_exit_status(g_signal_received);
+			g_signal_received = 0;
+		}
+		free_cmd_list(cmd_tree);
 		free_token_lst(token_lst);
 		free(clean_input);
-		free(input);
 	}
 }
 
@@ -127,6 +113,7 @@ int	main(int argc, char *argv[], char *envp[])
     {
         fprintf(stderr, "Warning: Could not initialize history\n");
     }
+	setup_signals_interactive();
 	input_loop(history_fd, &shell);
     // Cleanup
     if (history_fd >= 0)
