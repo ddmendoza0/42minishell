@@ -62,6 +62,21 @@ static int	is_valid_identifier(char *str)
 	return (1);
 }
 
+static int	process_export_arg(char *arg, t_shell *shell)
+{
+	if (!is_valid_identifier(arg))
+	{
+		export_error(shell, arg);
+		return (EXIT_FAILURE);
+	}
+	else if (ft_strchr(arg, '='))
+	{
+		if (!set_env_var(shell, arg))
+			return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 int	builtin_export(char **argv, t_shell *shell)
 {
 	int	i;
@@ -78,16 +93,8 @@ int	builtin_export(char **argv, t_shell *shell)
 	i = 0;
 	while (argv[++i])
 	{
-		if (!is_valid_identifier(argv[i]))
-		{
-			export_error(shell, argv[i]);
+		if (process_export_arg(argv[i], shell) == EXIT_FAILURE)
 			exit_status = EXIT_FAILURE;
-		}
-		else if (ft_strchr(argv[i], '='))
-		{
-			if (!set_env_var(shell, argv[i]))
-				exit_status = EXIT_FAILURE;
-		}
 	}
 	return (set_exit_status(shell, exit_status));
 }
