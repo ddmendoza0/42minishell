@@ -12,6 +12,20 @@
 
 #include "minishell.h"
 
+static int	check_n_flag(char *arg)
+{
+	int	j;
+
+	if (!arg || arg[0] != '-' || !arg[1])
+		return (0);
+	j = 1;
+	while (arg[j] == 'n')
+		j++;
+	if (arg[j] == '\0')
+		return (1);
+	return (0);
+}
+
 int	builtin_echo(char **argv, t_shell *shell)
 {
 	int	i;
@@ -19,7 +33,7 @@ int	builtin_echo(char **argv, t_shell *shell)
 
 	i = 1;
 	newline = 1;
-	while (argv[i] && ft_strncmp(argv[i], "-n", 3) == 0)
+	while (argv[i] && check_n_flag(argv[i]))
 	{
 		newline = 0;
 		i++;
