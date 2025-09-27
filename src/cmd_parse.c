@@ -54,7 +54,7 @@ static int	create_cmd(t_command **cmd)
 	return (1);
 }
 
-static int	process_token(t_command **cmd, t_token **current)
+static int	process_token(t_command **cmd, t_token **current, t_shell *shell)
 {
 	t_command	*new_cmd;
 
@@ -73,26 +73,26 @@ static int	process_token(t_command **cmd, t_token **current)
 		return (1);
 	}
 	else if ((*current)->type == LPAREN)
-		return (handle_lparen(*cmd, current));
+		return (handle_lparen(*cmd, current, shell));
 	else if ((*current)->type == RPAREN)
 	{
 		*current = (*current)->next;
 		return (1);
 	}
-	return (handle_syntax_error(*current));
+	return (handle_token_error(*current, shell));
 }
 
-static int	cmd_parse_tokens(t_command *cmd, t_token *current)
+static int	cmd_parse_tokens(t_command *cmd, t_token *current, t_shell *shell)
 {
 	while (current)
 	{
-		if (!process_token(&cmd, &current))
+		if (!process_token(&cmd, &current, shell))
 			return (0);
 	}
 	return (1);
 }
 
-t_command	*cmd_builder(t_token **tkn_list)
+t_command	*cmd_builder(t_token **tkn_list, t_shell *shell)
 {
 	t_command	*cmd;
 	t_command	*head;
@@ -104,7 +104,7 @@ t_command	*cmd_builder(t_token **tkn_list)
 	if (!create_cmd(&cmd))
 		return (NULL);
 	head = cmd;
-	if (!cmd_parse_tokens(cmd, current))
+	if (!cmd_parse_tokens(cmd, current, shell))
 	{
 		free_cmd_list(head);
 		return (NULL);

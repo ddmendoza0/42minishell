@@ -42,16 +42,13 @@ t_token	*extract_subshell_tokens(t_token **current)
 	return (start);
 }
 
-int	handle_lparen(t_command *cmd, t_token **current)
+int	handle_lparen(t_command *cmd, t_token **current, t_shell *shell)
 {
 	t_token	*sub_tokens;
 
 	sub_tokens = extract_subshell_tokens(current);
 	if (!sub_tokens)
-	{
-		printf("Syntax error: unmatched parenthesis\n");
-		return (0);
-	}
-	cmd->subshell = cmd_builder(&sub_tokens);
+		return (handle_syntax_error(shell, "unmatched parenthesis"));
+	cmd->subshell = cmd_builder(&sub_tokens, shell);
 	return (cmd->subshell != NULL);
 }

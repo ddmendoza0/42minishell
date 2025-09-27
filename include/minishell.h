@@ -198,17 +198,17 @@ t_redir_file	*create_redir_file(t_token *original, int append_mode, int is_hered
 void			free_redir_file(t_redir_file *redir);
 
 // Parser functions
-t_command		*cmd_builder(t_token **tkn_list);
+t_command		*cmd_builder(t_token **tkn_list, t_shell *shell);
 void			free_cmd_list(t_command *cmd);
 int				add_token_to_args(t_command *cmd, t_token *token);
 int				add_token_redir_in(t_command *cmd, t_token **token);
 int				add_token_redir_out(t_command *cmd, t_token **token);
-int				handle_lparen(t_command *cmd, t_token **current);
+int				handle_lparen(t_command *cmd, t_token **current, t_shell *shell);
 t_token			*extract_subshell_tokens(t_token **current);
 int				validate_command_redirections(t_command *cmd);
 int				handle_word_token(t_command *cmd, t_token **current);
 int				handle_logic_token(t_command *cmd, t_token *current, t_command **new_cmd);
-int				handle_syntax_error(t_token *current);
+int				handle_token_error(t_token *current, t_shell *shell);
 
 // Expansion and review functions
 int				lexical_review(t_command *cmd_list, t_shell *shell);

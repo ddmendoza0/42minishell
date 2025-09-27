@@ -50,7 +50,7 @@ static void input_loop(int history_fd, t_shell *shell)
 			continue; // Return to prompt
 		}
 		//call the command parser
-        cmd_tree = cmd_builder(&token_lst);
+        cmd_tree = cmd_builder(&token_lst, shell);
         if (!cmd_tree)
         {
             printf("Error: Syntax analysis failed\n");

@@ -22,11 +22,12 @@ int	handle_logic_token(t_command *cmd, t_token *current, t_command **new_cmd)
 	return (1);
 }
 
-int	handle_syntax_error(t_token *current)
+int	handle_token_error(t_token *current, t_shell *shell)
 {
-	printf("Syntax error: unexpected token");
-	if (current->value)
-		printf(" '%s'", current->value);
-	printf("\n");
-	return (0);
+	char	*token_value;
+
+	token_value = "unexpected token";
+	if (current && current->value)
+		token_value = current->value;
+	return (handle_syntax_error(shell, token_value));
 }
