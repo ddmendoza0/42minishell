@@ -199,6 +199,7 @@ void			free_redir_file(t_redir_file *redir);
 
 // Parser functions
 t_command		*cmd_builder(t_token **tkn_list, t_shell *shell);
+int				create_cmd(t_command **cmd);
 void			free_cmd_list(t_command *cmd);
 int				add_token_to_args(t_command *cmd, t_token *token);
 int				add_token_redir_in(t_command *cmd, t_token **token);

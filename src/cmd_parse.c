@@ -40,7 +40,7 @@ void	free_cmd_list(t_command *cmd)
 	}
 }
 
-static int	create_cmd(t_command **cmd)
+int	create_cmd(t_command **cmd)
 {
 	*cmd = malloc(sizeof(t_command));
 	if (!*cmd)
