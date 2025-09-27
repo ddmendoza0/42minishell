@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
-# include <sys/wait.h>
+#include <sys/wait.h>
 
 /*
  * UTILITY FUNCTIONS
@@ -22,7 +21,7 @@ void	free_argv(char **argv)
 	int	i;
 
 	if (!argv)
-		return;
+		return ;
 	i = 0;
 	while (argv[i])
 	{
@@ -62,7 +61,7 @@ static int	is_builtin(char *cmd)
 static int	execute_builtin(char **argv, t_shell *shell)
 {
 	char	*cmd;
-	
+
 	if (!argv || !argv[0] || !shell)
 		return (EXIT_FAILURE);
 	cmd = argv[0];
@@ -112,7 +111,7 @@ static int	setup_heredoc(char *delimiter, t_shell *shell)
 			{
 				if (line)
 					free(line);
-				break;
+				break ;
 			}
 			write(pipe_fd[1], line, ft_strlen(line));
 			write(pipe_fd[1], "\n", 1);
@@ -193,6 +192,7 @@ static int	execute_external(char **argv, t_shell *shell)
 	char	*executable_path;
 	pid_t	pid;
 	int		status;
+	int		sig;
 
 	executable_path = find_executable(argv[0], shell);
 	if (!executable_path)
@@ -218,7 +218,7 @@ static int	execute_external(char **argv, t_shell *shell)
 			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
 		{
-			int sig = WTERMSIG(status);
+			sig = WTERMSIG(status);
 			if (sig == SIGINT)
 				write(STDOUT_FILENO, "\n", 1);
 			else if (sig == SIGQUIT)
@@ -383,7 +383,6 @@ static int	execute_pipeline_command(t_command *cmd, t_shell *shell)
 	return (exit_status);
 }
 
-
 /*
  * HELPER FUNCTIONS
  */
@@ -426,7 +425,7 @@ static int	count_pipeline_commands(t_command *cmd_list)
 	{
 		count++;
 		if (current->logic != CMD_PIPE)
-			break;
+			break ;
 		current = current->next;
 	}
 	return (count);
@@ -482,6 +481,7 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 	int			i;
 	int			status;
 	int			exit_status;
+	int			sig;
 
 	cmd_count = count_pipeline_commands(cmd_list);
 	pids = malloc(sizeof(pid_t) * cmd_count);
@@ -551,7 +551,7 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 				exit_status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
 			{
-				int sig = WTERMSIG(status);
+				sig = WTERMSIG(status);
 				if (sig == SIGINT)
 					write(STDOUT_FILENO, "\n", 1);
 				else if (sig == SIGQUIT)
@@ -592,8 +592,7 @@ static int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
 			exit_status = execute_single_command(current, shell);
 		if (current && current->logic == CMD_AND && exit_status != EXIT_SUCCESS)
 			break ;
-		else if (current && current->logic == CMD_OR \
-			&& exit_status == EXIT_SUCCESS)
+		else if (current && current->logic == CMD_OR && exit_status == EXIT_SUCCESS)
 			break ;
 		if (current)
 			current = current->next;
