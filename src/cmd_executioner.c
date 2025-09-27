@@ -320,7 +320,7 @@ static int	setup_redirections(t_command *cmd, int *s_stdin, int *s_stdout,	t_she
 /*
  * PIPELINE FUNCTIONS
  */
-static void	setup_pipeline_redirections(t_command *cmd, int prev_pipe_read,	int *pipe_fd)
+static void	setup_pipeline_redirections(t_command *cmd, int prev_pipe_read, int *pipe_fd)
 {
 	if (prev_pipe_read != -1)
 	{
@@ -497,6 +497,8 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 			if (pipe(pipe_fd) == -1)
 			{
 				handle_system_error(shell, "pipe");
+				if (prev_pipe_read != -1)
+					close(prev_pipe_read);
 				free(pids);
 				return (EXIT_FAILURE);
 			}
@@ -505,6 +507,13 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 		if (pids[i] == -1)
 		{
 			handle_system_error(shell, "fork");
+			if (current->next && current->logic == CMD_PIPE)
+			{
+				close(pipe_fd[0]);
+				close(pipe_fd[1]);
+			}
+			if (prev_pipe_read != -1)
+				close(prev_pipe_read);
 			free(pids);
 			return (EXIT_FAILURE);
 		}
@@ -523,10 +532,14 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 				close(pipe_fd[1]);
 				prev_pipe_read = pipe_fd[0];
 			}
+			else
+				prev_pipe_read = -1;
 		}
 		current = current->next;
 		i++;
 	}
+	if (prev_pipe_read != -1)
+		close(prev_pipe_read);
 	exit_status = 0;
 	i = 0;
 	while (i < cmd_count)
