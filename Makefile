@@ -30,6 +30,8 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)history.c\
 			$(SRC_DIR)history_commands.c\
 			$(SRC_DIR)cmd_parse.c \
+			$(SRC_DIR)cmd_parse_token.c \
+			$(SRC_DIR)cmd_parse_subshell.c \
 			$(SRC_DIR)cmd_reviewer.c\
 			$(SRC_DIR)cmd_reviewer_utils.c\
 			$(SRC_DIR)token_management.c \

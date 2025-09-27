@@ -206,6 +206,9 @@ int				add_token_redir_out(t_command *cmd, t_token **token);
 int				handle_lparen(t_command *cmd, t_token **current);
 t_token			*extract_subshell_tokens(t_token **current);
 int				validate_command_redirections(t_command *cmd);
+int				handle_word_token(t_command *cmd, t_token **current);
+int				handle_logic_token(t_command *cmd, t_token *current, t_command **new_cmd);
+int				handle_syntax_error(t_token *current);
 
 // Expansion and review functions
 int				lexical_review(t_command *cmd_list, t_shell *shell);
@@ -252,15 +255,6 @@ void	setup_signals_execution(void);
 void	setup_signals_default(void);
 void	handle_interactive_signals(t_shell *shell);
 int		get_signal_exit_status(int sig);
-
-// builtin commands
-/*
-int		builtin_echo(char** argv);
-int		builtin_export(char** argv, t_shell* shell);
-int		builtin_unset(char** argv, t_shell* shell);
-int		builtin_env(t_shell* shell);
-int		builtin_exit(char** argv, t_shell* shell);
-*/
 
 // Utility function
 void			free_argv(char **argv);
