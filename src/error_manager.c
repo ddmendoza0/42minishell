@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   error_manager.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 17:29:28 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/15 17:30:36 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:36:53 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* Main error handler - central point for all error management */
-int	handle_error(t_shell* shell, t_error_type type, const char* context)
+int	handle_error(t_shell *shell, t_error_type type, const char *context)
 {
-	int exit_code;
+	int	exit_code;
 
 	exit_code = EXIT_FAILURE;
 	if (type == ERR_SYNTAX || type == ERR_UNCLOSED_QUOTE)
@@ -57,7 +57,7 @@ int	handle_error(t_shell* shell, t_error_type type, const char* context)
 }
 
 /* Handle system call errors using errno */
-int	handle_system_error(t_shell* shell, const char* context)
+int	handle_system_error(t_shell *shell, const char *context)
 {
 	int	exit_code;
 
@@ -81,9 +81,9 @@ int	handle_system_error(t_shell* shell, const char* context)
 }
 
 /* Handle syntax errors */
-int	handle_syntax_error(t_shell* shell, const char* token)
+int	handle_syntax_error(t_shell *shell, const char *token)
 {
-	char* error_msg;
+	char	*error_msg;
 	int		exit_code;
 
 	if (!token)
@@ -95,20 +95,17 @@ int	handle_syntax_error(t_shell* shell, const char* token)
 			return (handle_error(shell, ERR_MEMORY, "syntax error"));
 		sprintf(error_msg, "syntax error near unexpected token `%s'", token);
 	}
-
 	write(STDERR_FILENO, "minishell: ", 11);
 	write(STDERR_FILENO, error_msg, strlen(error_msg));
 	write(STDERR_FILENO, "\n", 1);
-
 	if (token)
 		free(error_msg);
-
 	exit_code = EXIT_MISUSE;
 	return (set_exit_status(shell, exit_code));
 }
 
 /* Handle command execution errors */
-int	handle_command_error(t_shell* shell, const char* cmd, int error_code)
+int	handle_command_error(t_shell *shell, const char *cmd, int error_code)
 {
 	if (error_code == ENOENT)
 		return (handle_error(shell, ERR_COMMAND_NOT_FOUND, cmd));
@@ -121,7 +118,8 @@ int	handle_command_error(t_shell* shell, const char* cmd, int error_code)
 }
 
 /* Generic error printer following bash format */
-void	print_error(const char* prefix, const char* context, const char* message)
+void	print_error(const char *prefix,
+	const char *context, const char *message)
 {
 	write(STDERR_FILENO, prefix, strlen(prefix));
 	write(STDERR_FILENO, ": ", 2);
@@ -134,15 +132,16 @@ void	print_error(const char* prefix, const char* context, const char* message)
 	write(STDERR_FILENO, "\n", 1);
 }
 
+//5 functions
 /* Set exit status and return it for convenience */
-int	set_exit_status(t_shell* shell, int status)
+int	set_exit_status(t_shell *shell, int status)
 {
 	shell->last_exit_status = status;
 	return (status);
 }
 
 /* CD command errors */
-int	cd_error(t_shell* shell, const char* path, int error_type)
+int	cd_error(t_shell *shell, const char *path, int error_type)
 {
 	if (error_type == ENOENT)
 		print_error("minishell: cd", path, "No such file or directory");
@@ -152,44 +151,44 @@ int	cd_error(t_shell* shell, const char* path, int error_type)
 		print_error("minishell: cd", path, "Permission denied");
 	else
 		print_error("minishell: cd", path, strerror(error_type));
-
 	return (set_exit_status(shell, EXIT_FAILURE));
 }
 
 /* Export command errors */
-int	export_error(t_shell* shell, const char* var)
+int	export_error(t_shell *shell, const char *var)
 {
 	print_error("minishell: export", var, "not a valid identifier");
 	return (set_exit_status(shell, EXIT_FAILURE));
 }
 
 /* Unset command errors */
-int	unset_error(t_shell* shell, const char* var)
+int	unset_error(t_shell *shell, const char *var)
 {
 	print_error("minishell: unset", var, "not a valid identifier");
 	return (set_exit_status(shell, EXIT_FAILURE));
 }
 
 /* Exit command errors (non-numeric argument) */
-int	exit_error(t_shell* shell, const char* arg)
+int	exit_error(t_shell *shell, const char *arg)
 {
 	print_error("minishell: exit", arg, "numeric argument required");
 	return (set_exit_status(shell, EXIT_MISUSE));
 }
 
+//5 functions
 /* Other builtin errors */
-int	echo_error(t_shell* shell)
+int	echo_error(t_shell *shell)
 {
 	return (set_exit_status(shell, EXIT_FAILURE));
 }
 
-int	pwd_error(t_shell* shell)
+int	pwd_error(t_shell *shell)
 {
 	print_error("minishell: pwd", NULL, "error retrieving current directory");
 	return (set_exit_status(shell, EXIT_FAILURE));
 }
 
-int	env_error(t_shell* shell)
+int	env_error(t_shell *shell)
 {
 	return (set_exit_status(shell, EXIT_FAILURE));
 }

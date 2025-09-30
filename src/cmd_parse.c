@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:27:58 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:28:00 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:22:09 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ static int	process_token(t_command **cmd, t_token **current, t_shell *shell)
 		return (add_token_redir_in(*cmd, current));
 	else if ((*current)->type == REDIRECT_OUT || (*current)->type == APPEND_OUT)
 		return (add_token_redir_out(*cmd, current));
-	else if ((*current)->type == PIPE || (*current)->type == AND || (*current)->type == OR)
+	else if ((*current)->type == PIPE || (*current)->type == AND
+		|| (*current)->type == OR)
 	{
 		if (!handle_logic_token(*cmd, *current, &new_cmd))
 			return (0);

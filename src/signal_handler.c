@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signal_handler.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/30 13:24:22 by dmaya-vi          #+#    #+#             */
+/*   Updated: 2025/09/30 13:27:19 by dmaya-vi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-volatile sig_atomic_t g_signal_received = 0;
+volatile sig_atomic_t	g_signal_received = 0;
 
-static void signal_handler_interactive(int sig)
+static void	signal_handler_interactive(int sig)
 {
 	g_signal_received = sig;
 	if (sig == SIGINT)
@@ -15,7 +26,7 @@ static void signal_handler_interactive(int sig)
 	}
 }
 
-static void signal_handler_execution(int sig)
+static void	signal_handler_execution(int sig)
 {
 	g_signal_received = sig;
 	if (sig == SIGINT)
@@ -24,10 +35,10 @@ static void signal_handler_execution(int sig)
 		write(STDOUT_FILENO, "Quit: 3\n", 8);
 }
 
-void setup_signals_interactive(void)
+void	setup_signals_interactive(void)
 {
-	struct sigaction sa_int;
-	struct sigaction sa_quit;
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_handler = signal_handler_interactive;
@@ -39,10 +50,10 @@ void setup_signals_interactive(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
-void setup_signals_execution(void)
+void	setup_signals_execution(void)
 {
-	struct sigaction sa_int;
-	struct sigaction sa_quit;
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_handler = signal_handler_execution;
@@ -54,28 +65,28 @@ void setup_signals_execution(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
 
-void setup_signals_default(void)
+void	setup_signals_default(void)
 {
-	struct sigaction sa_default;
+	struct sigaction	sa_default;
 
 	sigemptyset(&sa_default.sa_mask);
 	sa_default.sa_handler = SIG_DFL;
 	sa_default.sa_flags = 0;
-	
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
 }
 
-void handle_interactive_signals(t_shell *shell)
+/* 128 + SIGINT(2) */
+void	handle_interactive_signals(t_shell *shell)
 {
 	if (g_signal_received == SIGINT)
 	{
-		shell->last_exit_status = 130; /* 128 + SIGINT(2) */
+		shell->last_exit_status = 130;
 		g_signal_received = 0;
 	}
 }
 
-int get_signal_exit_status(int sig)
+int	get_signal_exit_status(int sig)
 {
 	return (128 + sig);
 }

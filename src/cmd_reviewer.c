@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:28:18 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:28:20 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:15:01 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ static int	expand_command_args(t_command *cmd, t_shell *shell)
 	{
 		if (!current->expanded_value && current->original_token)
 		{
-			current->expanded_value = expand_token(current->original_token, shell);
+			current->expanded_value
+				= expand_token(current->original_token, shell);
 			if (!current->expanded_value)
 				return (0);
 		}
@@ -36,15 +37,19 @@ static int	expand_command_redirections(t_command *cmd, t_shell *shell)
 {
 	if (!cmd || !shell)
 		return (0);
-	if (cmd->input_redir && !cmd->input_redir->expanded_path && cmd->input_redir->original_token)
+	if (cmd->input_redir && !cmd->input_redir->expanded_path
+		&& cmd->input_redir->original_token)
 	{
-		cmd->input_redir->expanded_path = expand_token(cmd->input_redir->original_token, shell);
+		cmd->input_redir->expanded_path
+			= expand_token(cmd->input_redir->original_token, shell);
 		if (!cmd->input_redir->expanded_path)
 			return (0);
 	}
-	if (cmd->output_redir && !cmd->output_redir->expanded_path && cmd->output_redir->original_token)
+	if (cmd->output_redir && !cmd->output_redir->expanded_path
+		&& cmd->output_redir->original_token)
 	{
-		cmd->output_redir->expanded_path = expand_token(cmd->output_redir->original_token, shell);
+		cmd->output_redir->expanded_path
+			= expand_token(cmd->output_redir->original_token, shell);
 		if (!cmd->output_redir->expanded_path)
 			return (0);
 	}

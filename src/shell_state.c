@@ -6,14 +6,13 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:30:07 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:30:08 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:21:01 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
-void	cleanup_shell(t_shell* shell)
+void	cleanup_shell(t_shell *shell)
 {
 	int	i;
 
@@ -27,17 +26,15 @@ void	cleanup_shell(t_shell* shell)
 		}
 		free(shell->env);
 	}
-
 	if (shell->cwd)
 		free(shell->cwd);
-
 	if (shell->stdin_backup >= 0)
 		close(shell->stdin_backup);
 	if (shell->stdout_backup >= 0)
 		close(shell->stdout_backup);
 }
 
-static int	count_env_vars(char** envp)
+static int	count_env_vars(char **envp)
 {
 	int	count;
 
@@ -47,13 +44,13 @@ static int	count_env_vars(char** envp)
 	return (count);
 }
 
-static int	copy_environment(t_shell* shell, char** envp)
+static int	copy_environment(t_shell *shell, char **envp)
 {
 	int	env_count;
 	int	i;
 
 	env_count = count_env_vars(envp);
-	shell->env = malloc(sizeof(char*) * (env_count + 1));
+	shell->env = malloc(sizeof(char *) * (env_count + 1));
 	if (!shell->env)
 		return (0);
 	i = 0;
@@ -74,7 +71,7 @@ static int	copy_environment(t_shell* shell, char** envp)
 	return (1);
 }
 
-int	init_shell(t_shell* shell, char** envp)
+int	init_shell(t_shell *shell, char **envp)
 {
 	if (!copy_environment(shell, envp))
 	{
