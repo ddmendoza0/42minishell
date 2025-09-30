@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:11 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/13 17:35:06 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/09/30 11:59:46 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ static void input_loop(int history_fd, t_shell *shell)
 			printf("exit\n");
 			break;
 		}
+		add_history(input);
+		write_to_history_file(input, history_fd);
 		handle_interactive_signals(shell);
 		clean_input = trim_input(input);
 		free(input);
@@ -74,8 +76,6 @@ static void input_loop(int history_fd, t_shell *shell)
     		free(clean_input);
     		continue;
 		}
-		add_history(input);
-		write_to_history_file(input, history_fd);
 		if (strcmp(input, "history") == 0)
 			cmd_history();
 		setup_signals_execution();

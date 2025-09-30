@@ -84,7 +84,7 @@ static int	execute_builtin(char **argv, t_shell *shell)
 
 /*
  * HEREDOC IMPLEMENTATION
- */
+ *//*
 static int	setup_heredoc(char *delimiter, t_shell *shell)
 {
 	int		pipe_fd[2];
@@ -126,7 +126,7 @@ static int	setup_heredoc(char *delimiter, t_shell *shell)
 		waitpid(pid, NULL, 0);
 		return (pipe_fd[0]);
 	}
-}
+}*/
 
 /*
  * PATH RESOLUTION HELPERS
@@ -236,10 +236,14 @@ static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 {
 	int	fd;
 
-	if (input_redir->is_heredoc)
-		fd = setup_heredoc(input_redir->expanded_path, shell);
-	else
+	if (!input_redir)
+		return (1);
+	// If heredoc, use the fd already opened and set in handle_heredoc
+	if (input_redir->is_heredoc && input_redir->fd >= 0) {
+		fd = input_redir->fd;
+	} else {
 		fd = open(input_redir->expanded_path, O_RDONLY);
+	}
 	if (fd == -1)
 	{
 		handle_system_error(shell, input_redir->expanded_path);
@@ -251,7 +255,9 @@ static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 		handle_system_error(shell, "dup2");
 		return (0);
 	}
-	close(fd);
+	// Only close fd if it was opened here (not heredoc fd which gets closed in free_redir_file)
+	if (!(input_redir->is_heredoc && input_redir->fd >= 0))
+		close(fd);
 	return (1);
 }
 
@@ -520,6 +526,11 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 		else if (pids[i] == 0)
 		{
 			setup_signals_default();
+			// PATCH: If this is the first command and it uses heredoc, setup heredoc fd as stdin
+			if (i == 0 && current->input_redir && current->input_redir->is_heredoc && current->input_redir->fd >= 0) {
+				dup2(current->input_redir->fd, STDIN_FILENO);
+				// No need to close fd here, free_redir_file will handle it
+			}
 			setup_pipeline_redirections(current, prev_pipe_read, pipe_fd);
 			exit(execute_pipeline_command(current, shell));
 		}

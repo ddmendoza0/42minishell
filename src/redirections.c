@@ -15,10 +15,11 @@ int handle_heredoc(t_redir_file *redir)
     delimiter_len = ft_strlen(redir->expanded_path);
     while (1)
     {
-        ft_putstr_fd("> ", STDOUT_FILENO);
+        ft_putstr_fd("heredoc> ", STDOUT_FILENO); // friendlier prompt
         line = readline(NULL);
         if (!line)
             break;
+        // End heredoc if line matches the delimiter exactly
         if (ft_strncmp(line, redir->expanded_path, delimiter_len) == 0
             && line[delimiter_len] == '\0')
         {
