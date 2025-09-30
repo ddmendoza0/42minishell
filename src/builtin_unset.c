@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:27:05 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:27:07 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:44:38 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ static int	find_env_var_index(t_shell *shell, char *var_name)
 	i = 0;
 	while (shell->env[i])
 	{
-		if (ft_strncmp(shell->env[i], var_name, var_len) == 0 && shell->env[i][var_len] == '=')
+		if (ft_strncmp(shell->env[i], var_name, var_len)
+			== 0 && shell->env[i][var_len] == '=')
 			return (i);
 		i++;
 	}

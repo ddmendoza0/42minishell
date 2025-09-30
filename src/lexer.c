@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 18:46:37 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/07/15 18:31:32 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:22:43 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int	is_single_char_operator(char c)
 {
-	return (c == '|' || c == '<' || c == '>' || c == '&' || c == '(' || c == ')');
+	return (c == '|' || c == '<' || c == '>'
+		|| c == '&' || c == '(' || c == ')');
 }
 
 int	lexer(char *input, t_token **token_lst, t_shell *shell)

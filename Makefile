@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/07/15 17:31:41 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/09/30 15:07:11 by dmaya-vi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)cmd_executioner.c\
 			$(SRC_DIR)redirections.c\
 			$(SRC_DIR)signal_handler.c\
+			$(SRC_DIR)history_trim.c\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)

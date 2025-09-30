@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:27:18 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:27:24 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:45:10 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ static int	find_env_var(char **env, char *var_name, int var_name_len)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], var_name, var_name_len) == 0 && env[i][var_name_len] == '=')
+		if (ft_strncmp(env[i], var_name, var_name_len)
+			== 0 && env[i][var_name_len] == '=')
 			return (i);
 		i++;
 	}
