@@ -37,6 +37,13 @@ LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_aux.c\
 				  $(LEXER_DIR)lexer_utils.c
 
+COMMAND_DIR		= $(SRC_DIR)command/
+COMMAND_FILES	= $(COMMAND_DIR)cmd_parse.c \
+				  $(COMMAND_DIR)cmd_parse_token.c \
+				  $(COMMAND_DIR)cmd_parse_subshell.c \
+				  $(COMMAND_DIR)cmd_reviewer.c\
+				  $(COMMAND_DIR)cmd_reviewer_utils.c
+
 EXECUTOR_DIR	= $(SRC_DIR)executor/
 EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
 				  $(EXECUTOR_DIR)exe_external.c\
@@ -66,17 +73,13 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 SRCS	=	$(ERROR_FILES)\
 			$(SIGNAL_FILES)\
 			$(LEXER_FILES)\
+			$(COMMAND_FILES)\
 			$(EXECUTOR_FILES)\
 			$(BUILTIN_FILES)\
 			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
 			$(SRC_DIR)history.c\
 			$(SRC_DIR)history_commands.c\
-			$(SRC_DIR)cmd_parse.c \
-			$(SRC_DIR)cmd_parse_token.c \
-			$(SRC_DIR)cmd_parse_subshell.c \
-			$(SRC_DIR)cmd_reviewer.c\
-			$(SRC_DIR)cmd_reviewer_utils.c\
 			$(SRC_DIR)token_management.c\
 			$(SRC_DIR)env_utils.c\
 			$(SRC_DIR)redirections.c\
