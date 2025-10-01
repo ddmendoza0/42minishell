@@ -81,7 +81,7 @@ int	handle_error(t_shell *shell, t_error_type type, const char *context)
 
 	exit_code = EXIT_FAILURE;
 	if (type == ERR_SYNTAX || type == ERR_UNCLOSED_QUOTE || type == ERR_COMMAND_NOT_FOUND)
-		exit_code = handle_syntax_command_errors(shell, type, context);
+		exit_code = handle_syntax_command_errors(type, context);
 	else if (type == ERR_NO_SUCH_FILE || type == ERR_PERMISSION_DENIED || type == ERR_IS_DIRECTORY)
 		exit_code = handle_file_errors(type, context);
 	else if (type == ERR_CANNOT_EXECUTE || type == ERR_MEMORY || type == ERR_MALLOC)
