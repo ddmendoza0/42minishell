@@ -23,8 +23,7 @@ char	*get_env_value(t_shell *shell, char *var_name)
 	i = 0;
 	while (shell->env[i])
 	{
-		if (ft_strncmp(shell->env[i], var_name, var_len)
-			== 0 && shell->env[i][var_len] == '=')
+		if (ft_strncmp(shell->env[i], var_name, var_len) == 0 && shell->env[i][var_len] == '=')
 			return (&shell->env[i][var_len + 1]);
 		i++;
 	}
@@ -52,7 +51,7 @@ char	*expand_variable(t_shell *shell, char *var_name)
 		return (NULL);
 	value = get_special_var(shell, var_name);
 	if (value)
-		return (ft_strdup(value));
+		return (value);
 	value = get_env_value(shell, var_name);
 	if (value)
 		return (ft_strdup(value));

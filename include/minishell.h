@@ -24,8 +24,6 @@
 # include <unistd.h>
 # include "libft.h"
 # include "error_manager.h"
-# include <readline/readline.h>
-# include <readline/history.h>
 # include <sys/types.h>
 
 //for the readline function and functioning history
@@ -66,7 +64,6 @@ typedef enum e_token_type
 	OR,
 	LPAREN,
 	RPAREN,
-	SEMICOLON,
 	INVALID
 }t_token_type;
 
