@@ -13,8 +13,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-volatile sig_atomic_t	g_signal_received = 0;
-
 /****************************************************************/
 /*			LIBRARIES		 		*/
 /****************************************************************/
