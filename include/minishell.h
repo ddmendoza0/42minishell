@@ -152,6 +152,23 @@ typedef struct s_command {
 } t_command;
 /*AST Builder*/
 
+/*PIPE*/
+typedef struct s_pipe_ctx
+{
+	pid_t* pids;
+	int			cmd_count;
+	int			prev_pipe_read;
+	int			index;
+}	t_pipe_ctx;
+
+typedef struct s_child_ctx
+{
+	int	prev_pipe_read;
+	int* pipe_fd;
+	int	is_first;
+}	t_child_ctx;
+/*PIPE*/
+
 /****************************************************************/
 /*			END DEFINES				*/
 /****************************************************************/

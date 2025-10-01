@@ -33,6 +33,9 @@ LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_aux.c\
 				  $(LEXER_DIR)lexer_utils.c
 
+EXECUTOR_DIR	= $(SRC_DIR)executor/
+EXECUTOR_FILES	= $(EXECUTOR_DIR)executor.c
+
 BUILTIN_DIR		= $(SRC_DIR)builtins/
 BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_echo.c\
@@ -45,6 +48,7 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 
 SRCS	=	$(ERROR_FILES)\
 			$(LEXER_FILES)\
+			$(EXECUTOR_FILES)\
 			$(BUILTIN_FILES)\
 			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
@@ -57,7 +61,6 @@ SRCS	=	$(ERROR_FILES)\
 			$(SRC_DIR)cmd_reviewer_utils.c\
 			$(SRC_DIR)token_management.c\
 			$(SRC_DIR)env_utils.c\
-			$(SRC_DIR)executor.c\
 			$(SRC_DIR)redirections.c\
 			$(SRC_DIR)signal_handler.c\
 			$(SRC_DIR)history_trim.c\
