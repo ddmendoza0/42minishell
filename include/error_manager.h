@@ -62,7 +62,7 @@ int		handle_error(t_shell* shell, t_error_type type, const char* context);
 int		handle_system_error(t_shell* shell, const char* context);
 int		handle_syntax_error(t_shell* shell, const char* token);
 int		handle_command_error(t_shell* shell, const char* cmd, int error_code);
-void	print_error(const char* prefix, const char* context, const char* message);
+void	print_error(const char* prefix, const char* context, const char* msg);
 int		set_exit_status(t_shell* shell, int status);
 
 /* Builtin error handlers */

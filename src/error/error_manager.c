@@ -12,8 +12,9 @@
 
 #include "minishell.h"
 
-/* Main error handler - central point for all error management */
-int	handle_error(t_shell *shell, t_error_type type, const char *context)
+/* Handle syntax and command errors */
+static int	handle_syntax_command_errors(t_shell *shell,
+	t_error_type type, const char *context)
 {
 	int	exit_code;
 
@@ -28,7 +29,16 @@ int	handle_error(t_shell *shell, t_error_type type, const char *context)
 		print_error("minishell", context, "command not found");
 		exit_code = EXIT_COMMAND_NOT_FOUND;
 	}
-	else if (type == ERR_NO_SUCH_FILE)
+	return (exit_code);
+}
+
+/* Handle file and permission errors */
+static int	handle_file_errors(t_error_type type, const char *context)
+{
+	int	exit_code;
+
+	exit_code = EXIT_FAILURE;
+	if (type == ERR_NO_SUCH_FILE)
 	{
 		print_error("minishell", context, "No such file or directory");
 		exit_code = EXIT_FAILURE;
@@ -43,7 +53,16 @@ int	handle_error(t_shell *shell, t_error_type type, const char *context)
 		print_error("minishell", context, "Is a directory");
 		exit_code = EXIT_CANNOT_EXECUTE;
 	}
-	else if (type == ERR_CANNOT_EXECUTE)
+	return (exit_code);
+}
+
+/* Handle execution and memory errors */
+static int	handle_exec_memory_errors(t_error_type type, const char *context)
+{
+	int	exit_code;
+
+	exit_code = EXIT_FAILURE;
+	if (type == ERR_CANNOT_EXECUTE)
 	{
 		print_error("minishell", context, "cannot execute binary file");
 		exit_code = EXIT_CANNOT_EXECUTE;
@@ -53,6 +72,24 @@ int	handle_error(t_shell *shell, t_error_type type, const char *context)
 		print_error("minishell", "malloc", "cannot allocate memory");
 		exit_code = EXIT_FAILURE;
 	}
+	return (exit_code);
+}
+
+/* Main error handler - central point for all error management */
+int	handle_error(t_shell *shell, t_error_type type, const char *context)
+{
+	int	exit_code;
+
+	exit_code = EXIT_FAILURE;
+	if (type == ERR_SYNTAX || type == ERR_UNCLOSED_QUOTE
+		|| type == ERR_COMMAND_NOT_FOUND)
+		exit_code = handle_syntax_command_errors(shell, type, context);
+	else if (type == ERR_NO_SUCH_FILE || type == ERR_PERMISSION_DENIED
+		|| type == ERR_IS_DIRECTORY)
+		exit_code = handle_file_errors(type, context);
+	else if (type == ERR_CANNOT_EXECUTE || type == ERR_MEMORY
+		|| type == ERR_MALLOC)
+		exit_code = handle_exec_memory_errors(type, context);
 	return (set_exit_status(shell, exit_code));
 }
 
@@ -78,56 +115,4 @@ int	handle_system_error(t_shell *shell, const char *context)
 		exit_code = EXIT_FAILURE;
 	}
 	return (set_exit_status(shell, exit_code));
-}
-
-/* Handle syntax errors */
-int	handle_syntax_error(t_shell *shell, const char *token)
-{
-	char	*error_msg;
-	int		exit_code;
-
-	if (!token)
-		error_msg = "syntax error near unexpected token `newline'";
-	else
-	{
-		error_msg = malloc(strlen(token) + 50);
-		if (!error_msg)
-			return (handle_error(shell, ERR_MEMORY, "syntax error"));
-		sprintf(error_msg, "syntax error near unexpected token `%s'", token);
-	}
-	write(STDERR_FILENO, "minishell: ", 11);
-	write(STDERR_FILENO, error_msg, strlen(error_msg));
-	write(STDERR_FILENO, "\n", 1);
-	if (token)
-		free(error_msg);
-	exit_code = EXIT_MISUSE;
-	return (set_exit_status(shell, exit_code));
-}
-
-/* Handle command execution errors */
-int	handle_command_error(t_shell *shell, const char *cmd, int error_code)
-{
-	if (error_code == ENOENT)
-		return (handle_error(shell, ERR_COMMAND_NOT_FOUND, cmd));
-	else if (error_code == EACCES)
-		return (handle_error(shell, ERR_PERMISSION_DENIED, cmd));
-	else if (error_code == EISDIR)
-		return (handle_error(shell, ERR_IS_DIRECTORY, cmd));
-	else
-		return (handle_system_error(shell, cmd));
-}
-
-/* Generic error printer following bash format */
-void	print_error(const char *prefix,
-	const char *context, const char *message)
-{
-	write(STDERR_FILENO, prefix, strlen(prefix));
-	write(STDERR_FILENO, ": ", 2);
-	if (context)
-	{
-		write(STDERR_FILENO, context, strlen(context));
-		write(STDERR_FILENO, ": ", 2);
-	}
-	write(STDERR_FILENO, message, strlen(message));
-	write(STDERR_FILENO, "\n", 1);
 }

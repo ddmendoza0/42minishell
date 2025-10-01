@@ -17,8 +17,16 @@ HEADERS	=	-I ./include -I -I$(LIBFT)
 LIBFT	=	./lib/libft
 LIBS = $(LIBFT)/libft.a -L/mingw64/lib -lreadline
 
+
 SRC_DIR =	src/
-SRCS	=	$(SRC_DIR)main.c\
+
+ERROR_DIR	= $(SRC_DIR)error/
+ERROR_FILES	= $(ERROR_DIR)error_manager.c\
+			  $(ERROR_DIR)error_utils.c\
+			  $(ERROR_DIR)error_builtin.c
+
+SRCS	=	$(ERROR_FILES)\
+			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
 			$(SRC_DIR)error/error_manager.c\
 			$(SRC_DIR)error/error_utils.c\
@@ -36,7 +44,7 @@ SRCS	=	$(SRC_DIR)main.c\
 			$(SRC_DIR)cmd_parse_subshell.c \
 			$(SRC_DIR)cmd_reviewer.c\
 			$(SRC_DIR)cmd_reviewer_utils.c\
-			$(SRC_DIR)token_management.c \
+			$(SRC_DIR)token_management.c\
 			$(SRC_DIR)env_utils.c\
 			$(SRC_DIR)builtin_cd.c\
 			$(SRC_DIR)builtin_pwd.c\
