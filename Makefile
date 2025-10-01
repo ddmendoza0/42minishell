@@ -48,7 +48,7 @@ LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_aux.c\
 				  $(LEXER_DIR)lexer_utils.c
 
-PARSER_DIR		= $(SRC_DIR)command/
+PARSER_DIR		= $(SRC_DIR)parser/
 PARSER_FILES	= $(PARSER_DIR)cmd_parse.c \
 				  $(PARSER_DIR)cmd_parse_token.c \
 				  $(PARSER_DIR)cmd_parse_subshell.c \
