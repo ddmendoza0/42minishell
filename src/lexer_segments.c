@@ -100,8 +100,11 @@ int	process_segments(t_token *token, char *word, t_shell *shell, t_token **lst)
 {
 	if (!process_word_segments(token, word, shell))
 	{
-		free_token_lst(*lst);
-		*lst = NULL;
+		if (*lst)
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+		}
 		return (0);
 	}
 	if (!token->segments)
@@ -109,8 +112,11 @@ int	process_segments(t_token *token, char *word, t_shell *shell, t_token **lst)
 		if (!create_default_segment(token, word))
 		{
 			handle_error(shell, ERR_MALLOC, "segment processing");
-			free_token_lst(*lst);
-			*lst = NULL;
+			if (*lst)
+			{
+				free_token_lst(*lst);
+				*lst = NULL;
+			}
 			return (0);
 		}
 	}

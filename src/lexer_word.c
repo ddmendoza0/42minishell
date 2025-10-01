@@ -25,8 +25,11 @@ int	handle_q_sctn(size_t *i, const char *input, t_shell *shell, t_token **lst)
 	else
 	{
 		handle_error(shell, ERR_UNCLOSED_QUOTE, "unclosed quote");
-		free_token_lst(*lst);
-		*lst = NULL;
+		if (*lst)  // Solo liberar si hay tokens
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+		}
 		return (0);
 	}
 	return (1);
@@ -57,7 +60,7 @@ static char	*crt_w_str(const char *str, size_t len, t_shell *s, t_token **lst)
 	if (!word)
 	{
 		handle_error(s, ERR_MALLOC, "word token");
-		if (*lst)
+		if (*lst)  // Solo liberar si hay tokens
 		{
 			free_token_lst(*lst);
 			*lst = NULL;
@@ -75,7 +78,7 @@ static t_token	*create_word_token(char *word, t_shell *shell, t_token **lst)
 	{
 		handle_error(shell, ERR_MALLOC, "word token");
 		free(word);
-		if (*lst)
+		if (*lst)  // Solo liberar si hay tokens
 		{
 			free_token_lst(*lst);
 			*lst = NULL;
@@ -92,8 +95,6 @@ int	extract_word(size_t *i, const char *input, t_token **lst, t_shell *shell)
 
 	start = *i;
 	if (!find_w_end(i, input, shell, lst))
-		return (0);
-	if (!lst || !(*lst))
 		return (0);
 	word = crt_w_str(input + start, *i - start, shell, lst);
 	if (!word)

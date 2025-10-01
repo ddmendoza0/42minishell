@@ -61,8 +61,11 @@ static char	*create_str(size_t *i, const char *input, t_shell *s, t_token **lst)
 	if (!op)
 	{
 		handle_error(s, ERR_MALLOC, "operator token");
-		free_token_lst(*lst);
-		*lst = NULL;
+		if (*lst)  // Solo liberar si hay tokens
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+		}
 	}
 	return (op);
 }
@@ -76,8 +79,11 @@ static t_token	*create_operator_token(char *op, t_shell *shell, t_token **lst)
 	{
 		handle_error(shell, ERR_MALLOC, "operator token");
 		free(op);
-		free_token_lst(*lst);
-		*lst = NULL;
+		if (*lst)  // Solo liberar si hay tokens
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+		}
 	}
 	return (token);
 }
