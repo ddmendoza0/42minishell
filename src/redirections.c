@@ -46,14 +46,17 @@ int	handle_heredoc(t_redir_file *redir)
 	return (1);
 }
 
-int	validate_input_redirection(t_redir_file *input_redir, t_shell *shell)
+int	validate_input_redirection(t_redir_file *input_redir)
 {
 	if (input_redir)
 	{
 		if (input_redir->is_heredoc)
 		{
 			if (!input_redir->expanded_path || !*input_redir->expanded_path)
-				handle_syntax_error(shell, "newline");
+			{
+				print_error("minishell", "syntax error", "unexpected token `newline'");
+				return (0);
+			}
 			if (!handle_heredoc(input_redir))
 				return (0);
 		}
@@ -72,7 +75,7 @@ int	validate_input_redirection(t_redir_file *input_redir, t_shell *shell)
 			input_redir->fd = open(input_redir->expanded_path, O_RDONLY);
 			if (input_redir->fd == -1)
 			{
-				perror("minishell: input redirection");
+				print_error("minishell", input_redir->expanded_path, strerror(errno));
 				return (0);
 			}
 		}
@@ -80,7 +83,7 @@ int	validate_input_redirection(t_redir_file *input_redir, t_shell *shell)
 	return (1);
 }
 
-int	validate_output_redirection(t_redir_file *output_redir, t_shell *shell)
+int	validate_output_redirection(t_redir_file *output_redir)
 {
 	if (output_redir)
 	{
@@ -97,14 +100,12 @@ int	validate_output_redirection(t_redir_file *output_redir, t_shell *shell)
 		else
 		{
 			if (output_redir->append_mode)
-				output_redir->fd = open(output_redir
-						->expanded_path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				output_redir->fd = open(output_redir->expanded_path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
-				output_redir->fd = open(output_redir
-						->expanded_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				output_redir->fd = open(output_redir->expanded_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (output_redir->fd == -1)
 			{
-				perror("minishell: output redirection");
+				print_error("minishell", output_redir->expanded_path, strerror(errno));
 				return (0);
 			}
 		}
@@ -112,15 +113,15 @@ int	validate_output_redirection(t_redir_file *output_redir, t_shell *shell)
 	return (1);
 }
 
-int	validate_command_redirections(t_command *cmd, t_shell *shell)
+int	validate_command_redirections(t_command *cmd)
 {
-	if (!validate_input_redirection(cmd->input_redir, shell))
+	if (!validate_input_redirection(cmd->input_redir))
 		return (0);
-	if (!validate_output_redirection(cmd->output_redir, shell))
+	if (!validate_output_redirection(cmd->output_redir))
 		return (0);
-	if (cmd->subshell && !validate_command_redirections(cmd->subshell, shell))
+	if (cmd->subshell && !validate_command_redirections(cmd->subshell))
 		return (0);
-	if (cmd->next && !validate_command_redirections(cmd->next, shell))
+	if (cmd->next && !validate_command_redirections(cmd->next))
 		return (0);
 	return (1);
 }
