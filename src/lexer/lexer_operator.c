@@ -14,10 +14,7 @@
 
 static int	is_multi_char_operator(const char *input)
 {
-	return (ft_strncmp(input, "&&", 2) == 0
-		|| ft_strncmp(input, "||", 2) == 0
-		|| ft_strncmp(input, ">>", 2) == 0
-		|| ft_strncmp(input, "<<", 2) == 0);
+	return (ft_strncmp(input, "&&", 2) == 0 || ft_strncmp(input, "||", 2) == 0 || ft_strncmp(input, ">>", 2) == 0 || ft_strncmp(input, "<<", 2) == 0);
 }
 
 static t_token_type	det_op_type(const char *op)
@@ -61,7 +58,7 @@ static char	*create_str(size_t *i, const char *input, t_shell *s, t_token **lst)
 	if (!op)
 	{
 		handle_error(s, ERR_MALLOC, "operator token");
-		if (*lst)  // Solo liberar si hay tokens
+		if (*lst)
 		{
 			free_token_lst(*lst);
 			*lst = NULL;
@@ -79,7 +76,7 @@ static t_token	*create_operator_token(char *op, t_shell *shell, t_token **lst)
 	{
 		handle_error(shell, ERR_MALLOC, "operator token");
 		free(op);
-		if (*lst)  // Solo liberar si hay tokens
+		if (*lst)
 		{
 			free_token_lst(*lst);
 			*lst = NULL;
