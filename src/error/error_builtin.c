@@ -34,3 +34,9 @@ int	exit_error(t_shell *shell, const char *arg)
 	print_error("minishell: exit", arg, "numeric argument required");
 	return (set_exit_status(shell, EXIT_MISUSE));
 }
+
+int	pwd_error(t_shell *shell)
+{
+	print_error("minishell: pwd", NULL, "error retrieving current directory");
+	return (set_exit_status(shell, EXIT_FAILURE));
+}

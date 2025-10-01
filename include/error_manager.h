@@ -70,8 +70,6 @@ int		cd_error(t_shell* shell, const char* path, int error_type);
 int		export_error(t_shell* shell, const char* var);
 int		unset_error(t_shell* shell, const char* var);
 int		exit_error(t_shell* shell, const char* arg);
-int		echo_error(t_shell* shell);
 int		pwd_error(t_shell* shell);
-int		env_error(t_shell* shell);
 
 #endif

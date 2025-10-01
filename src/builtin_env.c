@@ -17,14 +17,14 @@ int	builtin_env(char **argv, t_shell *shell)
 	int	i;
 
 	if (!shell)
-		return (env_error(shell));
+		return (set_exit_status(shell, EXIT_FAILURE));
 	if (argv[1])
 	{
 		print_error("minishell: env", NULL, "too many arguments");
 		return (set_exit_status(shell, EXIT_FAILURE));
 	}
 	if (!shell->env)
-		return (env_error(shell));
+		return (set_exit_status(shell, EXIT_FAILURE));
 	i = 0;
 	while (shell->env[i])
 	{
