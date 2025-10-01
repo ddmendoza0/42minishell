@@ -25,7 +25,7 @@ ERROR_FILES		= $(ERROR_DIR)error_manager.c\
 				  $(ERROR_DIR)error_utils.c\
 				  $(ERROR_DIR)error_builtin.c
 
-SIGNAL_DIR		= $(SRC_DIR)signal/
+SIGNAL_DIR		= $(SRC_DIR)signals/
 SIGNAL_FILES	= $(SIGNAL_DIR)signal_handler.c\
 				  $(SIGNAL_DIR)signal_utils.c
 
