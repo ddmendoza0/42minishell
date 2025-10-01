@@ -22,7 +22,7 @@ static int	count_args(t_arg_token *args)
 	return (count);
 }
 
-static void	free_argv(char **argv, int up_to)
+static void	free_argv_builder(char **argv, int up_to)
 {
 	int	i;
 
@@ -47,7 +47,7 @@ static int	fill_argv(char **argv, t_arg_token *args)
 		argv[i] = ft_strdup(get_arg_value(arg));
 		if (!argv[i])
 		{
-			free_argv(argv, i);
+			free_argv_builder(argv, i);
 			return (0);
 		}
 		arg = arg->next;
