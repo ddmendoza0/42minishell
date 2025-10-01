@@ -28,9 +28,6 @@ ERROR_FILES	= $(ERROR_DIR)error_manager.c\
 SRCS	=	$(ERROR_FILES)\
 			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
-			$(SRC_DIR)error/error_manager.c\
-			$(SRC_DIR)error/error_utils.c\
-			$(SRC_DIR)error/error_builtin.c\
 			$(SRC_DIR)lexer.c\
 			$(SRC_DIR)lexer_word.c\
 			$(SRC_DIR)lexer_operator.c\
