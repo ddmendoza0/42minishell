@@ -44,6 +44,7 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_utils.c
 
 SRCS	=	$(ERROR_FILES)\
+			$(LEXER_FILES)\
 			$(BUILTIN_FILES)\
 			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
