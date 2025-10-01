@@ -83,52 +83,6 @@ static int	execute_builtin(char **argv, t_shell *shell)
 }
 
 /*
- * HEREDOC IMPLEMENTATION
- *//*
-static int	setup_heredoc(char *delimiter, t_shell *shell)
-{
-	int		pipe_fd[2];
-	char	*line;
-	pid_t	pid;
-
-	(void)shell;
-	if (pipe(pipe_fd) == -1)
-		return (-1);
-	pid = fork();
-	if (pid == -1)
-	{
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		return (-1);
-	}
-	else if (pid == 0)
-	{
-		close(pipe_fd[0]);
-		while (1)
-		{
-			line = readline("> ");
-			if (!line || ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
-			{
-				if (line)
-					free(line);
-				break ;
-			}
-			write(pipe_fd[1], line, ft_strlen(line));
-			write(pipe_fd[1], "\n", 1);
-			free(line);
-		}
-		close(pipe_fd[1]);
-		exit(0);
-	}
-	else
-	{
-		close(pipe_fd[1]);
-		waitpid(pid, NULL, 0);
-		return (pipe_fd[0]);
-	}
-}*/
-
-/*
  * PATH RESOLUTION HELPERS
  */
 static char	*create_full_path(char *dir, char *cmd)
@@ -212,8 +166,8 @@ static int	execute_external(char **argv, t_shell *shell)
 	}
 	else
 	{
-		waitpid(pid, &status, 0);
 		free(executable_path);
+		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
 		else if (WIFSIGNALED(status))
@@ -230,7 +184,7 @@ static int	execute_external(char **argv, t_shell *shell)
 }
 
 /*
- * REDIRECTION SETUP FUNCTIONS
+ * REDIRECTION SETUP FUNCTIONS - CORREGIDO
  */
 static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 {
@@ -238,12 +192,10 @@ static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 
 	if (!input_redir)
 		return (1);
-	// If heredoc, use the fd already opened and set in handle_heredoc
-	if (input_redir->is_heredoc && input_redir->fd >= 0) {
+	if (input_redir->is_heredoc && input_redir->fd >= 0)
 		fd = input_redir->fd;
-	} else {
+	else
 		fd = open(input_redir->expanded_path, O_RDONLY);
-	}
 	if (fd == -1)
 	{
 		handle_system_error(shell, input_redir->expanded_path);
@@ -255,9 +207,9 @@ static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 		handle_system_error(shell, "dup2");
 		return (0);
 	}
-	// Only close fd if it was opened here (not heredoc fd which gets closed in free_redir_file)
-	if (!(input_redir->is_heredoc && input_redir->fd >= 0))
-		close(fd);
+	close(fd);
+	if (input_redir->is_heredoc)
+		input_redir->fd = -1;
 	return (1);
 }
 
@@ -266,6 +218,8 @@ static int	setup_output_redirection(t_redir_file *output_redir, t_shell *shell)
 	int	fd;
 	int	flags;
 
+	if (!output_redir)
+		return (1);
 	flags = O_WRONLY | O_CREAT;
 	if (output_redir->append_mode)
 		flags |= O_APPEND;
@@ -291,78 +245,121 @@ static void	restore_redirections(int saved_stdin, int saved_stdout)
 {
 	if (saved_stdin != -1)
 	{
-		dup2(saved_stdin, STDIN_FILENO);
+		if (dup2(saved_stdin, STDIN_FILENO) == -1)
+			perror("restore stdin");
 		close(saved_stdin);
 	}
 	if (saved_stdout != -1)
 	{
-		dup2(saved_stdout, STDOUT_FILENO);
+		if (dup2(saved_stdout, STDOUT_FILENO) == -1)
+			perror("restore stdout");
 		close(saved_stdout);
 	}
 }
 
-static int	setup_redirections(t_command *cmd, int *s_stdin, int *s_stdout,	t_shell *shell)
+static int	setup_redirections(t_command *cmd, int *s_stdin, int *s_stdout,
+		t_shell *shell)
 {
 	*s_stdin = dup(STDIN_FILENO);
 	*s_stdout = dup(STDOUT_FILENO);
 	if (*s_stdin == -1 || *s_stdout == -1)
 	{
+		if (*s_stdin != -1)
+			close(*s_stdin);
+		if (*s_stdout != -1)
+			close(*s_stdout);
 		handle_system_error(shell, "dup");
 		return (0);
 	}
 	if (cmd->input_redir)
 	{
 		if (!setup_input_redirection(cmd->input_redir, shell))
+		{
+			restore_redirections(*s_stdin, *s_stdout);
 			return (0);
+		}
 	}
 	if (cmd->output_redir)
 	{
 		if (!setup_output_redirection(cmd->output_redir, shell))
+		{
+			restore_redirections(*s_stdin, *s_stdout);
 			return (0);
+		}
 	}
 	return (1);
 }
 
 /*
- * PIPELINE FUNCTIONS
+ * PIPELINE FUNCTIONS - COMPLETAMENTE CORREGIDO
  */
-static void	setup_pipeline_redirections(t_command *cmd, int prev_pipe_read, int *pipe_fd)
+static int	safe_dup2(int oldfd, int newfd, const char *msg)
 {
+	if (dup2(oldfd, newfd) == -1)
+	{
+		perror(msg);
+		return (0);
+	}
+	return (1);
+}
+
+static void	setup_pipeline_redirections(t_command *cmd, int prev_pipe_read,
+		int *pipe_fd)
+{
+	int	fd;
+
 	if (prev_pipe_read != -1)
 	{
-		dup2(prev_pipe_read, STDIN_FILENO);
+		if (!safe_dup2(prev_pipe_read, STDIN_FILENO, "dup2 stdin"))
+			exit(EXIT_FAILURE);
 		close(prev_pipe_read);
 	}
 	if (cmd->next && cmd->logic == CMD_PIPE)
 	{
 		close(pipe_fd[0]);
-		dup2(pipe_fd[1], STDOUT_FILENO);
+		if (!safe_dup2(pipe_fd[1], STDOUT_FILENO, "dup2 stdout"))
+		{
+			close(pipe_fd[1]);
+			exit(EXIT_FAILURE);
+		}
 		close(pipe_fd[1]);
 	}
 	if (cmd->input_redir && !cmd->input_redir->is_heredoc)
 	{
-		int	fd = open(cmd->input_redir->expanded_path, O_RDONLY);
-		if (fd != -1)
+		fd = open(cmd->input_redir->expanded_path, O_RDONLY);
+		if (fd == -1)
 		{
-			dup2(fd, STDIN_FILENO);
-			close(fd);
+			perror(cmd->input_redir->expanded_path);
+			exit(EXIT_FAILURE);
 		}
+		if (!safe_dup2(fd, STDIN_FILENO, "dup2 input"))
+		{
+			close(fd);
+			exit(EXIT_FAILURE);
+		}
+		close(fd);
 	}
 	if (cmd->output_redir)
 	{
-		int	flags = O_WRONLY | O_CREAT;
-		int	fd;
+		int	flags;
 
+		flags = O_WRONLY | O_CREAT;
 		if (cmd->output_redir->append_mode)
 			flags |= O_APPEND;
 		else
 			flags |= O_TRUNC;
 		fd = open(cmd->output_redir->expanded_path, flags, 0644);
-		if (fd != -1)
+		if (fd == -1)
 		{
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
+			perror(cmd->output_redir->expanded_path);
+			exit(EXIT_FAILURE);
 		}
+		if (!safe_dup2(fd, STDOUT_FILENO, "dup2 output"))
+		{
+			close(fd);
+			exit(EXIT_FAILURE);
+		}
+		close(fd);
 	}
 }
 
@@ -475,82 +472,76 @@ static int	execute_single_command(t_command *cmd, t_shell *shell)
 }
 
 /*
- * PIPELINE EXECUTION
+ * PIPELINE CLEANUP HELPER
  */
-static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
+static void	cleanup_pipeline_error(int *pids, int count, int prev_read,
+		int *pipe_fd, int has_pipe)
 {
-	t_command	*current;
-	int			pipe_fd[2];
-	int			prev_pipe_read;
-	pid_t		*pids;
-	int			cmd_count;
-	int			i;
-	int			status;
-	int			exit_status;
-	int			sig;
+	int	i;
 
-	cmd_count = count_pipeline_commands(cmd_list);
-	pids = malloc(sizeof(pid_t) * cmd_count);
-	if (!pids)
-		return (handle_error(shell, ERR_MALLOC, "pipeline execution"));
-	current = cmd_list;
-	prev_pipe_read = -1;
-	i = 0;
-	while (current)
+	if (has_pipe)
 	{
-		if (current->next && current->logic == CMD_PIPE)
-		{
-			if (pipe(pipe_fd) == -1)
-			{
-				handle_system_error(shell, "pipe");
-				if (prev_pipe_read != -1)
-					close(prev_pipe_read);
-				free(pids);
-				return (EXIT_FAILURE);
-			}
-		}
-		pids[i] = fork();
-		if (pids[i] == -1)
-		{
-			handle_system_error(shell, "fork");
-			if (current->next && current->logic == CMD_PIPE)
-			{
-				close(pipe_fd[0]);
-				close(pipe_fd[1]);
-			}
-			if (prev_pipe_read != -1)
-				close(prev_pipe_read);
-			free(pids);
-			return (EXIT_FAILURE);
-		}
-		else if (pids[i] == 0)
-		{
-			setup_signals_default();
-			// PATCH: If this is the first command and it uses heredoc, setup heredoc fd as stdin
-			if (i == 0 && current->input_redir && current->input_redir->is_heredoc && current->input_redir->fd >= 0) {
-				dup2(current->input_redir->fd, STDIN_FILENO);
-				// No need to close fd here, free_redir_file will handle it
-			}
-			setup_pipeline_redirections(current, prev_pipe_read, pipe_fd);
-			exit(execute_pipeline_command(current, shell));
-		}
-		else
-		{
-			if (prev_pipe_read != -1)
-				close(prev_pipe_read);
-			if (current->next && current->logic == CMD_PIPE)
-			{
-				close(pipe_fd[1]);
-				prev_pipe_read = pipe_fd[0];
-			}
-			else
-				prev_pipe_read = -1;
-		}
-		current = current->next;
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+	}
+	if (prev_read != -1)
+		close(prev_read);
+	i = 0;
+	while (i < count)
+	{
+		if (pids[i] > 0)
+			waitpid(pids[i], NULL, 0);
 		i++;
 	}
-	if (prev_pipe_read != -1)
-		close(prev_pipe_read);
+	free(pids);
+}
+
+/*
+ * PIPELINE CHILD PROCESS
+ */
+static void	execute_in_child(t_command *current, int prev_pipe_read,
+		int *pipe_fd, t_shell *shell, int is_first)
+{
+	setup_signals_default();
+	if (is_first && current->input_redir && current->input_redir->is_heredoc
+		&& current->input_redir->fd >= 0)
+	{
+		if (!safe_dup2(current->input_redir->fd, STDIN_FILENO, "dup2 heredoc"))
+			exit(EXIT_FAILURE);
+		close(current->input_redir->fd);
+		current->input_redir->fd = -1;
+	}
+	setup_pipeline_redirections(current, prev_pipe_read, pipe_fd);
+	exit(execute_pipeline_command(current, shell));
+}
+
+/*
+ * PIPELINE PARENT PROCESS
+ */
+static void	handle_parent_fds(int *prev_pipe_read, t_command *current,
+		int *pipe_fd)
+{
+	if (*prev_pipe_read != -1)
+		close(*prev_pipe_read);
+	if (current->next && current->logic == CMD_PIPE)
+	{
+		close(pipe_fd[1]);
+		*prev_pipe_read = pipe_fd[0];
+	}
+	else
+		*prev_pipe_read = -1;
+}
+
+/*
+ * WAIT FOR PIPELINE COMPLETION
+ */
+static int	wait_pipeline(pid_t *pids, int cmd_count)
+{
+	int	i;
+	int	status;
+	int	exit_status;
+	int	sig;
+
 	exit_status = 0;
 	i = 0;
 	while (i < cmd_count)
@@ -572,8 +563,59 @@ static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 		}
 		i++;
 	}
+	return (exit_status);
+}
+
+/*
+ * PIPELINE EXECUTION - VERSIÓN ROBUSTA
+ */
+static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
+{
+	t_command	*current;
+	int			pipe_fd[2];
+	int			prev_pipe_read;
+	pid_t		*pids;
+	int			cmd_count;
+	int			i;
+
+	cmd_count = count_pipeline_commands(cmd_list);
+	pids = malloc(sizeof(pid_t) * cmd_count);
+	if (!pids)
+		return (handle_error(shell, ERR_MALLOC, "pipeline execution"));
+	current = cmd_list;
+	prev_pipe_read = -1;
+	i = 0;
+	while (current && i < cmd_count)
+	{
+		if (current->next && current->logic == CMD_PIPE)
+		{
+			if (pipe(pipe_fd) == -1)
+			{
+				handle_system_error(shell, "pipe");
+				cleanup_pipeline_error(pids, i, prev_pipe_read, pipe_fd, 0);
+				return (EXIT_FAILURE);
+			}
+		}
+		pids[i] = fork();
+		if (pids[i] == -1)
+		{
+			handle_system_error(shell, "fork");
+			cleanup_pipeline_error(pids, i, prev_pipe_read, pipe_fd,
+				(current->next && current->logic == CMD_PIPE));
+			return (EXIT_FAILURE);
+		}
+		else if (pids[i] == 0)
+			execute_in_child(current, prev_pipe_read, pipe_fd, shell, (i == 0));
+		else
+			handle_parent_fds(&prev_pipe_read, current, pipe_fd);
+		current = current->next;
+		i++;
+	}
+	if (prev_pipe_read != -1)
+		close(prev_pipe_read);
+	i = wait_pipeline(pids, cmd_count);
 	free(pids);
-	return (set_exit_status(shell, exit_status));
+	return (set_exit_status(shell, i));
 }
 
 /*
@@ -600,13 +642,15 @@ static int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
 			current = pipeline_end->next;
 		}
 		else
+		{
 			exit_status = execute_single_command(current, shell);
+			current = current->next;
+		}
 		if (current && current->logic == CMD_AND && exit_status != EXIT_SUCCESS)
 			break ;
-		else if (current && current->logic == CMD_OR && exit_status == EXIT_SUCCESS)
+		else if (current && current->logic == CMD_OR
+			&& exit_status == EXIT_SUCCESS)
 			break ;
-		if (current)
-			current = current->next;
 	}
 	return (exit_status);
 }

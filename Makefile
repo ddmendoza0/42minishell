@@ -54,7 +54,7 @@ SRCS	=	$(ERROR_FILES)\
 			$(SRC_DIR)cmd_reviewer_utils.c\
 			$(SRC_DIR)token_management.c\
 			$(SRC_DIR)env_utils.c\
-			$(SRC_DIR)cmd_executioner.c\
+			$(SRC_DIR)executor.c\
 			$(SRC_DIR)redirections.c\
 			$(SRC_DIR)signal_handler.c\
 			$(SRC_DIR)history_trim.c\

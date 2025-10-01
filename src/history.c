@@ -22,7 +22,7 @@ int	initialize_history(void)
 	if (hs_fd == -1)
 	{
 		perror("Error opening history file");
-		return (-1);
+		return (-1); //el caller no verifica este -1 ???
 	}
 	while (1)
 	{

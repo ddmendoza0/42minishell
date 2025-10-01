@@ -57,8 +57,11 @@ static char	*crt_w_str(const char *str, size_t len, t_shell *s, t_token **lst)
 	if (!word)
 	{
 		handle_error(s, ERR_MALLOC, "word token");
-		free_token_lst(*lst);
-		*lst = NULL;
+		if (*lst)
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+		}
 	}
 	return (word);
 }
@@ -72,8 +75,11 @@ static t_token	*create_word_token(char *word, t_shell *shell, t_token **lst)
 	{
 		handle_error(shell, ERR_MALLOC, "word token");
 		free(word);
-		free_token_lst(*lst);
-		*lst = NULL;
+		if (*lst)
+		{
+			free_token_lst(*lst);
+			*lst = NULL;
+		}
 	}
 	return (token);
 }
@@ -86,6 +92,8 @@ int	extract_word(size_t *i, const char *input, t_token **lst, t_shell *shell)
 
 	start = *i;
 	if (!find_w_end(i, input, shell, lst))
+		return (0);
+	if (!lst || !(*lst))
 		return (0);
 	word = crt_w_str(input + start, *i - start, shell, lst);
 	if (!word)

@@ -27,7 +27,7 @@ static char	**read_history_lines(size_t *count)
 	line = get_next_line(fd);
 	while (line)
 	{
-		lines = realloc(lines, sizeof(char *) * (n + 1));
+		lines = realloc(lines, sizeof(char *) * (n + 1)); //aqui falta validación del malloc
 		lines[n] = line;
 		n++;
 		line = get_next_line(fd);
