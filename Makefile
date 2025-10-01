@@ -25,6 +25,14 @@ ERROR_FILES		= $(ERROR_DIR)error_manager.c\
 				  $(ERROR_DIR)error_utils.c\
 				  $(ERROR_DIR)error_builtin.c
 
+LEXER_DIR		= $(SRC_DIR)lexer/
+LEXER_FILES		= $(LEXER_DIR)lexer.c\
+				  $(LEXER_DIR)lexer_word.c\
+				  $(LEXER_DIR)lexer_operator.c\
+				  $(LEXER_DIR)lexer_segments.c\
+				  $(LEXER_DIR)lexer_aux.c\
+				  $(LEXER_DIR)lexer_utils.c
+
 BUILTIN_DIR		= $(SRC_DIR)builtins/
 BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_echo.c\
@@ -39,12 +47,6 @@ SRCS	=	$(ERROR_FILES)\
 			$(BUILTIN_FILES)\
 			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
-			$(SRC_DIR)lexer.c\
-			$(SRC_DIR)lexer_word.c\
-			$(SRC_DIR)lexer_operator.c\
-			$(SRC_DIR)lexer_segments.c\
-			$(SRC_DIR)lexer_aux.c\
-			$(SRC_DIR)lexer_utils.c\
 			$(SRC_DIR)history.c\
 			$(SRC_DIR)history_commands.c\
 			$(SRC_DIR)cmd_parse.c \
