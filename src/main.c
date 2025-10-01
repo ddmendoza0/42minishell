@@ -47,8 +47,6 @@ static void	input_loop(int history_fd, t_shell *shell)
 		}
 		if (!lexer(clean_input, &token_lst, shell))
 		{
-			printf("DEBUG: Input was: '%s'\n", clean_input);
-			printf("DEBUG: token_lst is %s\n", token_lst ? "NOT NULL" : "NULL");
 			printf("Error: Lexical analysis failed\n");
 			free(clean_input);
 			continue ;
