@@ -206,7 +206,7 @@ int				add_token_redir_in(t_command *cmd, t_token **token, t_shell *shell);
 int				add_token_redir_out(t_command *cmd, t_token **token, t_shell *shell);
 int				handle_lparen(t_command *cmd, t_token **current, t_shell *shell);
 t_token			*extract_subshell_tokens(t_token **current);
-int				validate_command_redirections(t_command *cmd);
+int				validate_command_redirections(t_command *cmd, t_shell *shell);
 int				handle_word_token(t_command *cmd, t_token **current);
 int				handle_logic_token(t_command *cmd, t_token *current, t_command **new_cmd);
 int				handle_token_error(t_token *current, t_shell *shell);

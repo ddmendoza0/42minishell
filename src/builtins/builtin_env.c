@@ -17,7 +17,7 @@ int	builtin_env(char **argv, t_shell *shell)
 	int	i;
 
 	if (!shell)
-		return (set_exit_status(shell, EXIT_FAILURE));
+		return (EXIT_FAILURE);
 	if (argv[1])
 	{
 		print_error("minishell: env", NULL, "too many arguments");

@@ -67,7 +67,7 @@ static void	input_loop(int history_fd, t_shell *shell)
 			free(clean_input);
 			continue ;
 		}
-		if (!validate_command_redirections(cmd_tree))
+		if (!validate_command_redirections(cmd_tree, shell))
 		{
 			printf("Error: Redirection validation failed\n");
 			free_cmd_list(cmd_tree);

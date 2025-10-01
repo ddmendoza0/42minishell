@@ -86,11 +86,6 @@ int	handle_error(t_shell *shell, t_error_type type, const char *context)
 		exit_code = handle_file_errors(type, context);
 	else if (type == ERR_CANNOT_EXECUTE || type == ERR_MEMORY || type == ERR_MALLOC)
 		exit_code = handle_exec_memory_errors(type, context);
-	else if (type == ERR_BUILTIN)
-	{
-		print_error("minishell", context, "error");
-		exit_code = EXIT_FAILURE;
-	}
 	return (set_exit_status(shell, exit_code));
 }
 

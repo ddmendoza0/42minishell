@@ -61,7 +61,7 @@ static int	validate_command(t_command *cmd, t_shell *shell)
 	if (!cmd)
 		return (0);
 	if (!cmd->args && !cmd->input_redir && !cmd->output_redir && !cmd->subshell)
-		return (handle_error(shell, ERR_SYNTAX, "empty command"));
+		return (1);
 	if (cmd->input_redir && cmd->input_redir->expanded_path)
 	{
 		if (ft_strlen(cmd->input_redir->expanded_path) == 0)

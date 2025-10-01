@@ -38,7 +38,7 @@ int	builtin_pwd(char **argv, t_shell *shell)
 	char	*cwd;
 
 	if (!shell)
-		return (pwd_error(shell));
+		return (EXIT_FAILURE);
 	if (argv[1])
 	{
 		print_error("minishell: pwd", NULL, "too many arguments");

@@ -41,9 +41,15 @@ static char	*get_current_directory(void)
 static int	validate_cd_args(char **argv, t_shell *shell)
 {
 	if (!argv[1])
-		return (handle_error(shell, ERR_BUILTIN, "cd: missing argument"));
+	{
+		print_error("minishell: cd", NULL, "missing argument");
+		return (set_exit_status(shell, EXIT_FAILURE));
+	}
 	if (argv[2])
-		return (handle_error(shell, ERR_BUILTIN, "cd: too many arguments"));
+	{
+		print_error("minishell: cd", NULL, "too many arguments");
+		return (set_exit_status(shell, EXIT_FAILURE));
+	}
 	return (0);
 }
 

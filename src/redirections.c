@@ -46,17 +46,14 @@ int	handle_heredoc(t_redir_file *redir)
 	return (1);
 }
 
-int	validate_input_redirection(t_redir_file *input_redir)
+int	validate_input_redirection(t_redir_file *input_redir, t_shell *shell)
 {
 	if (input_redir)
 	{
 		if (input_redir->is_heredoc)
 		{
 			if (!input_redir->expanded_path || !*input_redir->expanded_path)
-			{
-				printf("minishell: heredoc: missing delimiter\n");
-				return (0);
-			}
+				handle_syntax_error(shell, "newline");
 			if (!handle_heredoc(input_redir))
 				return (0);
 		}
@@ -83,7 +80,7 @@ int	validate_input_redirection(t_redir_file *input_redir)
 	return (1);
 }
 
-int	validate_output_redirection(t_redir_file *output_redir)
+int	validate_output_redirection(t_redir_file *output_redir, t_shell *shell)
 {
 	if (output_redir)
 	{
@@ -115,15 +112,15 @@ int	validate_output_redirection(t_redir_file *output_redir)
 	return (1);
 }
 
-int	validate_command_redirections(t_command *cmd)
+int	validate_command_redirections(t_command *cmd, t_shell *shell)
 {
-	if (!validate_input_redirection(cmd->input_redir))
+	if (!validate_input_redirection(cmd->input_redir, shell))
 		return (0);
-	if (!validate_output_redirection(cmd->output_redir))
+	if (!validate_output_redirection(cmd->output_redir, shell))
 		return (0);
-	if (cmd->subshell && !validate_command_redirections(cmd->subshell))
+	if (cmd->subshell && !validate_command_redirections(cmd->subshell, shell))
 		return (0);
-	if (cmd->next && !validate_command_redirections(cmd->next))
+	if (cmd->next && !validate_command_redirections(cmd->next, shell))
 		return (0);
 	return (1);
 }
