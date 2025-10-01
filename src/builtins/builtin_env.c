@@ -28,8 +28,7 @@ int	builtin_env(char **argv, t_shell *shell)
 	i = 0;
 	while (shell->env[i])
 	{
-		if (printf("%s\n", shell->env[i]) < 0)
-			return (handle_system_error(shell, "write"));
+		printf("%s\n", shell->env[i]);
 		i++;
 	}
 	return (set_exit_status(shell, EXIT_SUCCESS));

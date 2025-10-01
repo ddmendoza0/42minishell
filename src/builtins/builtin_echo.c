@@ -40,13 +40,9 @@ int	builtin_echo(char **argv, t_shell *shell)
 	}
 	while (argv[i])
 	{
-		if (ft_putstr_fd(argv[i], STDOUT_FILENO) < 0)
-			return (handle_system_error(shell, "write"));
+		ft_putstr_fd(argv[i], STDOUT_FILENO);
 		if (argv[i + 1])
-		{
-			if (ft_putstr_fd(" ", STDOUT_FILENO) < 0)
-				return (handle_system_error(shell, "write"));
-		}
+			ft_putstr_fd(" ", STDOUT_FILENO);
 		i++;
 	}
 	if (newline)
