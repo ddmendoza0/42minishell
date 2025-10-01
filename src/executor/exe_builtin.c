@@ -4,7 +4,7 @@
 /*
  * BUILTIN COMMAND DETECTION
  */
-static int	is_builtin(char *cmd)
+int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
@@ -28,7 +28,7 @@ static int	is_builtin(char *cmd)
 /*
  * BUILTIN COMMAND DISPATCHER
  */
-static int	execute_builtin(char **argv, t_shell *shell)
+int	execute_builtin(char **argv, t_shell *shell)
 {
 	char	*cmd;
 

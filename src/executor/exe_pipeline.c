@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include <sys/wait.h>
 
-static int	execute_pipeline(t_command *cmd_list, t_shell *shell)
+int	execute_pipeline(t_command *cmd_list, t_shell *shell)
 {
 	t_pipe_ctx		ctx;
 	t_command		*current;

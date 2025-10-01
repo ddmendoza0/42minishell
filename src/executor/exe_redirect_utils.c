@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include <sys/wait.h>
 
-static int	stp_redir(t_command *cmd, int *s_stdin, int *s_stdout, t_shell *sh)
+int	stp_redir(t_command *cmd, int *s_stdin, int *s_stdout, t_shell *sh)
 {
 	if (!save_standard_fds(s_stdin, s_stdout, sh))
 		return (0);

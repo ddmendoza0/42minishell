@@ -38,7 +38,7 @@ static void	setup_heredoc_if_first(t_command *current, int is_first)
 	current->input_redir->fd = -1;
 }
 
-static void	exe_in_child(t_command *current, t_child_ctx *ctx, t_shell *shell)
+void	exe_in_child(t_command *current, t_child_ctx *ctx, t_shell *shell)
 {
 	setup_signals_default();
 	setup_heredoc_if_first(current, ctx->is_first);

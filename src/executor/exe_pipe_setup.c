@@ -4,7 +4,7 @@
 /*
  * PIPELINE FUNCTIONS - COMPLETAMENTE CORREGIDO
  */
-static int	safe_dup2(int oldfd, int newfd, const char *msg)
+int	safe_dup2(int oldfd, int newfd, const char *msg)
 {
 	if (dup2(oldfd, newfd) == -1)
 	{
@@ -14,7 +14,7 @@ static int	safe_dup2(int oldfd, int newfd, const char *msg)
 	return (1);
 }
 
-static void	setup_pipe_input(int prev_pipe_read)
+void	setup_pipe_input(int prev_pipe_read)
 {
 	if (prev_pipe_read != -1)
 	{
@@ -24,7 +24,7 @@ static void	setup_pipe_input(int prev_pipe_read)
 	}
 }
 
-static void	setup_pipe_output(int *pipe_fd)
+void	setup_pipe_output(int *pipe_fd)
 {
 	close(pipe_fd[0]);
 	if (!safe_dup2(pipe_fd[1], STDOUT_FILENO, "dup2 stdout"))
@@ -35,7 +35,7 @@ static void	setup_pipe_output(int *pipe_fd)
 	close(pipe_fd[1]);
 }
 
-static void	setup_input_file(t_redir_file *input_redir)
+void	setup_input_file(t_redir_file *input_redir)
 {
 	int	fd;
 
@@ -55,7 +55,7 @@ static void	setup_input_file(t_redir_file *input_redir)
 	close(fd);
 }
 
-static int	get_output_flags(t_redir_file *output_redir)
+int	get_output_flags(t_redir_file *output_redir)
 {
 	int	flags;
 

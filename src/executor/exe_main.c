@@ -4,7 +4,7 @@
 /*
  * SINGLE COMMAND EXECUTION
  */
-static int	execute_single_command(t_command *cmd, t_shell *shell)
+int	execute_single_command(t_command *cmd, t_shell *shell)
 {
 	char	**argv;
 	int		saved_stdin;

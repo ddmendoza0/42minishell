@@ -30,7 +30,7 @@ static int	handle_child_status(int status)
 /*
  * EXTERNAL COMMAND EXECUTION
  */
-static int	execute_external(char **argv, t_shell *shell)
+int	execute_external(char **argv, t_shell *shell)
 {
 	char	*executable_path;
 	pid_t	pid;

@@ -48,7 +48,7 @@ static char	*search_in_path_dirs(char **path_dirs, char *cmd)
 	return (NULL);
 }
 
-static char	*find_executable(char *cmd, t_shell *shell)
+char	*find_executable(char *cmd, t_shell *shell)
 {
 	char	*path_env;
 	char	**path_dirs;

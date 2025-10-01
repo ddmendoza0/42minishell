@@ -59,7 +59,7 @@ static int	setup_output_redirection(t_redir_file *output_redir, t_shell *shell)
 	return (1);
 }
 
-static void	restore_redirections(int saved_stdin, int saved_stdout)
+void	restore_redirections(int saved_stdin, int saved_stdout)
 {
 	if (saved_stdin != -1)
 	{
@@ -75,7 +75,7 @@ static void	restore_redirections(int saved_stdin, int saved_stdout)
 	}
 }
 
-static int	save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell)
+int	save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell)
 {
 	*s_stdin = dup(STDIN_FILENO);
 	*s_stdout = dup(STDOUT_FILENO);
@@ -91,7 +91,7 @@ static int	save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell)
 	return (1);
 }
 
-static int	app_redir(t_command *cmd, int s_stdin, int s_stdout, t_shell *shell)
+int	app_redir(t_command *cmd, int s_stdin, int s_stdout, t_shell *shell)
 {
 	if (cmd->input_redir)
 	{

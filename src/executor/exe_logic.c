@@ -22,7 +22,7 @@ static int	should_stop_execution(t_command *current, int exit_status)
 	return (0);
 }
 
-static int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
+int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
 {
 	t_command	*current;
 	t_command	*pipeline_end;

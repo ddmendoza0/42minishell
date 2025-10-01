@@ -23,7 +23,7 @@ static void	setup_output_file(t_redir_file *output_redir)
 	close(fd);
 }
 
-static void	setup_pipeline_redir(t_command *cmd, int p_pipe_read, int *pipe_fd)
+void	setup_pipeline_redir(t_command *cmd, int p_pipe_read, int *pipe_fd)
 {
 	setup_pipe_input(p_pipe_read);
 	if (cmd->next && cmd->logic == CMD_PIPE)

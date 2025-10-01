@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include <sys/wait.h>
 
-static int	init_pipe_ctx(t_pipe_ctx *ctx, t_command *cmd_lst, t_shell *sh)
+int	init_pipe_ctx(t_pipe_ctx *ctx, t_command *cmd_lst, t_shell *sh)
 {
 	ctx->cmd_count = count_pipeline_commands(cmd_lst);
 	ctx->pids = malloc(sizeof(pid_t) * ctx->cmd_count);
@@ -12,7 +12,7 @@ static int	init_pipe_ctx(t_pipe_ctx *ctx, t_command *cmd_lst, t_shell *sh)
 	return (0);
 }
 
-static int	crt_pipe_if(t_command *crr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh)
+int	crt_pipe_if(t_command *crr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh)
 {
 	if (crr->next && crr->logic == CMD_PIPE)
 	{
@@ -26,7 +26,7 @@ static int	crt_pipe_if(t_command *crr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh)
 	return (1);
 }
 
-static int	fork_exe(t_command *curr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh)
+int	fork_exe(t_command *curr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh)
 {
 	int			has_pipe;
 	t_child_ctx	child_ctx;

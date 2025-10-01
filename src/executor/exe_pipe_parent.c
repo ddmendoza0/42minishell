@@ -4,7 +4,7 @@
 /*
  * PIPELINE PARENT PROCESS
  */
-static void	handle_parent_fds(int *prev_pipe_read, t_command *current,
+void	handle_parent_fds(int *prev_pipe_read, t_command *current,
 		int *pipe_fd)
 {
 	if (*prev_pipe_read != -1)
@@ -36,7 +36,7 @@ static int	get_process_exit_status(int status)
 	return (0);
 }
 
-static int	wait_pipeline(pid_t *pids, int cmd_count)
+int	wait_pipeline(pid_t *pids, int cmd_count)
 {
 	int	i;
 	int	status;
@@ -65,7 +65,7 @@ static void	close_pipe_fds(int prev_read, int *pipe_fd)
 		close(prev_read);
 }
 
-static void	cleanup_pipeline_error(t_pipe_ctx *ctx, int *pipe_fd)
+void	cleanup_pipeline_error(t_pipe_ctx *ctx, int *pipe_fd)
 {
 	int	i;
 
