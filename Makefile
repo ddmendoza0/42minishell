@@ -56,7 +56,7 @@ PARSER_FILES	= $(PARSER_DIR)cmd_parse.c \
 				  $(PARSER_DIR)cmd_reviewer_utils.c
 
 REVIEWER_DIR	= $(SRC_DIR)reviewer/
-REVIEWER_FILES	= $(REVIEWER_DIR)arg_builder.c\
+REVIEWER_FILES	= $(REVIEWER_DIR)argv_builder.c\
 				  $(REVIEWER_DIR)arg_token.c\
 				  $(REVIEWER_DIR)expand_segments.c\
 				  $(REVIEWER_DIR)expand_string.c\
