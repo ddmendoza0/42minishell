@@ -61,9 +61,9 @@ static int	process_token(t_command **cmd, t_token **current, t_shell *shell)
 	if ((*current)->type == WORD)
 		return (handle_word_token(*cmd, current));
 	else if ((*current)->type == REDIRECT_IN || (*current)->type == HEREDOC)
-		return (add_token_redir_in(*cmd, current));
+		return (add_token_redir_in(*cmd, current, shell));
 	else if ((*current)->type == REDIRECT_OUT || (*current)->type == APPEND_OUT)
-		return (add_token_redir_out(*cmd, current));
+		return (add_token_redir_out(*cmd, current, shell));
 	else if ((*current)->type == PIPE || (*current)->type == AND
 		|| (*current)->type == OR)
 	{

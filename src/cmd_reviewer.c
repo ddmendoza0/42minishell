@@ -56,30 +56,21 @@ static int	expand_command_redirections(t_command *cmd, t_shell *shell)
 	return (1);
 }
 
-static int	validate_command(t_command *cmd)
+static int	validate_command(t_command *cmd, t_shell *shell)
 {
 	if (!cmd)
 		return (0);
 	if (!cmd->args && !cmd->input_redir && !cmd->output_redir && !cmd->subshell)
-	{
-		printf("Error: empty command\n");
-		return (0);
-	}
+		return (handle_error(shell, ERR_SYNTAX, "empty command"));
 	if (cmd->input_redir && cmd->input_redir->expanded_path)
 	{
 		if (ft_strlen(cmd->input_redir->expanded_path) == 0)
-		{
-			printf("Error: empty input redirection filename\n");
-			return (0);
-		}
+			return (handle_error(shell, ERR_REDIRECT, "ambiguous redirect"));
 	}
 	if (cmd->output_redir && cmd->output_redir->expanded_path)
 	{
 		if (ft_strlen(cmd->output_redir->expanded_path) == 0)
-		{
-			printf("Error: empty output redirection filename\n");
-			return (0);
-		}
+			return (handle_error(shell, ERR_REDIRECT, "ambiguous redirect"));
 	}
 	return (1);
 }
@@ -97,7 +88,7 @@ static int	process_single_command(t_command *cmd, t_shell *shell)
 		return (0);
 	if (!expand_command_redirections(cmd, shell))
 		return (0);
-	if (!validate_command(cmd))
+	if (!validate_command(cmd, shell))
 		return (0);
 	return (1);
 }

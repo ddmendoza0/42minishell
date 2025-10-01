@@ -127,7 +127,7 @@ static int	get_heredoc_mode(t_token *redir_token)
 	return (0);
 }
 
-int	add_token_redir_in(t_command *cmd, t_token **token)
+int	add_token_redir_in(t_command *cmd, t_token **token, t_shell *shell)
 {
 	t_token	*redir_token;
 	t_token	*file_token;
@@ -138,10 +138,7 @@ int	add_token_redir_in(t_command *cmd, t_token **token)
 	redir_token = *token;
 	file_token = redir_token->next;
 	if (!file_token || file_token->type != WORD)
-	{
-		printf("Error: Expected a file name after redirection token.\n");
-		return (0);
-	}
+		return (handle_syntax_error(shell, "newline"));
 	is_heredoc = get_heredoc_mode(redir_token);
 	if (cmd->input_redir)
 		free_redir_file(cmd->input_redir);
@@ -159,7 +156,7 @@ static int	get_append_mode(t_token *redir_token)
 	return (0);
 }
 
-int	add_token_redir_out(t_command *cmd, t_token **token)
+int	add_token_redir_out(t_command *cmd, t_token **token, t_shell *shell)
 {
 	t_token	*redir_token;
 	t_token	*file_token;
@@ -170,10 +167,7 @@ int	add_token_redir_out(t_command *cmd, t_token **token)
 	redir_token = *token;
 	file_token = redir_token->next;
 	if (!file_token || file_token->type != WORD)
-	{
-		printf("Error: Expected a file name after redirection token.\n");
-		return (0);
-	}
+		return (handle_syntax_error(shell, "newline"));
 	append_mode = get_append_mode(redir_token);
 	if (cmd->output_redir)
 		free_redir_file(cmd->output_redir);
