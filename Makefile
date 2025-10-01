@@ -20,12 +20,23 @@ LIBS = $(LIBFT)/libft.a -L/mingw64/lib -lreadline
 
 SRC_DIR =	src/
 
-ERROR_DIR	= $(SRC_DIR)error/
-ERROR_FILES	= $(ERROR_DIR)error_manager.c\
-			  $(ERROR_DIR)error_utils.c\
-			  $(ERROR_DIR)error_builtin.c
+ERROR_DIR		= $(SRC_DIR)error/
+ERROR_FILES		= $(ERROR_DIR)error_manager.c\
+				  $(ERROR_DIR)error_utils.c\
+				  $(ERROR_DIR)error_builtin.c
+
+BUILTIN_DIR		= $(SRC_DIR)builtins/
+BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
+				  $(BUILTIN_DIR)builtin_echo.c\
+				  $(BUILTIN_DIR)builtin_env.c\
+				  $(BUILTIN_DIR)builtin_exit.c\
+				  $(BUILTIN_DIR)builtin_export.c\
+				  $(BUILTIN_DIR)builtin_pwd.c\
+				  $(BUILTIN_DIR)builtin_unset.c\
+				  $(BUILTIN_DIR)builtin_utils.c
 
 SRCS	=	$(ERROR_FILES)\
+			$(BUILTIN_FILES)\
 			$(SRC_DIR)main.c\
 			$(SRC_DIR)shell_state.c\
 			$(SRC_DIR)lexer.c\
@@ -43,14 +54,6 @@ SRCS	=	$(ERROR_FILES)\
 			$(SRC_DIR)cmd_reviewer_utils.c\
 			$(SRC_DIR)token_management.c\
 			$(SRC_DIR)env_utils.c\
-			$(SRC_DIR)builtin_cd.c\
-			$(SRC_DIR)builtin_pwd.c\
-			$(SRC_DIR)builtin_echo.c\
-			$(SRC_DIR)builtin_export.c\
-			$(SRC_DIR)builtin_unset.c\
-			$(SRC_DIR)builtin_env.c\
-			$(SRC_DIR)builtin_exit.c\
-			$(SRC_DIR)builtin_utils.c\
 			$(SRC_DIR)cmd_executioner.c\
 			$(SRC_DIR)redirections.c\
 			$(SRC_DIR)signal_handler.c\
