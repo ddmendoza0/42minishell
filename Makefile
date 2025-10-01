@@ -34,7 +34,20 @@ LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_utils.c
 
 EXECUTOR_DIR	= $(SRC_DIR)executor/
-EXECUTOR_FILES	= $(EXECUTOR_DIR)executor.c
+EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
+				  $(EXECUTOR_DIR)exe_external.c\
+				  $(EXECUTOR_DIR)exe_logic.c\
+				  $(EXECUTOR_DIR)exe_main.c\
+				  $(EXECUTOR_DIR)exe_path.c\
+				  $(EXECUTOR_DIR)exe_pipeline.c\
+				  $(EXECUTOR_DIR)exe_pipe_child.c\
+				  $(EXECUTOR_DIR)exe_pipe_main.c\
+				  $(EXECUTOR_DIR)exe_pipe_parent.c\
+				  $(EXECUTOR_DIR)exe_setup.c\
+				  $(EXECUTOR_DIR)exe_setup2.c\
+				  $(EXECUTOR_DIR)exe_redirect.c\
+				  $(EXECUTOR_DIR)exe_redirect_utils.c\
+				  $(EXECUTOR_DIR)exe_utils.c\
 
 BUILTIN_DIR		= $(SRC_DIR)builtins/
 BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\

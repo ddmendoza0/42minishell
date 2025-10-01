@@ -248,6 +248,35 @@ int				is_append_mode(t_command *cmd);
 int				is_heredoc_mode(t_command *cmd);
 
  // Executor
+void			free_argv(char **argv);
+int				has_pipeline(t_command *cmd_list);
+int				has_logical_ops(t_command *cmd_list);
+int				count_pipeline_commands(t_command *cmd_list);
+int				prepare_argv(t_command *cmd, char ***argv);
+int				is_builtin(char *cmd);
+int				execute_builtin(char **argv, t_shell *shell);
+char			*find_executable(char *cmd, t_shell *shell);
+int				execute_external(char **argv, t_shell *shell);
+void			restore_redirections(int saved_stdin, int saved_stdout);
+int				stp_redir(t_command *cmd, int *s_stdin, int *s_stdout, t_shell *sh);
+int				save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell);
+int				app_redir(t_command *cmd, int s_stdin, int s_stdout, t_shell *shell);
+int				safe_dup2(int oldfd, int newfd, const char *msg);
+void			setup_pipe_input(int prev_pipe_read);
+void			setup_pipe_output(int *pipe_fd);
+void			setup_input_file(t_redir_file *input_redir);
+int				get_output_flags(t_redir_file *output_redir);
+void			setup_pipeline_redir(t_command *cmd, int p_pipe_read, int *pipe_fd);
+void			exe_in_child(t_command *current, t_child_ctx *ctx, t_shell *shell);
+void			handle_parent_fds(int *prev_pipe_read, t_command *current, int *pipe_fd);
+int				wait_pipeline(pid_t *pids, int cmd_count);
+void			cleanup_pipeline_error(t_pipe_ctx *ctx, int *pipe_fd);
+int				init_pipe_ctx(t_pipe_ctx *ctx, t_command *cmd_lst, t_shell *sh);
+int				crt_pipe_if(t_command *crr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh);
+int				fork_exe(t_command *curr, int *p_fd, t_pipe_ctx *ctx, t_shell *sh);
+int				execute_pipeline(t_command *cmd_list, t_shell *shell);
+int				execute_logical_sequence(t_command *cmd_list, t_shell *shell);
+int				execute_single_command(t_command *cmd, t_shell *shell);
 int				execute_command_tree(t_command *cmd_tree, t_shell *shell);
 
 //Builtins
