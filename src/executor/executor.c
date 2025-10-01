@@ -121,10 +121,7 @@ static char	*search_in_path_dirs(char **path_dirs, char *cmd)
 	{
 		full_path = create_full_path(path_dirs[i], cmd);
 		if (full_path && access(full_path, F_OK | X_OK) == 0)
-		{
-			free_argv(path_dirs);
 			return (full_path);
-		}
 		if (full_path)
 			free(full_path);
 		i++;
