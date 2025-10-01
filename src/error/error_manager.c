@@ -13,8 +13,7 @@
 #include "minishell.h"
 
 /* Handle syntax and command errors */
-static int	handle_syntax_command_errors(t_shell *shell,
-	t_error_type type, const char *context)
+static int	handle_syntax_command_errors(t_error_type type, const char *context)
 {
 	int	exit_code;
 
