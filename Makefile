@@ -20,6 +20,12 @@ LIBS = $(LIBFT)/libft.a -L/mingw64/lib -lreadline
 
 SRC_DIR =	src/
 
+CORE_DIR		= $(SRC_DIR)core/
+CORE_FILES		= $(CORE_DIR)shell_state.c
+
+ENVIROMENT_DIR	= $(SRC_DIR)enviroment/
+ENVIROMENT_FILES= $(ENVIROMENT_DIR)env_utils.c
+
 ERROR_DIR		= $(SRC_DIR)error/
 ERROR_FILES		= $(ERROR_DIR)error_manager.c\
 				  $(ERROR_DIR)error_utils.c\
@@ -29,6 +35,11 @@ SIGNAL_DIR		= $(SRC_DIR)signals/
 SIGNAL_FILES	= $(SIGNAL_DIR)signal_handler.c\
 				  $(SIGNAL_DIR)signal_utils.c
 
+HISTORY_DIR		= $(SRC_DIR)history/
+HISTORY_FILES	= $(HISTORY_DIR)history.c\
+				  $(HISTORY_DIR)history_commands.c\
+				  $(HISTORY_DIR)history_trim.c
+
 LEXER_DIR		= $(SRC_DIR)lexer/
 LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_word.c\
@@ -37,12 +48,23 @@ LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_aux.c\
 				  $(LEXER_DIR)lexer_utils.c
 
-COMMAND_DIR		= $(SRC_DIR)command/
-COMMAND_FILES	= $(COMMAND_DIR)cmd_parse.c \
-				  $(COMMAND_DIR)cmd_parse_token.c \
-				  $(COMMAND_DIR)cmd_parse_subshell.c \
-				  $(COMMAND_DIR)cmd_reviewer.c\
-				  $(COMMAND_DIR)cmd_reviewer_utils.c
+PARSER_DIR		= $(SRC_DIR)command/
+PARSER_FILES	= $(PARSER_DIR)cmd_parse.c \
+				  $(PARSER_DIR)cmd_parse_token.c \
+				  $(PARSER_DIR)cmd_parse_subshell.c \
+				  $(PARSER_DIR)cmd_reviewer.c\
+				  $(PARSER_DIR)cmd_reviewer_utils.c
+
+REVIEWER_DIR	= $(SRC_DIR)reviewer/
+REVIEWER_FILES	= $(REVIEWER_DIR)arg_builder.c\
+				  $(REVIEWER_DIR)arg_token.c\
+				  $(REVIEWER_DIR)expand_segments.c\
+				  $(REVIEWER_DIR)expand_string.c\
+				  $(REVIEWER_DIR)expand_var_utils.c\
+				  $(REVIEWER_DIR)file_utils.c\
+				  $(REVIEWER_DIR)mode_checkers.c\
+				  $(REVIEWER_DIR)redir_file.c\
+				  $(REVIEWER_DIR)token_redir.c
 
 EXECUTOR_DIR	= $(SRC_DIR)executor/
 EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
@@ -58,7 +80,7 @@ EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
 				  $(EXECUTOR_DIR)exe_pipe_setup2.c\
 				  $(EXECUTOR_DIR)exe_redirect.c\
 				  $(EXECUTOR_DIR)exe_redirect_utils.c\
-				  $(EXECUTOR_DIR)exe_utils.c\
+				  $(EXECUTOR_DIR)exe_utils.c
 
 BUILTIN_DIR		= $(SRC_DIR)builtins/
 BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
@@ -70,20 +92,18 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_unset.c\
 				  $(BUILTIN_DIR)builtin_utils.c
 
-SRCS	=	$(ERROR_FILES)\
+SRCS	=	$(CORE_FILES)\
+			$(ENVIROMENT_FILES)\
+			$(ERROR_FILES)\
 			$(SIGNAL_FILES)\
+			$(HISTORY_FILES)\
 			$(LEXER_FILES)\
-			$(COMMAND_FILES)\
+			$(PARSER_FILES)\
+			$(REVIEWER_FILES)\
 			$(EXECUTOR_FILES)\
 			$(BUILTIN_FILES)\
 			$(SRC_DIR)main.c\
-			$(SRC_DIR)shell_state.c\
-			$(SRC_DIR)history.c\
-			$(SRC_DIR)history_commands.c\
-			$(SRC_DIR)token_management.c\
-			$(SRC_DIR)env_utils.c\
-			$(SRC_DIR)redirections.c\
-			$(SRC_DIR)history_trim.c\
+			$(SRC_DIR)redirections.c
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
