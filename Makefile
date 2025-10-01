@@ -25,6 +25,10 @@ ERROR_FILES		= $(ERROR_DIR)error_manager.c\
 				  $(ERROR_DIR)error_utils.c\
 				  $(ERROR_DIR)error_builtin.c
 
+SIGNAL_DIR		= $(SRC_DIR)signal/
+SIGNAL_FILES	= $(SIGNAL_DIR)signal_handler.c\
+				  $(SIGNAL_DIR)signal_utils.c
+
 LEXER_DIR		= $(SRC_DIR)lexer/
 LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_word.c\
@@ -60,6 +64,7 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_utils.c
 
 SRCS	=	$(ERROR_FILES)\
+			$(SIGNAL_FILES)\
 			$(LEXER_FILES)\
 			$(EXECUTOR_FILES)\
 			$(BUILTIN_FILES)\
@@ -75,7 +80,6 @@ SRCS	=	$(ERROR_FILES)\
 			$(SRC_DIR)token_management.c\
 			$(SRC_DIR)env_utils.c\
 			$(SRC_DIR)redirections.c\
-			$(SRC_DIR)signal_handler.c\
 			$(SRC_DIR)history_trim.c\
 
 OBJ_DIR =	obj/

@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-volatile sig_atomic_t	g_signal_received = 0;
-
 static void	signal_handler_interactive(int sig)
 {
 	g_signal_received = sig;
@@ -74,19 +72,4 @@ void	setup_signals_default(void)
 	sa_default.sa_flags = 0;
 	sigaction(SIGINT, &sa_default, NULL);
 	sigaction(SIGQUIT, &sa_default, NULL);
-}
-
-/* 128 + SIGINT(2) */
-void	handle_interactive_signals(t_shell *shell)
-{
-	if (g_signal_received == SIGINT)
-	{
-		shell->last_exit_status = 130;
-		g_signal_received = 0;
-	}
-}
-
-int	get_signal_exit_status(int sig)
-{
-	return (128 + sig);
 }
