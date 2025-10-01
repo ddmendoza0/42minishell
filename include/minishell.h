@@ -28,13 +28,6 @@
 # include <readline/history.h>
 # include <sys/types.h>
 
-
-# include <unistd.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include "libft.h"
-# include <fcntl.h>
 //for the readline function and functioning history
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -104,6 +97,16 @@ typedef struct s_segment_data
 	size_t	word_len;
 	size_t	segment_start;
 }	t_segment_data;
+
+typedef struct s_expand_data
+{
+	char	*str;
+	char	*result;
+	size_t	i;
+	size_t	j;
+	size_t	result_size;
+	t_shell	*shell;
+}	t_expand_data;
 /*END TOKEN*/
 
 /*SEHLL STRUCTURE*/
@@ -205,22 +208,30 @@ int				process_word_segments(t_token *token, char *word, t_shell* shell);
 int				process_segments(t_token *token, char *word, t_shell *shell, t_token **lst);
 int				handle_q_sctn(size_t *i, const char *input, t_shell *shell, t_token **lst);
 
-// Token and argument management
+
+//Token handler
+char			**get_argv_from_args(t_command *cmd);
 t_arg_token		*create_arg_token(t_token *original);
 void			add_arg_token(t_arg_token **list, t_arg_token *new_arg);
 void			free_arg_tokens(t_arg_token *args);
-
-// Redirection management
-t_redir_file	*create_redir_file(t_token *original, int append_mode, int is_heredoc);
+int				add_token_to_args(t_command *cmd, t_token *token);
+int				add_token_redir_in(t_command *cmd, t_token **token, t_shell *shell);
+int				add_token_redir_out(t_command *cmd, t_token **token, t_shell *shell);
+t_redir_file	*create_redir_file(t_token *org, int append_mode, int is_hdoc);
 void			free_redir_file(t_redir_file *redir);
+char			*expand_variables_in_string(char *str, t_shell *shell);
+char			*get_var_name(char *str, size_t *i);
+char			*expand_from_segments(t_token_segment *segments, t_shell *shell);
+char			*get_input_file(t_command *cmd);
+char			*get_output_file(t_command *cmd);
+int				is_append_mode(t_command *cmd);
+int				is_heredoc_mode(t_command *cmd);
+
 
 // Parser functions
 t_command		*cmd_builder(t_token **tkn_list, t_shell *shell);
 int				create_cmd(t_command **cmd);
 void			free_cmd_list(t_command *cmd);
-int				add_token_to_args(t_command *cmd, t_token *token);
-int				add_token_redir_in(t_command *cmd, t_token **token, t_shell *shell);
-int				add_token_redir_out(t_command *cmd, t_token **token, t_shell *shell);
 int				handle_lparen(t_command *cmd, t_token **current, t_shell *shell);
 t_token			*extract_subshell_tokens(t_token **current);
 int				validate_command_redirections(t_command *cmd);
@@ -230,8 +241,6 @@ int				handle_token_error(t_token *current, t_shell *shell);
 
 // Expansion and review functions
 int				lexical_review(t_command *cmd_list, t_shell *shell);
-char			*expand_from_segments(t_token_segment *segments, t_shell *shell);
-char			*expand_variables_in_string(char *str, t_shell *shell);
 char			*expand_token(t_token *token, t_shell *shell);
 char			*process_segment(t_token_segment *segment, t_shell *shell);
 
@@ -239,13 +248,6 @@ char			*process_segment(t_token_segment *segment, t_shell *shell);
 char			*get_env_value(t_shell *shell, char *var_name);
 char			*get_special_var(t_shell *shell, char *var_name);
 char			*expand_variable(t_shell *shell, char *var_name);
-
-// Execution helper functions (implemented in token_management.c)
-char			**get_argv_from_args(t_command *cmd);
-char			*get_input_file(t_command *cmd);
-char			*get_output_file(t_command *cmd);
-int				is_append_mode(t_command *cmd);
-int				is_heredoc_mode(t_command *cmd);
 
  // Executor
 void			free_argv(char **argv);
