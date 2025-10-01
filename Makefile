@@ -43,8 +43,8 @@ EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
 				  $(EXECUTOR_DIR)exe_pipe_child.c\
 				  $(EXECUTOR_DIR)exe_pipe_main.c\
 				  $(EXECUTOR_DIR)exe_pipe_parent.c\
-				  $(EXECUTOR_DIR)exe_setup.c\
-				  $(EXECUTOR_DIR)exe_setup2.c\
+				  $(EXECUTOR_DIR)exe_pipe_setup.c\
+				  $(EXECUTOR_DIR)exe_pipe_setup2.c\
 				  $(EXECUTOR_DIR)exe_redirect.c\
 				  $(EXECUTOR_DIR)exe_redirect_utils.c\
 				  $(EXECUTOR_DIR)exe_utils.c\
