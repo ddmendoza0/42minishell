@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef ERROR_MANAGEMENT_H
-# define ERROR_MANAGEMENT_H
+#ifndef ERROR_MANAGER_H
+# define ERROR_MANAGER_H
 
 # include <errno.h>
 # include <string.h>
@@ -52,24 +51,24 @@ typedef enum e_error_type
 	ERR_EXIT_NUMERIC,
 	ERR_UNCLOSED_QUOTE,
 	ERR_MALLOC
-} t_error_type;
+}	t_error_type;
 
 /* Forward declaration for t_shell */
-typedef struct s_shell t_shell;
+typedef struct s_shell	t_shell;
 
 /* Error handling functions */
-int		handle_error(t_shell* shell, t_error_type type, const char* context);
-int		handle_system_error(t_shell* shell, const char* context);
-int		handle_syntax_error(t_shell* shell, const char* token);
-int		handle_command_error(t_shell* shell, const char* cmd, int error_code);
-void	print_error(const char* prefix, const char* context, const char* msg);
-int		set_exit_status(t_shell* shell, int status);
+int		handle_error(t_shell *shell, t_error_type type, const char *context);
+int		handle_system_error(t_shell *shell, const char *context);
+int		handle_syntax_error(t_shell *shell, const char *token);
+int		handle_command_error(t_shell *shell, const char *cmd, int error_code);
+void	print_error(const char *prefix, const char *context, const char *msg);
+int		set_exit_status(t_shell *shell, int status);
 
 /* Builtin error handlers */
-int		cd_error(t_shell* shell, const char* path, int error_type);
-int		export_error(t_shell* shell, const char* var);
-int		unset_error(t_shell* shell, const char* var);
-int		exit_error(t_shell* shell, const char* arg);
-int		pwd_error(t_shell* shell);
+int		cd_error(t_shell *shell, const char *path, int error_type);
+int		export_error(t_shell *shell, const char *var);
+int		unset_error(t_shell *shell, const char *var);
+int		exit_error(t_shell *shell, const char *arg);
+int		pwd_error(t_shell *shell);
 
 #endif
