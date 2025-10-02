@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:20 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/30 15:41:18 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/02 12:15:45 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int	validate_input_redirection(t_redir_file *input_redir)
 		{
 			if (!input_redir->expanded_path || !*input_redir->expanded_path)
 			{
-				print_error("minishell", "syntax error", "unexpected token `newline'");
+				print_error("minishell", "syntax error",
+					"unexpected token `newline'");
 				return (0);
 			}
 			if (!handle_heredoc(input_redir))
@@ -75,7 +76,8 @@ int	validate_input_redirection(t_redir_file *input_redir)
 			input_redir->fd = open(input_redir->expanded_path, O_RDONLY);
 			if (input_redir->fd == -1)
 			{
-				print_error("minishell", input_redir->expanded_path, strerror(errno));
+				print_error("minishell", input_redir
+					->expanded_path, strerror(errno));
 				return (0);
 			}
 		}
@@ -100,12 +102,15 @@ int	validate_output_redirection(t_redir_file *output_redir)
 		else
 		{
 			if (output_redir->append_mode)
-				output_redir->fd = open(output_redir->expanded_path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				output_redir->fd = open(output_redir
+						->expanded_path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			else
-				output_redir->fd = open(output_redir->expanded_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				output_redir->fd = open(output_redir
+						->expanded_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (output_redir->fd == -1)
 			{
-				print_error("minishell", output_redir->expanded_path, strerror(errno));
+				print_error("minishell", output_redir
+					->expanded_path, strerror(errno));
 				return (0);
 			}
 		}

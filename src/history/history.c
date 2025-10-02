@@ -6,12 +6,13 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 12:53:51 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/30 14:54:40 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/02 12:25:44 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+//check retorno de -1 si falla
 int	initialize_history(void)
 {
 	int		hs_fd;
@@ -22,7 +23,7 @@ int	initialize_history(void)
 	if (hs_fd == -1)
 	{
 		perror("Error opening history file");
-		return (-1); //el caller no verifica este -1 ???
+		return (-1);
 	}
 	while (1)
 	{

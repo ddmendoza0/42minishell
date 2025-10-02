@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:28:45 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/30 13:15:58 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/02 12:19:16 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ char	*get_env_value(t_shell *shell, char *var_name)
 	i = 0;
 	while (shell->env[i])
 	{
-		if (ft_strncmp(shell->env[i], var_name, var_len) == 0 && shell->env[i][var_len] == '=')
+		if (ft_strncmp(shell->env[i], var_name, var_len)
+			== 0 && shell->env[i][var_len] == '=')
 			return (&shell->env[i][var_len + 1]);
 		i++;
 	}
