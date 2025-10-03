@@ -92,6 +92,13 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_unset.c\
 				  $(BUILTIN_DIR)builtin_utils.c
 
+REDIR_DIR		= $(SRC_DIR)redirections/
+REDIR_FILES	= $(REDIR_DIR)redirections.c\
+
+MAIN_DIR		= $(SRC_DIR)main/
+MAIN_FILES	= $(MAIN_DIR)main.c\
+			$(MAIN_DIR)main_utils.c\
+
 SRCS	=	$(CORE_FILES)\
 			$(ENVIROMENT_FILES)\
 			$(ERROR_FILES)\
@@ -102,8 +109,8 @@ SRCS	=	$(CORE_FILES)\
 			$(REVIEWER_FILES)\
 			$(EXECUTOR_FILES)\
 			$(BUILTIN_FILES)\
-			$(SRC_DIR)main.c\
-			$(SRC_DIR)redirections.c
+			$(MAIN_FILES)\
+			$(REDIR_FILES)\
 
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)

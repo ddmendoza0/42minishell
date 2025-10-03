@@ -181,6 +181,10 @@ typedef struct s_child_ctx
 /****************************************************************/
 /*			DECLARATIONS		 		*/
 /****************************************************************/
+//main utils
+char	*trim_input(const char *input);
+void	cleanup_resources(t_command *cmd_tree, t_token *token_lst, char *clean_input);
+void	execute_and_handle_signals(t_command *cmd_tree, t_shell *shell, char *input);
 //history
 void	write_to_history_file(char *input, int history_fd);
 int		initialize_history(void);
@@ -233,7 +237,7 @@ int		create_cmd(t_command **cmd);
 void	free_cmd_list(t_command *cmd);
 int		handle_lparen(t_command *cmd, t_token **current, t_shell *shell);
 t_token	*extract_subshell_tokens(t_token **current);
-int		validate_command_redirections(t_command *cmd);
+int		validate_command_redirections(t_command *cmd, t_shell *shell);
 int		handle_word_token(t_command *cmd, t_token **current);
 int		handle_logic_token(t_command *cmd, t_token *current, t_command **new_cmd);
 int		handle_token_error(t_token *current, t_shell *shell);
