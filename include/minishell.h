@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/09/18 12:20:50 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/03 18:42:02 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,13 +145,20 @@ typedef struct s_redir_file
 	int		append_mode;
 	int		is_heredoc;
 	int		fd;
+	int				order;
 }	t_redir_file;
+
+typedef struct s_redir_list
+{
+	t_redir_file			*redir;
+	struct s_redir_list		*next;
+}	t_redir_list;
 
 typedef struct s_command
 {
 	t_arg_token			*args;
-	t_redir_file		*input_redir;
-	t_redir_file		*output_redir;
+	t_redir_list		*input_redirs;
+	t_redir_list		*output_redirs;
 	t_cmd_logic			logic;
 	struct s_command	*subshell;
 	struct s_command	*next;
@@ -308,6 +315,18 @@ void	setup_signals_default(void);
 void	handle_interactive_signals(t_shell *shell);
 int		get_signal_exit_status(int sig);
 
+
+// Redir list functions
+t_redir_list	*create_redir_list_node(t_redir_file *redir);
+void			add_redir_to_list(t_redir_list **list, t_redir_file *redir);
+void			free_redir_list(t_redir_list *list);
+t_redir_file	*get_last_redir(t_redir_list *list);
+
+// Updated validation signatures
+int				validate_input_redirection(t_redir_list *input_redirs,
+					t_shell *shell);
+int				validate_output_redirection(t_redir_list *output_redirs,
+					t_shell *shell);
 // Utility function
 void	free_argv(char **argv);
 /****************************************************************/

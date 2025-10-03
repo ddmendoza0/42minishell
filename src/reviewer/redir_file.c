@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:53:20 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/10/03 17:00:11 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/10/03 19:49:56 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ t_redir_file	*create_redir_file(t_token *org, int append_mode, int is_hdoc)
 	redir->append_mode = append_mode;
 	redir->is_heredoc = is_hdoc;
 	redir->fd = -1;
+	redir->order = 0;
 	return (redir);
 }
 

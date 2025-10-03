@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 13:26:40 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/10/03 16:57:09 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/03 18:19:18 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,15 @@ static int	validate_and_review_command(t_command *cmd_tree,
 		free(clean_input);
 		return (0);
 	}
+	if (!has_pipeline(cmd_tree))
+	{
 	if (!validate_command_redirections(cmd_tree, shell))
 	{
-		printf("Error: Redirection validation failed\n");
 		free_cmd_list(cmd_tree);
 		free_token_lst(token_lst);
 		free(clean_input);
 		return (0);
+	}
 	}
 	return (1);
 }

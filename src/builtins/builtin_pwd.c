@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:26:51 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/09 15:26:53 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/03 19:45:11 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,7 @@ int	builtin_pwd(char **argv, t_shell *shell)
 
 	if (!shell)
 		return (EXIT_FAILURE);
-	if (argv[1])
-	{
-		print_error("minishell: pwd", NULL, "too many arguments");
-		return (set_exit_status(shell, EXIT_FAILURE));
-	}
+	(void)argv;
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
 		return (handle_getcwd_error(shell));

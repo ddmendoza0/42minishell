@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/09/30 15:07:11 by dmaya-vi         ###   ########.fr        #
+#    Updated: 2025/10/03 18:07:18 by dmendoza         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,6 +94,7 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 
 REDIR_DIR		= $(SRC_DIR)redirections/
 REDIR_FILES	= $(REDIR_DIR)redirections.c\
+		  $(REDIR_DIR)redir_list.c
 
 MAIN_DIR		= $(SRC_DIR)main/
 MAIN_FILES	= $(MAIN_DIR)main.c\

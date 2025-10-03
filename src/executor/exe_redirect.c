@@ -6,16 +6,13 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:48:06 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/10/03 16:48:06 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/10/03 19:46:18 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/wait.h>
 
-/*
- * REDIRECTION SETUP FUNCTIONS - CORREGIDO
- */
 static int	setup_input_redirection(t_redir_file *input_redir, t_shell *shell)
 {
 	int	fd;
@@ -105,17 +102,22 @@ int	save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell)
 
 int	app_redir(t_command *cmd, int s_stdin, int s_stdout, t_shell *shell)
 {
-	if (cmd->input_redir)
+	t_redir_file	*input;
+	t_redir_file	*output;
+
+	input = get_last_redir(cmd->input_redirs);
+	output = get_last_redir(cmd->output_redirs);
+	if (input)
 	{
-		if (!setup_input_redirection(cmd->input_redir, shell))
+		if (!setup_input_redirection(input, shell))
 		{
 			restore_redirections(s_stdin, s_stdout);
 			return (0);
 		}
 	}
-	if (cmd->output_redir)
+	if (output)
 	{
-		if (!setup_output_redirection(cmd->output_redir, shell))
+		if (!setup_output_redirection(output, shell))
 		{
 			restore_redirections(s_stdin, s_stdout);
 			return (0);
