@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:05:53 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/30 15:06:20 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/03 16:50:56 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static char	**read_history_lines(size_t *count)
 	line = get_next_line(fd);
 	while (line)
 	{
-		lines = realloc(lines, sizeof(char *) * (n + 1)); //aqui falta validación del malloc
+		lines = realloc(lines, sizeof(char *) * (n + 1));
 		lines[n] = line;
 		n++;
 		line = get_next_line(fd);
