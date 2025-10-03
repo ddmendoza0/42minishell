@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redir_file.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/03 16:53:20 by dmendoza          #+#    #+#             */
+/*   Updated: 2025/10/03 17:00:11 by dmendoza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_redir_file	*create_redir_file(t_token *org, int append_mode, int is_hdoc)
@@ -28,7 +40,10 @@ void	free_redir_file(t_redir_file *redir)
 	if (redir->expanded_path)
 	{
 		path_len = ft_strlen(redir->expanded_path);
-		if ((ft_strncmp(redir->expanded_path, TMP_IN_FILE, path_len + 1) == 0) || (ft_strncmp(redir->expanded_path, TMP_OUT_FILE, path_len + 1) == 0) || (ft_strncmp(redir->expanded_path, TMP_HEREDOC_FILE, path_len + 1) == 0))
+		if ((ft_strncmp(redir->expanded_path, TMP_IN_FILE, path_len + 1) == 0)
+			|| (ft_strncmp(redir->expanded_path, TMP_OUT_FILE,
+					path_len + 1) == 0) || (ft_strncmp(redir->expanded_path,
+					TMP_HEREDOC_FILE, path_len + 1) == 0))
 		{
 			unlink(redir->expanded_path);
 		}
