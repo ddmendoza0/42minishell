@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:29:15 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/09/30 13:17:29 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/03 16:53:40 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 static int	is_multi_char_operator(const char *input)
 {
-	return (ft_strncmp(input, "&&", 2) == 0 || ft_strncmp(input, "||", 2) == 0 || ft_strncmp(input, ">>", 2) == 0 || ft_strncmp(input, "<<", 2) == 0);
+	return (ft_strncmp(input, "&&", 2) == 0 || ft_strncmp(input, "||", 2)
+		== 0 || ft_strncmp(input, ">>", 2) == 0
+		|| ft_strncmp(input, "<<", 2) == 0);
 }
 
 static t_token_type	det_op_type(const char *op)

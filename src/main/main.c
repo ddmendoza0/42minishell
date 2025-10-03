@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 13:26:40 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/10/02 13:41:03 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/03 16:57:09 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,15 +82,15 @@ static void	input_loop(int history_fd, t_shell *shell)
 	char		*clean_input;
 	t_token		*token_lst;
 	t_command	*cmd_tree;
-	int		prep_result;
+	int			prep_result;
 
 	while (1)
 	{
 		prep_result = get_and_prepare_input(history_fd, shell, &clean_input);
 		if (prep_result == -1)
-			break;
+			break ;
 		if (prep_result == 0)
-			continue;
+			continue ;
 		token_lst = NULL;
 		cmd_tree = NULL;
 		if (!lex_and_parse_input(clean_input, &token_lst, &cmd_tree, shell))
