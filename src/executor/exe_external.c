@@ -51,7 +51,11 @@ int	execute_external(char **argv, t_shell *shell)
 
 	executable_path = find_executable(argv[0], shell);
 	if (!executable_path)
+	{
+		if (ft_strchr(argv[0], '/'))
+			return (handle_error(shell, ERR_NO_SUCH_FILE, argv[0]));
 		return (handle_error(shell, ERR_COMMAND_NOT_FOUND, argv[0]));
+	}
 	if (stat(executable_path, &path_stat) == 0)
 	{
 		if (S_ISDIR(path_stat.st_mode))
