@@ -75,25 +75,40 @@ int	init_shell(t_shell* shell, char** envp)
 {
 	char* pwd_str;
 	char* current_dir;
+	char* old_pwd;
 
-	// IMPORTANTE: Obtener el directorio actual PRIMERO
-	current_dir = getcwd(NULL, 0);
-	if (!current_dir)
+	// Ver qué PWD viene del entorno padre
+	int i = 0;
+	while (envp[i])
 	{
-		perror("minishell: getcwd");
-		return (0);
+		if (ft_strncmp(envp[i], "PWD=", 4) == 0)
+		{
+			fprintf(stderr, "DEBUG envp PWD heredado: %s\n", envp[i]);
+			break;
+		}
+		i++;
 	}
-
-	// DEBUG - Eliminar después
-	fprintf(stderr, "DEBUG getcwd: %s\n", current_dir);
 
 	if (!copy_environment(shell, envp))
 	{
 		perror("minishell: malloc");
-		free(current_dir);
 		return (0);
 	}
 
+	// Ver qué PWD quedó después de copiar
+	old_pwd = get_env_value(shell, "PWD");
+	fprintf(stderr, "DEBUG PWD después de copy_environment: %s\n",
+		old_pwd ? old_pwd : "NULL");
+
+	current_dir = getcwd(NULL, 0);
+	if (!current_dir)
+	{
+		perror("minishell: getcwd");
+		cleanup_shell(shell);
+		return (0);
+	}
+
+	fprintf(stderr, "DEBUG getcwd actual: %s\n", current_dir);
 	shell->cwd = current_dir;
 
 	pwd_str = ft_strjoin("PWD=", current_dir);
@@ -103,6 +118,8 @@ int	init_shell(t_shell* shell, char** envp)
 		return (0);
 	}
 
+	fprintf(stderr, "DEBUG intentando set_env_var con: %s\n", pwd_str);
+
 	if (!set_env_var(shell, pwd_str))
 	{
 		free(pwd_str);
@@ -110,8 +127,10 @@ int	init_shell(t_shell* shell, char** envp)
 		return (0);
 	}
 
-	// DEBUG - Eliminar después
-	fprintf(stderr, "DEBUG PWD env: %s\n", get_env_value(shell, "PWD"));
+	// Verificar si realmente se actualizó
+	char* new_pwd = get_env_value(shell, "PWD");
+	fprintf(stderr, "DEBUG PWD después de set_env_var: %s\n",
+		new_pwd ? new_pwd : "NULL");
 
 	free(pwd_str);
 
