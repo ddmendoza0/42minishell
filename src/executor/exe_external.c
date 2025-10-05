@@ -44,13 +44,22 @@ static int	handle_child_status(int status)
  */
 int	execute_external(char **argv, t_shell *shell)
 {
-	char	*executable_path;
-	pid_t	pid;
-	int		status;
+	char			*executable_path;
+	pid_t			pid;
+	int				status;
+	struct stat		path_stat;
 
 	executable_path = find_executable(argv[0], shell);
 	if (!executable_path)
 		return (handle_error(shell, ERR_COMMAND_NOT_FOUND, argv[0]));
+	if (stat(executable_path, &path_stat) == 0)
+	{
+		if (S_ISDIR(path_stat.st_mode))
+		{
+			free(executable_path);
+			return (handle_error(shell, ERR_IS_DIRECTORY, argv[0]));
+		}
+	}
 	pid = fork();
 	if (pid == -1)
 	{
