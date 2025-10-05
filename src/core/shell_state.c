@@ -108,6 +108,7 @@ int	init_shell(t_shell *shell, char **envp)
 		cleanup_shell(shell);
 		return (0);
 	}
+	printf("DEBUG: PWD configurado a: %s\n", get_env_value(shell, "PWD"));
 	free(pwd_str);
 	
 	shell->last_exit_status = 0;
