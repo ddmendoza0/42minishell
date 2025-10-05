@@ -43,27 +43,46 @@ static char	*join_segments(char *result, char *new_segment)
 	return (temp);
 }
 
-char	*expand_token(t_token *token, t_shell *shell)
+char* expand_token(t_token* token, t_shell* shell)
 {
-	t_token_segment	*current;
-	char			*result;
-	char			*processed_segment;
+	t_token_segment* current;
+	char* result;
+	char* processed_segment;
 
 	if (!token || !token->segments)
 		return (handle_fallback_token(token, shell));
+
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
+
+	fprintf(stderr, "DEBUG expand_token: iniciando\n");
+
 	current = token->segments;
 	while (current)
 	{
+		fprintf(stderr, "DEBUG expand_token: procesando segmento='%s' quote_type=%d\n",
+			current->content, current->quote_type);
+
 		processed_segment = process_segment(current, shell);
 		if (!processed_segment)
 			return (free(result), NULL);
+
+		fprintf(stderr, "DEBUG expand_token: processed_segment='%s' (len=%zu)\n",
+			processed_segment, strlen(processed_segment));
+
 		result = join_segments(result, processed_segment);
 		if (!result)
 			return (NULL);
+
+		fprintf(stderr, "DEBUG expand_token: result acumulado='%s' (len=%zu)\n",
+			result, strlen(result));
+
 		current = current->next;
 	}
+
+	fprintf(stderr, "DEBUG expand_token: resultado final='%s' (len=%zu)\n",
+		result, strlen(result));
+
 	return (result);
 }
