@@ -108,7 +108,7 @@ int	set_env_var(t_shell* shell, char* var_assignment)
 		return (replace_env_var(shell, existing_index, var_assignment));
 	}
 
-	fprintf(stderr, "DEBUG añadiendo nueva variable\n");
+	fprintf(stderr, "DEBUG anadiendo nueva variable\n");
 	free(var_name);
 	return (add_new_env_var(shell, var_assignment, count_env_vars(shell->env)));
 }
