@@ -195,7 +195,7 @@ int	validate_input_redirection(t_redir_file *input_redir, t_shell *shell)
 			input_redir->fd = open(input_redir->expanded_path, O_RDONLY);
 			if (input_redir->fd == -1)
 			{
-				saved_errno = errno;  // GUARDA errno AQUÍ
+				saved_errno = errno;  // GUARDA errno 
             if (saved_errno == ENOENT)
                 handle_error(shell, ERR_NO_SUCH_FILE, input_redir->expanded_path);
             else if (saved_errno == EACCES)
@@ -636,7 +636,6 @@ static int	validate_single_input(t_redir_file *redir, t_shell *shell)
 	{
 		if (!redir->expanded_path || !*redir->expanded_path)
 			return (handle_syntax_error(shell, "newline"));
-		// El heredoc se procesa después
 		return (1);
 	}
 	if (!redir->expanded_path || !*redir->expanded_path)
