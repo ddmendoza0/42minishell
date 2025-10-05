@@ -40,7 +40,7 @@ static int	handle_file_errors(t_error_type type, const char *context)
 	if (type == ERR_NO_SUCH_FILE)
 	{
 		print_error("minishell", context, "No such file or directory");
-		exit_code = EXIT_FAILURE;
+		exit_code = EXIT_COMMAND_NOT_FOUND;
 	}
 	else if (type == ERR_PERMISSION_DENIED)
 	{
