@@ -49,7 +49,7 @@ static void	init_expand_data(t_expand_data *data, char *str, t_shell *shell)
 {
 	data->str = str;
 	data->shell = shell;
-	data->result_size = ft_strlen(str) * 4;
+	data->result_size = ft_strlen(str) * 256;
 	data->result = malloc(data->result_size);
 	data->i = 0;
 	data->j = 0;
