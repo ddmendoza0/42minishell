@@ -75,7 +75,6 @@ int	init_shell(t_shell *shell, char **envp)
 {
 	char	*pwd_str;
 	char	*current_dir;
-	char	*old_pwd;
 
 	int i = 0;
 	while (envp[i])
