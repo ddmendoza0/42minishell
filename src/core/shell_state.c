@@ -71,34 +71,9 @@ static int	copy_environment(t_shell *shell, char **envp)
 	return (1);
 }
 
-/*int	init_shell(t_shell *shell, char **envp)
+int	init_shell(t_shell* shell, char** envp)
 {
-	if (!copy_environment(shell, envp))
-	{
-		perror("minishell: malloc");
-		return (0);
-	}
-	shell->cwd = getcwd(NULL, 0);
-	if (!shell->cwd)
-	{
-		perror("minishell: getcwd");
-		cleanup_shell(shell);
-		return (0);
-	}
-	shell->last_exit_status = 0;
-	shell->stdin_backup = dup(STDIN_FILENO);
-	shell->stdout_backup = dup(STDOUT_FILENO);
-	if (shell->stdin_backup == -1 || shell->stdout_backup == -1)
-	{
-		perror("minishell: dup");
-		cleanup_shell(shell);
-		return (0);
-	}
-	return (1);
-}*/
-int	init_shell(t_shell *shell, char **envp)
-{
-	char	*pwd_str;
+	char* pwd_str;
 
 	if (!copy_environment(shell, envp))
 	{
