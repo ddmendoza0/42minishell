@@ -71,24 +71,16 @@ static int	copy_environment(t_shell *shell, char **envp)
 	return (1);
 }
 
-int	init_shell(t_shell *shell, char **envp)
+int	init_shell(t_shell* shell, char** envp)
 {
-	char	*pwd_str;
-	char	*current_dir;
+	char* pwd_str;
+	char* current_dir;
 
-	int i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], "PWD=", 4) == 0)
-			break;
-		i++;
-	}
 	if (!copy_environment(shell, envp))
 	{
 		perror("minishell: malloc");
 		return (0);
 	}
-	old_pwd = get_env_value(shell, "PWD");
 	current_dir = getcwd(NULL, 0);
 	if (!current_dir)
 	{
