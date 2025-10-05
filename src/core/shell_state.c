@@ -71,28 +71,45 @@ static int	copy_environment(t_shell *shell, char **envp)
 	return (1);
 }
 
-int	init_shell(t_shell* shell, char** envp)
+int	init_shell(t_shell *shell, char **envp)
 {
-	char* pwd_str;
+	char	*pwd_str;
+	char	*current_dir;
 
 	if (!copy_environment(shell, envp))
 	{
 		perror("minishell: malloc");
 		return (0);
 	}
-	shell->cwd = getcwd(NULL, 0);
-	if (!shell->cwd)
+	
+	// Obtener el directorio actual REAL
+	current_dir = getcwd(NULL, 0);
+	if (!current_dir)
 	{
 		perror("minishell: getcwd");
 		cleanup_shell(shell);
 		return (0);
 	}
-	pwd_str = ft_strjoin("PWD=", shell->cwd);
-	if (pwd_str)
+	
+	shell->cwd = current_dir;
+	
+	// IMPORTANTE: Sobrescribir PWD con el directorio actual REAL
+	pwd_str = ft_strjoin("PWD=", current_dir);
+	if (!pwd_str)
 	{
-		set_env_var(shell, pwd_str);
-		free(pwd_str);
+		cleanup_shell(shell);
+		return (0);
 	}
+	
+	// Esto debe SOBRESCRIBIR el PWD existente
+	if (!set_env_var(shell, pwd_str))
+	{
+		free(pwd_str);
+		cleanup_shell(shell);
+		return (0);
+	}
+	free(pwd_str);
+	
 	shell->last_exit_status = 0;
 	shell->stdin_backup = dup(STDIN_FILENO);
 	shell->stdout_backup = dup(STDOUT_FILENO);
