@@ -74,15 +74,18 @@ static int	count_env_vars(char **env)
 	return (count);
 }
 
-int	set_env_var(t_shell *shell, char *var_assignment)
+int	set_env_var(t_shell* shell, char* var_assignment)
 {
-	char	*var_name;
-	char	*equals_pos;
+	char* var_name;
+	char* equals_pos;
 	int		var_name_len;
 	int		existing_index;
 
 	if (!shell || !var_assignment)
 		return (0);
+
+	fprintf(stderr, "DEBUG set_env_var llamado con: %s\n", var_assignment);
+
 	equals_pos = ft_strchr(var_assignment, '=');
 	if (!equals_pos)
 		return (0);
@@ -90,12 +93,22 @@ int	set_env_var(t_shell *shell, char *var_assignment)
 	var_name = ft_strndup(var_assignment, var_name_len);
 	if (!var_name)
 		return (0);
+
+	fprintf(stderr, "DEBUG buscando variable: '%s' (len=%d)\n", var_name, var_name_len);
+
 	existing_index = find_env_var(shell->env, var_name, var_name_len);
+
+	fprintf(stderr, "DEBUG existing_index: %d\n", existing_index);
+
 	if (existing_index != -1)
 	{
+		fprintf(stderr, "DEBUG reemplazando: '%s' -> '%s'\n",
+			shell->env[existing_index], var_assignment);
 		free(var_name);
 		return (replace_env_var(shell, existing_index, var_assignment));
 	}
+
+	fprintf(stderr, "DEBUG añadiendo nueva variable\n");
 	free(var_name);
 	return (add_new_env_var(shell, var_assignment, count_env_vars(shell->env)));
 }

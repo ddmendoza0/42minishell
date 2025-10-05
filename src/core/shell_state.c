@@ -97,7 +97,7 @@ int	init_shell(t_shell* shell, char** envp)
 
 	// Ver qué PWD quedó después de copiar
 	old_pwd = get_env_value(shell, "PWD");
-	fprintf(stderr, "DEBUG PWD después de copy_environment: %s\n",
+	fprintf(stderr, "DEBUG PWD despues de copy_environment: %s\n",
 		old_pwd ? old_pwd : "NULL");
 
 	current_dir = getcwd(NULL, 0);
@@ -129,7 +129,7 @@ int	init_shell(t_shell* shell, char** envp)
 
 	// Verificar si realmente se actualizó
 	char* new_pwd = get_env_value(shell, "PWD");
-	fprintf(stderr, "DEBUG PWD después de set_env_var: %s\n",
+	fprintf(stderr, "DEBUG PWD despues de set_env_var: %s\n",
 		new_pwd ? new_pwd : "NULL");
 
 	free(pwd_str);
