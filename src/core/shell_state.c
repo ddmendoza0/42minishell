@@ -71,10 +71,10 @@ static int	copy_environment(t_shell *shell, char **envp)
 	return (1);
 }
 
-int	init_shell(t_shell* shell, char** envp)
+int	init_shell(t_shell *shell, char **envp)
 {
-	char* pwd_str;
-	char* current_dir;
+	char	*pwd_str;
+	char	*current_dir;
 
 	if (!copy_environment(shell, envp))
 	{

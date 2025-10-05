@@ -21,10 +21,10 @@ static void	append_var_value(t_expand_data *data, char *var_value)
 		data->result[data->j++] = var_value[k++];
 }
 
-static void	process_variable(t_expand_data* data)
+static void	process_variable(t_expand_data *data)
 {
-	char* var_name;
-	char* var_value;
+	char	*var_name;
+	char	*var_value;
 
 	data->i++;
 	var_name = get_var_name(data->str, &data->i);
@@ -33,9 +33,7 @@ static void	process_variable(t_expand_data* data)
 		var_value = expand_variable(data->shell, var_name);
 		if (var_value)
 		{
-				var_value, strlen(var_value));
 			append_var_value(data, var_value);
-				data->result);
 			free(var_value);
 		}
 		free(var_name);

@@ -47,26 +47,21 @@ static void	free_argv_builder(char **argv, int up_to)
 	free(argv);
 }
 
-static int	fill_argv(char** argv, t_arg_token* args)
+static int	fill_argv(char **argv, t_arg_token *args)
 {
-	t_arg_token* arg;
+	t_arg_token	*arg;
 	int			i;
 
 	arg = args;
 	i = 0;
 	while (arg)
 	{
-			get_arg_value(arg), strlen(get_arg_value(arg)));
-
 		argv[i] = ft_strdup(get_arg_value(arg));
 		if (!argv[i])
 		{
 			free_argv_builder(argv, i);
 			return (0);
 		}
-
-			i, argv[i], strlen(argv[i]));
-
 		arg = arg->next;
 		i++;
 	}

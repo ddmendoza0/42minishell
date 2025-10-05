@@ -43,41 +43,27 @@ static char	*join_segments(char *result, char *new_segment)
 	return (temp);
 }
 
-char* expand_token(t_token* token, t_shell* shell)
+char	*expand_token(t_token *token, t_shell *shell)
 {
-	t_token_segment* current;
-	char* result;
-	char* processed_segment;
+	t_token_segment	*current;
+	char			*result;
+	char			*processed_segment;
 
 	if (!token || !token->segments)
 		return (handle_fallback_token(token, shell));
-
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
-
-
 	current = token->segments;
 	while (current)
 	{
-			current->content, current->quote_type);
-
 		processed_segment = process_segment(current, shell);
 		if (!processed_segment)
 			return (free(result), NULL);
-
-			processed_segment, strlen(processed_segment));
-
 		result = join_segments(result, processed_segment);
 		if (!result)
 			return (NULL);
-
-			result, strlen(result));
-
 		current = current->next;
 	}
-
-		result, strlen(result));
-
 	return (result);
 }

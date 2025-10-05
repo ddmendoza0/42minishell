@@ -152,9 +152,9 @@ int	lexical_review(t_command *cmd_list, t_shell *shell)
 	return (1);
 }*/
 
-static int	expand_command_args(t_command* cmd, t_shell* shell)
+static int	expand_command_args(t_command *cmd, t_shell *shell)
 {
-	t_arg_token* current;
+	t_arg_token	*current;
 
 	if (!cmd || !shell)
 		return (0);
@@ -163,10 +163,10 @@ static int	expand_command_args(t_command* cmd, t_shell* shell)
 	{
 		if (!current->expanded_value && current->original_token)
 		{
-			current->expanded_value = expand_token(current->original_token, shell);
+			current->expanded_value
+				= expand_token(current->original_token, shell);
 			if (!current->expanded_value)
 				return (0);
-				current->expanded_value, strlen(current->expanded_value));
 		}
 		current = current->next;
 	}
