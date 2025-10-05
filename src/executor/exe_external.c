@@ -60,6 +60,11 @@ int	execute_external(char **argv, t_shell *shell)
 			return (handle_error(shell, ERR_IS_DIRECTORY, argv[0]));
 		}
 	}
+	if (access(executable_path, X_OK) != 0)
+	{
+		free(executable_path);
+		return (handle_error(shell, ERR_PERMISSION_DENIED, argv[0]));
+	}
 	pid = fork();
 	if (pid == -1)
 	{
