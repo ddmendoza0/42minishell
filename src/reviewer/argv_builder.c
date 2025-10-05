@@ -56,7 +56,6 @@ static int	fill_argv(char** argv, t_arg_token* args)
 	i = 0;
 	while (arg)
 	{
-		fprintf(stderr, "DEBUG fill_argv: antes de strdup, valor='%s' (len=%zu)\n",
 			get_arg_value(arg), strlen(get_arg_value(arg)));
 
 		argv[i] = ft_strdup(get_arg_value(arg));
@@ -66,7 +65,6 @@ static int	fill_argv(char** argv, t_arg_token* args)
 			return (0);
 		}
 
-		fprintf(stderr, "DEBUG fill_argv: argv[%d]='%s' (len=%zu)\n",
 			i, argv[i], strlen(argv[i]));
 
 		arg = arg->next;

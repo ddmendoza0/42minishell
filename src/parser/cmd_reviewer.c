@@ -163,11 +163,9 @@ static int	expand_command_args(t_command* cmd, t_shell* shell)
 	{
 		if (!current->expanded_value && current->original_token)
 		{
-			fprintf(stderr, "DEBUG expand_command_args: expandiendo token\n");
 			current->expanded_value = expand_token(current->original_token, shell);
 			if (!current->expanded_value)
 				return (0);
-			fprintf(stderr, "DEBUG expand_command_args: expanded_value='%s' (len=%zu)\n",
 				current->expanded_value, strlen(current->expanded_value));
 		}
 		current = current->next;
