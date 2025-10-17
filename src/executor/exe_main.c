@@ -13,6 +13,49 @@
 #include "minishell.h"
 #include <sys/wait.h>
 
+static int	count_non_empty_args(char **argv)
+{
+	int	count;
+	int	i;
+
+	count = 0;
+	i = 0;
+	while (argv[i])
+	{
+		if (argv[i][0] != '\0')
+			count++;
+		i++;
+	}
+	return (count);
+}
+
+char	**remove_empty_args(char **argv)
+{
+	char	**new_argv;
+	int		i;
+	int		j;
+	int		count;
+
+	if (!argv)
+		return (NULL);
+	count = count_non_empty_args(argv);
+	if (count == 0)
+		return (NULL);
+	new_argv = malloc(sizeof(char *) * (count + 1));
+	if (!new_argv)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (argv[i])
+	{
+		if (argv[i][0] != '\0')
+			new_argv[j++] = ft_strdup(argv[i]);
+		i++;
+	}
+	new_argv[j] = NULL;
+	return (new_argv);
+}
+/*
 static char	**remove_empty_args(char **argv)
 {
 	char	**new_argv;
@@ -82,10 +125,11 @@ int	execute_single_command(t_command *cmd, t_shell *shell)
 	free_argv(clean_argv);
 	return (set_exit_status(shell, exit_status));
 }
-
+*/
 /*
  * MAIN EXECUTION DISPATCHER
  */
+
 int	execute_command_tree(t_command *cmd_tree, t_shell *shell)
 {
 	if (!cmd_tree || !shell)

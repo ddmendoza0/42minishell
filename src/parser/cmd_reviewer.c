@@ -12,47 +12,6 @@
 
 #include "minishell.h"
 
-static int	expand_command_args(t_command *cmd, t_shell *shell)
-{
-	t_arg_token	*current;
-
-	if (!cmd || !shell)
-		return (0);
-	current = cmd->args;
-	while (current)
-	{
-		if (!current->expanded_value && current->original_token)
-		{
-			current->expanded_value
-				= expand_token(current->original_token, shell);
-			if (!current->expanded_value)
-				return (0);
-		}
-		current = current->next;
-	}
-	return (1);
-}
-
-static int	expand_redir_list(t_redir_list *list, t_shell *shell)
-{
-	t_redir_list	*current;
-
-	current = list;
-	while (current)
-	{
-		if (!current->redir->expanded_path
-			&& current->redir->original_token)
-		{
-			current->redir->expanded_path
-				= expand_token(current->redir->original_token, shell);
-			if (!current->redir->expanded_path)
-				return (0);
-		}
-		current = current->next;
-	}
-	return (1);
-}
-
 static int	expand_command_redirections(t_command *cmd, t_shell *shell)
 {
 	if (!cmd || !shell)

@@ -68,13 +68,13 @@ static int	validate_and_review_command(t_command *cmd_tree,
 	}
 	if (!has_pipeline(cmd_tree))
 	{
-	if (!validate_command_redirections(cmd_tree, shell))
-	{
-		free_cmd_list(cmd_tree);
-		free_token_lst(token_lst);
-		free(clean_input);
-		return (0);
-	}
+		if (!validate_command_redirections(cmd_tree, shell))
+		{
+			free_cmd_list(cmd_tree);
+			free_token_lst(token_lst);
+			free(clean_input);
+			return (0);
+		}
 	}
 	return (1);
 }

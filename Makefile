@@ -53,7 +53,8 @@ PARSER_FILES	= $(PARSER_DIR)cmd_parse.c \
 				  $(PARSER_DIR)cmd_parse_token.c \
 				  $(PARSER_DIR)cmd_parse_subshell.c \
 				  $(PARSER_DIR)cmd_reviewer.c\
-				  $(PARSER_DIR)cmd_reviewer_utils.c
+				  $(PARSER_DIR)cmd_reviewer_utils.c\
+				  $(PARSER_DIR)cmd_reviewer_helpers.c
 
 REVIEWER_DIR	= $(SRC_DIR)reviewer/
 REVIEWER_FILES	= $(REVIEWER_DIR)argv_builder.c\
@@ -80,7 +81,8 @@ EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
 				  $(EXECUTOR_DIR)exe_pipe_setup2.c\
 				  $(EXECUTOR_DIR)exe_redirect.c\
 				  $(EXECUTOR_DIR)exe_redirect_utils.c\
-				  $(EXECUTOR_DIR)exe_utils.c
+				  $(EXECUTOR_DIR)exe_utils.c\
+				  $(EXECUTOR_DIR)exe_single_command.c
 
 BUILTIN_DIR		= $(SRC_DIR)builtins/
 BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
@@ -93,8 +95,12 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_utils.c
 
 REDIR_DIR		= $(SRC_DIR)redirections/
-REDIR_FILES	= $(REDIR_DIR)redirections.c\
-		  $(REDIR_DIR)redir_list.c
+REDIR_FILES	= $(REDIR_DIR)redir_heredoc.c\
+		  $(REDIR_DIR)redir_list.c\
+		  $(REDIR_DIR)redir_input.c\
+		  $(REDIR_DIR)redir_output.c\
+		  $(REDIR_DIR)redir_utils.c\
+		  $(REDIR_DIR)redir_validate.c\
 
 MAIN_DIR		= $(SRC_DIR)main/
 MAIN_FILES	= $(MAIN_DIR)main.c\
