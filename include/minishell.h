@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:36:45 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/10/17 13:18:41 by dmaya-vi         ###   ########.fr       */
+/*   Updated: 2025/10/26 13:04:10 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,7 +282,7 @@ int				has_logical_ops(t_command *cmd_list);
 int				count_pipeline_commands(t_command *cmd_list);
 int				prepare_argv(t_command *cmd, char ***argv);
 int				is_builtin(char *cmd);
-int				execute_builtin(char **argv, t_shell *shell);
+int				execute_builtin(char **argv, t_command *cmd, t_shell *shell);
 char			*find_executable(char *cmd, t_shell *shell);
 int				execute_external(char **argv, t_shell *shell);
 void			restore_redirections(int saved_stdin, int saved_stdout);
@@ -319,7 +319,7 @@ char			**remove_empty_args(char **argv);
 int				set_env_var(t_shell *shell, char *var_assignment);
 int				builtin_cd(char **argv, t_shell *shell);
 int				builtin_pwd(char **argv, t_shell *shell);
-int				builtin_echo(char **argv, t_shell *shell);
+int				builtin_echo(char **argv, t_command *cmd, t_shell *shell);
 int				builtin_export(char **argv, t_shell *shell);
 int				builtin_unset(char **argv, t_shell *shell);
 int				builtin_env(char **argv, t_shell *shell);
