@@ -6,7 +6,7 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:45:15 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/11/07 10:33:25 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/11/07 10:35:51 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,37 +73,3 @@ int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
 	}
 	return (exit_status);
 }
-/*
-int	execute_logical_sequence(t_command *cmd_list, t_shell *shell)
-{
-	t_command	*current;
-	t_command	*pipeline_end;
-	int			exit_status;
-	int			should_exe;
-
-	current = cmd_list;
-	exit_status = EXIT_SUCCESS;
-	should_exe = 1;
-	while (current)
-	{
-		if (should_exe)
-		{
-			if (current->logic == CMD_PIPE)
-			{
-				pipeline_end = find_pipeline_end(current);
-				exit_status = execute_pipeline(current, shell);
-				current = pipeline_end->next;
-			}
-			else
-				exit_status = execute_single_command(current, shell);
-		}
-		if (current->logic == CMD_AND)
-			should_exe = (exit_status == EXIT_SUCCESS);
-		else if (current->logic == CMD_OR)
-			should_exe = (exit_status != EXIT_SUCCESS);
-		else
-			should_exe = 1;
-		current = current->next;
-	}
-	return (exit_status);
-}*/
