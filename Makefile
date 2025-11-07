@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/11/07 10:50:17 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/11/07 10:53:38 by dmendoza         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME	=	minishell
 HEADERS	=	-I ./include -I -I$(LIBFT)
 
 LIBFT	=	./lib/libft
-LIBS = $(LIBFT)/libft.a -L/mingw64/lib -lreadline
+LIBS = $(LIBFT)/libft.a -lreadline
 
 
 SRC_DIR =	src/
@@ -126,7 +126,7 @@ INCLUDE =	include/minishell.h include/error_manager.h Makefile
 
 CC	=	cc
 CFLAGS	=	-g -Wall -Wextra -Werror -Wunreachable-code -Ofast -I./libft \
-		-I./include -I$(LIBFT) -I/mingw64/include
+		-I./include -I$(LIBFT)
 RM	=	rm -f
 
 all:	libft $(NAME)
