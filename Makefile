@@ -6,7 +6,7 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/10/03 18:07:18 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/11/07 10:50:17 by dmendoza         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -122,7 +122,7 @@ SRCS	=	$(CORE_FILES)\
 OBJ_DIR =	obj/
 OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 
-INCLUDE =	include/minishell.h Makefile
+INCLUDE =	include/minishell.h include/error_manager.h Makefile
 
 CC	=	cc
 CFLAGS	=	-g -Wall -Wextra -Werror -Wunreachable-code -Ofast -I./libft \
@@ -143,7 +143,7 @@ $(NAME):	$(OBJS)
 
 $(OBJ_DIR)%.o:	$(SRC_DIR)%.c $(INCLUDE)
 		@mkdir -p $(dir $@)
-		@echo "Compiling $<..."
+		@echo -n "Compiling $<..."
 		@$(CC) $(CFLAGS) -c $< -o $@
 		@echo "...compilation completed"
 clean:
