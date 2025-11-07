@@ -6,13 +6,11 @@
 #    By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 18:40:05 by dmendoza          #+#    #+#              #
-#    Updated: 2025/11/07 10:53:38 by dmendoza         ###   ########.fr        #
+#    Updated: 2025/11/07 10:58:10 by dmendoza         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	minishell
-
-HEADERS	=	-I ./include -I -I$(LIBFT)
 
 LIBFT	=	./lib/libft
 LIBS = $(LIBFT)/libft.a -lreadline
@@ -125,8 +123,7 @@ OBJS	=	$(SRCS:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 INCLUDE =	include/minishell.h include/error_manager.h Makefile
 
 CC	=	cc
-CFLAGS	=	-g -Wall -Wextra -Werror -Wunreachable-code -Ofast -I./libft \
-		-I./include -I$(LIBFT)
+CFLAGS	=	-g -Wall -Wextra -Werror -I./libft -I./include -I$(LIBFT)
 RM	=	rm -f
 
 all:	libft $(NAME)
@@ -161,5 +158,5 @@ fclean:	clean
 
 re:	fclean all
 
-.PHONY:	all clean fclean re libft libmlx FORCE
+.PHONY:	all clean fclean re libft FORCE
 
