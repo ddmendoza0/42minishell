@@ -16,14 +16,18 @@ static int	read_heredoc_lines(int fd, t_redir_file *redir)
 {
 	char	*line;
 	size_t	delimiter_len;
+	size_t	len;
 
 	delimiter_len = ft_strlen(redir->expanded_path);
 	while (1)
 	{
 		ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-		line = readline(NULL);
+		line = get_next_line(STDIN_FILENO);
 		if (!line)
 			break ;
+		len = ft_strlen(line);
+		if (len > 0 && line[len - 1] == '\n')
+			line[len - 1] = '\0';
 		if (ft_strncmp(line, redir->expanded_path, delimiter_len) == 0
 			&& line[delimiter_len] == '\0')
 		{

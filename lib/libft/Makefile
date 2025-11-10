@@ -22,7 +22,7 @@ SRCS 	= ft_isalnum.c ft_isalpha.c ft_isdigit.c ft_isascii.c ft_isprint.c \
 	  ft_lstadd_front.c ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c \
 	  ft_lstclear.c ft_lstiter.c ft_lstmap.c ft_lstsize.c get_next_line.c \
 	  ft_putchar.c ft_putstr.c ft_printf.c ft_printf_utils.c printf_print.c \
-	  ft_strtok.c ft_atof.c ft_isspace.c ft_strndup.c
+	  ft_strtok.c ft_atof.c ft_isspace.c ft_strndup.c ft_strcmp.c
 
 OBJS 	= $(SRCS:.c=.o)
 

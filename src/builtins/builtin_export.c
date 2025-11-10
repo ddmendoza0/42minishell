@@ -62,6 +62,22 @@ static int	is_valid_identifier(char *str)
 	return (1);
 }
 
+static int	is_valid_var(const char *str)
+{
+    int i;
+
+    if (!str || !ft_isalpha(str[0]))
+        return 0;
+    i = 1;
+    while (str[i] && str[i] != '=')
+    {
+        if (!ft_isalnum(str[i]) && str[i] != '_')
+            return 0;
+        i++;
+    }
+    return 1;
+}
+
 static int	process_export_arg(char *arg, t_shell *shell)
 {
 	if (!is_valid_identifier(arg))
@@ -80,7 +96,8 @@ static int	process_export_arg(char *arg, t_shell *shell)
 int	builtin_export(char **argv, t_shell *shell)
 {
 	int	i;
-	int	exit_status;
+	char *eq;
+	char *name;
 
 	if (!shell)
 		return (EXIT_FAILURE);
@@ -89,12 +106,34 @@ int	builtin_export(char **argv, t_shell *shell)
 		print_all_exports(shell);
 		return (set_exit_status(shell, EXIT_SUCCESS));
 	}
-	exit_status = EXIT_SUCCESS;
-	i = 0;
-	while (argv[++i])
+	i = 1;
+	while (argv[i])
 	{
-		if (process_export_arg(argv[i], shell) == EXIT_FAILURE)
-			exit_status = EXIT_FAILURE;
+		if (!is_valid_var(argv[i]))
+		{
+			handle_error(shell, ERR_INVALID_IDENTIFIER, argv[i]);
+		}
+		else
+		{
+			eq = ft_strchr(argv[i], '=');
+			if (eq)
+				set_env_var(argv[i]);
+			else
+			{
+				if (getenv(argv[i]) == NULL)
+				{
+					name = ft_strjoin(argv[i], "=");
+					if (!name)
+					{
+						handle_error(shell, ERR_MALLOC, "export variable");
+						return set_exit_status(shell, EXIT_FAILURE);
+					}
+					set_env_var(name);
+					free(name);
+				}
+			}
+		}
+		i++;
 	}
-	return (set_exit_status(shell, exit_status));
+	return (set_exit_status(shell, EXIT_SUCCESS));
 }
