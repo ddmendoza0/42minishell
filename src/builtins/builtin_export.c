@@ -64,6 +64,8 @@ static int	is_valid_identifier(char *str)
 
 static int	process_export_arg(char *arg, t_shell *shell)
 {
+	char	*name;
+
 	if (!is_valid_identifier(arg))
 	{
 		export_error(shell, arg);
