@@ -59,7 +59,7 @@ int	builtin_exit(char **argv, t_shell *shell)
     ft_putstr_fd("exit\n", STDOUT_FILENO);
     if (!argv[1])
     {
-        exit_code = shell->exit_status;
+        exit_code = shell->last_exit_status;
         exit(exit_code);
     }
     if (!is_numeric_arg(argv[1]))
