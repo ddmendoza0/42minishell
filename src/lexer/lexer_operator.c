@@ -35,8 +35,6 @@ static t_token_type	det_op_type(const char *op)
         return (REDIRECT_IN);
     else if (ft_strncmp(op, "&&", 2) == 0)
         return (AND);
-    else if (ft_strncmp(op, ";", 1) == 0)
-        return (SEMICOLON);
     else if (ft_strncmp(op, "(", 1) == 0)
         return (LPAREN);
     else if (ft_strncmp(op, ")", 1) == 0)
@@ -94,7 +92,7 @@ static int	check_triple_operator(const char *input, size_t i, size_t op_len,
 {
     char	next_char;
     char	prev_char;
-    char	msg[100];
+    char	token_str[4];
 
     if (op_len != 2 || !input[i] || !is_single_char_operator(input[i]))
         return (1);
@@ -105,12 +103,15 @@ static int	check_triple_operator(const char *input, size_t i, size_t op_len,
         || (prev_char == '|' && next_char == '|')
         || (prev_char == '&' && next_char == '&'))
     {
-        ft_snprintf(msg, sizeof(msg), "syntax error near unexpected token `%c'",
-            next_char);
-        handle_error(shell, ERR_SYNTAX, msg);
+        token_str[0] = prev_char;
+        token_str[1] = prev_char;
+        token_str[2] = next_char;
+        token_str[3] = '\0';
+        handle_syntax_error(shell, token_str);
         return (0);
     }
     return (1);
+return (1);
 }
 
 int	extract_oprtr(size_t *i, const char *input, t_token **lst, t_shell *shell)

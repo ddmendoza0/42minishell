@@ -19,6 +19,32 @@ int	set_exit_status(t_shell *shell, int status)
 	return (status);
 }
 
+/*Builts the error message*/
+static char	*build_syntax_error_msg(const char *token)
+{
+	char	*msg;
+	char	*prefix;
+	size_t	token_len;
+	size_t	i;
+	size_t	j;
+
+	prefix = "syntax error near unexpected token `";
+	token_len = ft_strlen(token);
+	msg = malloc(ft_strlen(prefix) + token_len + 3);
+	if (!msg)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (prefix[j])
+		msg[i++] = prefix[j++];
+	j = 0;
+	while (token[j])
+		msg[i++] = token[j++];
+	msg[i++] = '\'';
+	msg[i] = '\0';
+	return (msg);
+}
+
 /* Handle syntax errors */
 int	handle_syntax_error(t_shell *shell, const char *token)
 {
@@ -29,13 +55,12 @@ int	handle_syntax_error(t_shell *shell, const char *token)
 		error_msg = "syntax error near unexpected token `newline'";
 	else
 	{
-		error_msg = malloc(strlen(token) + 50);
+		error_msg = build_syntax_error_msg(token);
 		if (!error_msg)
 			return (handle_error(shell, ERR_MEMORY, "syntax error"));
-		sprintf(error_msg, "syntax error near unexpected token `%s'", token);
 	}
 	write(STDERR_FILENO, "minishell: ", 11);
-	write(STDERR_FILENO, error_msg, strlen(error_msg));
+	write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
 	write(STDERR_FILENO, "\n", 1);
 	if (token)
 		free(error_msg);
