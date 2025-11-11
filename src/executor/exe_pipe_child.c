@@ -19,13 +19,13 @@ static int	execute_pipeline_command(t_command *cmd, t_shell *shell)
 	int		exit_status;
 
 	if (cmd->subshell)
-		return (execute_command_tree(cmd->subshell, shell));
+		exit(execute_command_tree(cmd->subshell, shell));
 	argv = get_argv_from_args(cmd);
 	if (!argv || !argv[0])
 	{
 		if (argv)
 			free_argv(argv);
-		return (EXIT_SUCCESS);
+		exit(EXIT_SUCCESS);
 	}
 	setup_signals_default();
 	if (is_builtin(argv[0]))
@@ -33,7 +33,7 @@ static int	execute_pipeline_command(t_command *cmd, t_shell *shell)
 	else
 		exit_status = execute_external(argv, shell);
 	free_argv(argv);
-	return (exit_status);
+	exit(exit_status);
 }
 
 static void	setup_heredoc_if_first(t_command *current, int is_first)
@@ -60,5 +60,5 @@ void	exe_in_child(t_command *current, t_child_ctx *ctx, t_shell *shell)
 	if (!validate_command_redirections(current, shell))
 		exit (1);
 	setup_pipeline_redir(current, ctx->prev_pipe_read, ctx->pipe_fd);
-	exit(execute_pipeline_command(current, shell));
+	execute_pipeline_command(current, shell);
 }
