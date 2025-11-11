@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+static void	skip_to_end_or_rparen(t_token **current)
+{
+	while (*current)
+	{
+		if ((*current)->type == RPAREN)
+		{
+			*current = (*current)->next;
+			return ;
+		}
+		*current = (*current)->next;
+	}
+}
+
 static int	count_parenthesis(t_token *start)
 {
 	t_token	*end;
@@ -39,7 +52,10 @@ t_token	*extract_subshell_tokens(t_token **current)
 
 	start = (*current)->next;
 	if (count_parenthesis(start) != 0)
+	{
+		skip_to_end_or_rparen(current);
 		return (NULL);
+	}
 	end = start;
 	while (end && end->next && end->next->type != RPAREN)
 		end = end->next;
