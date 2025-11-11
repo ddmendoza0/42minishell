@@ -41,14 +41,10 @@ static int	lex_and_parse_input(char *clean_input,
 		t_token **token_lst, t_command **cmd_tree, t_shell *shell)
 {
 	if (!lexer(clean_input, token_lst, shell))
-	{
-		printf("Error: Lexical analysis failed\n");
 		return (0);
-	}
 	*cmd_tree = cmd_builder(token_lst, shell);
 	if (!*cmd_tree)
 	{
-		printf("Error: Syntax analysis failed\n");
 		free_token_lst(*token_lst);
 		return (0);
 	}
@@ -60,7 +56,6 @@ static int	validate_and_review_command(t_command *cmd_tree,
 {
 	if (!lexical_review(cmd_tree, shell))
 	{
-		printf("Error: Lexical review failed\n");
 		free_cmd_list(cmd_tree);
 		free_token_lst(token_lst);
 		free(clean_input);
@@ -117,14 +112,12 @@ int	main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	if (!init_shell(&shell, envp))
 	{
-		fprintf(stderr, "Error: Failed to initialize shell\n");
+		ft_putstr_fd("Error: Failed to initialize shell\n", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
 	history_fd = initialize_history();
 	if (history_fd == -1)
-	{
-		fprintf(stderr, "Warning: Could not initialize history\n");
-	}
+		ft_putstr_fd("Warning: Could not initialize history\n", STDERR_FILENO);
 	setup_signals_interactive();
 	input_loop(history_fd, &shell);
 	if (history_fd >= 0)
