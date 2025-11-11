@@ -26,6 +26,7 @@
 # include "error_manager.h"
 # include <sys/types.h>
 # include <sys/stat.h>
+#include <limits.h>
 
 //for the readline function and functioning history
 # include <readline/readline.h>
