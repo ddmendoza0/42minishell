@@ -6,83 +6,21 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:30:07 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/11/07 10:39:57 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:40:00 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	cleanup_shell(t_shell *shell)
+static void	init_fd_values(t_shell *shell)
 {
-	int	i;
-
-	if (shell->env)
-	{
-		i = 0;
-		while (shell->env[i])
-		{
-			free(shell->env[i]);
-			i++;
-		}
-		free(shell->env);
-	}
-	if (shell->cwd)
-		free(shell->cwd);
-	if (shell->stdin_backup >= 0)
-	{
-		close(shell->stdin_backup);
-		shell->stdin_backup = -1;
-	}
-	if (shell->stdout_backup >= 0)
-	{
-		close(shell->stdout_backup);
-		shell->stdout_backup = -1;
-	}
-		if (shell->history_fd >= 0)
-	{
-		close(shell->history_fd);
-		shell->history_fd = -1;
-	}
+	shell->last_exit_status = 0;
+	shell->temp_stdin = -1;
+	shell->temp_stdout = -1;
+	shell->history_fd = -1;
 }
 
-static int	count_env_vars(char **envp)
-{
-	int	count;
-
-	count = 0;
-	while (envp[count])
-		count++;
-	return (count);
-}
-
-static int	copy_environment(t_shell *shell, char **envp)
-{
-	int	env_count;
-	int	i;
-
-	env_count = count_env_vars(envp);
-	shell->env = malloc(sizeof(char *) * (env_count + 1));
-	if (!shell->env)
-		return (0);
-	i = 0;
-	while (i < env_count)
-	{
-		shell->env[i] = ft_strdup(envp[i]);
-		if (!shell->env[i])
-		{
-			while (--i >= 0)
-				free(shell->env[i]);
-			free(shell->env);
-			shell->env = NULL;
-			return (0);
-		}
-		i++;
-	}
-	shell->env[i] = NULL;
-	return (1);
-}
-
-static int	init_pwd_and_fds(t_shell *shell, char *current_dir)
+static int	setup_pwd_variable(t_shell *shell, char *current_dir)
 {
 	char	*pwd_str;
 
@@ -99,18 +37,29 @@ static int	init_pwd_and_fds(t_shell *shell, char *current_dir)
 		return (0);
 	}
 	free(pwd_str);
-	shell->last_exit_status = 0;
+	return (1);
+}
+
+static int	duplicate_std_fds(t_shell *shell)
+{
 	shell->stdin_backup = dup(STDIN_FILENO);
 	shell->stdout_backup = dup(STDOUT_FILENO);
-	shell->temp_stdin = -1;
-	shell->temp_stdout = -1;
-	shell->history_fd = -1;
 	if (shell->stdin_backup == -1 || shell->stdout_backup == -1)
 	{
 		perror("minishell: dup");
 		cleanup_shell(shell);
 		return (0);
 	}
+	return (1);
+}
+
+static int	init_pwd_and_fds(t_shell *shell, char *current_dir)
+{
+	init_fd_values(shell);
+	if (!setup_pwd_variable(shell, current_dir))
+		return (0);
+	if (!duplicate_std_fds(shell))
+		return (0);
 	return (1);
 }
 

@@ -19,7 +19,8 @@ LIBS = $(LIBFT)/libft.a -lreadline
 SRC_DIR =	src/
 
 CORE_DIR		= $(SRC_DIR)core/
-CORE_FILES		= $(CORE_DIR)shell_state.c
+CORE_FILES		= $(CORE_DIR)shell_state.c \
+				$(CORE_DIR)shell_state_utils.c
 
 ENVIROMENT_DIR	= $(SRC_DIR)enviroment/
 ENVIROMENT_FILES= $(ENVIROMENT_DIR)env_utils.c
@@ -44,10 +45,12 @@ LEXER_FILES		= $(LEXER_DIR)lexer.c\
 				  $(LEXER_DIR)lexer_operator.c\
 				  $(LEXER_DIR)lexer_segments.c\
 				  $(LEXER_DIR)lexer_aux.c\
-				  $(LEXER_DIR)lexer_utils.c
+				  $(LEXER_DIR)lexer_utils.c \
+				  $(LEXER_DIR)is_multi_char_operator.c
 
 PARSER_DIR		= $(SRC_DIR)parser/
 PARSER_FILES	= $(PARSER_DIR)cmd_parse.c \
+				  $(PARSER_DIR)cmd_parse_helper.c \
 				  $(PARSER_DIR)cmd_parse_token.c \
 				  $(PARSER_DIR)cmd_parse_subshell.c \
 				  $(PARSER_DIR)cmd_reviewer.c\
@@ -63,7 +66,8 @@ REVIEWER_FILES	= $(REVIEWER_DIR)argv_builder.c\
 				  $(REVIEWER_DIR)file_utils.c\
 				  $(REVIEWER_DIR)mode_checkers.c\
 				  $(REVIEWER_DIR)redir_file.c\
-				  $(REVIEWER_DIR)token_redir.c
+				  $(REVIEWER_DIR)token_redir.c \
+				  $(REVIEWER_DIR)get_next_redir_order.c
 
 EXECUTOR_DIR	= $(SRC_DIR)executor/
 EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
@@ -73,6 +77,7 @@ EXECUTOR_FILES	= $(EXECUTOR_DIR)exe_builtin.c\
 				  $(EXECUTOR_DIR)exe_path.c\
 				  $(EXECUTOR_DIR)exe_pipeline.c\
 				  $(EXECUTOR_DIR)exe_pipe_child.c\
+				  $(EXECUTOR_DIR)exe_pipe_child_helper.c\
 				  $(EXECUTOR_DIR)exe_pipe_main.c\
 				  $(EXECUTOR_DIR)exe_pipe_parent.c\
 				  $(EXECUTOR_DIR)exe_pipe_setup.c\
@@ -88,6 +93,7 @@ BUILTIN_FILES	= $(BUILTIN_DIR)builtin_cd.c\
 				  $(BUILTIN_DIR)builtin_env.c\
 				  $(BUILTIN_DIR)builtin_exit.c\
 				  $(BUILTIN_DIR)builtin_export.c\
+				  $(BUILTIN_DIR)builtin_export_helper.c\
 				  $(BUILTIN_DIR)builtin_pwd.c\
 				  $(BUILTIN_DIR)builtin_unset.c\
 				  $(BUILTIN_DIR)builtin_utils.c

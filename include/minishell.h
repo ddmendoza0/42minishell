@@ -26,7 +26,7 @@
 # include "error_manager.h"
 # include <sys/types.h>
 # include <sys/stat.h>
-#include <limits.h>
+# include <limits.h>
 
 //for the readline function and functioning history
 # include <readline/readline.h>
@@ -207,6 +207,10 @@ void			cmd_history(void);
 //shell
 int				init_shell(t_shell *shell, char **envp);
 void			cleanup_shell(t_shell *shell);
+int				copy_environment(t_shell *shell, char **envp);
+int				count_env_vars_s(char **envp);
+void			close_file_descriptors(t_shell *shell);
+void			free_environment(t_shell *shell);
 
 //lexer
 int				lexer(char *input, t_token **token_lst, t_shell *shell);
@@ -232,6 +236,7 @@ int				process_segments(t_token *token, char *word,
 					t_shell *shell, t_token **lst);
 int				handle_q_sctn(size_t *i, const char *input,
 					t_shell *shell, t_token **lst);
+int				is_multi_char_operator(const char *input);
 
 //Token handler
 char			**get_argv_from_args(t_command *cmd);
@@ -268,11 +273,16 @@ int				handle_logic_token(t_command *cmd,
 int				handle_token_error(t_token *current, t_shell *shell);
 int				expand_command_args(t_command *cmd, t_shell *shell);
 int				expand_redir_list(t_redir_list *list, t_shell *shell);
+int				handle_redirection_token(t_command *cmd,
+					t_token **current, t_shell *shell);
+int				handle_logic_operator(t_command **cmd,
+					t_token **current, t_shell *shell);
 
 // Expansion and review functions
 int				lexical_review(t_command *cmd_list, t_shell *shell);
 char			*expand_token(t_token *token, t_shell *shell);
 char			*process_segment(t_token_segment *segment, t_shell *shell);
+int				get_next_redir_order(t_command *cmd);
 
 // Environment utilities
 char			*get_env_value(t_shell *shell, char *var_name);
@@ -289,7 +299,8 @@ int				is_builtin(char *cmd);
 int				execute_builtin(char **argv, t_command *cmd, t_shell *shell);
 char			*find_executable(char *cmd, t_shell *shell);
 int				execute_external(char **argv, t_shell *shell);
-void			restore_redirections(int saved_stdin, int saved_stdout, t_shell *shell);
+void			restore_redirections(int saved_stdin,
+					int saved_stdout, t_shell *shell);
 int				stp_redir(t_command *cmd, int *s_stdin,
 					int *s_stdout, t_shell *sh);
 int				save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell);
@@ -318,6 +329,7 @@ int				execute_logical_sequence(t_command *cmd_list, t_shell *shell);
 int				execute_single_command(t_command *cmd, t_shell *shell);
 int				execute_command_tree(t_command *cmd_tree, t_shell *shell);
 char			**remove_empty_args(char **argv);
+char			*get_and_validate_path(char **argv, t_shell *shell);
 
 //Builtins
 int				set_env_var(t_shell *shell, char *var_assignment);
@@ -325,6 +337,7 @@ int				builtin_cd(char **argv, t_shell *shell);
 int				builtin_pwd(char **argv, t_shell *shell);
 int				builtin_echo(char **argv, t_command *cmd, t_shell *shell);
 int				builtin_export(char **argv, t_shell *shell);
+int				export_variable_without_value(char *arg, t_shell *shell);
 int				builtin_unset(char **argv, t_shell *shell);
 int				builtin_env(char **argv, t_shell *shell);
 int				builtin_exit(char **argv, t_shell *shell);

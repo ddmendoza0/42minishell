@@ -6,42 +6,40 @@
 /*   By: dmendoza <dmendoza@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:46:05 by dmendoza          #+#    #+#             */
-/*   Updated: 2025/10/26 13:11:29 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/11/12 15:48:00 by dmendoza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/wait.h>
 
-static void	execute_external_direct(char **argv, t_shell *shell)
+static void	check_path_permissions(char *path, char *cmd, t_shell *shell)
 {
-	char			*executable_path;
-	struct stat		path_stat;
+	struct stat	path_stat;
 
-	executable_path = find_executable(argv[0], shell);
-	if (!executable_path)
-	{
-		if (ft_strchr(argv[0], '/'))
-			handle_error(shell, ERR_NO_SUCH_FILE, argv[0]);
-		else
-			handle_error(shell, ERR_COMMAND_NOT_FOUND, argv[0]);
-		exit(EXIT_COMMAND_NOT_FOUND);
-	}
-	if (stat(executable_path, &path_stat) == 0)
+	if (stat(path, &path_stat) == 0)
 	{
 		if (S_ISDIR(path_stat.st_mode))
 		{
-			handle_error(shell, ERR_IS_DIRECTORY, argv[0]);
-			free(executable_path);
+			handle_error(shell, ERR_IS_DIRECTORY, cmd);
+			free(path);
 			exit(EXIT_CANNOT_EXECUTE);
 		}
 	}
-	if (access(executable_path, X_OK) != 0)
+	if (access(path, X_OK) != 0)
 	{
-		handle_error(shell, ERR_PERMISSION_DENIED, argv[0]);
-		free(executable_path);
+		handle_error(shell, ERR_PERMISSION_DENIED, cmd);
+		free(path);
 		exit(EXIT_CANNOT_EXECUTE);
 	}
+}
+
+static void	execute_external_direct(char **argv, t_shell *shell)
+{
+	char	*executable_path;
+
+	executable_path = get_and_validate_path(argv, shell);
+	check_path_permissions(executable_path, argv[0], shell);
 	execve(executable_path, argv, shell->env);
 	handle_system_error(shell, argv[0]);
 	free(executable_path);

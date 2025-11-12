@@ -64,31 +64,20 @@ static int	is_valid_identifier(char *str)
 
 static int	process_export_arg(char *arg, t_shell *shell)
 {
-	char	*name;
-
 	if (!is_valid_identifier(arg))
 	{
 		export_error(shell, arg);
 		return (EXIT_FAILURE);
 	}
-	else if (ft_strchr(arg, '='))
+	if (ft_strchr(arg, '='))
 	{
 		if (!set_env_var(shell, arg))
 			return (EXIT_FAILURE);
 	}
 	else
 	{
-		if (getenv(arg) == NULL)
-		{
-			name = ft_strjoin(arg, "=");
-			if (!name)
-			{
-				handle_error(shell, ERR_MALLOC, "export variable");
-				return (EXIT_FAILURE);
-			}
-			set_env_var(shell, name);
-			free(name);
-		}
+		if (export_variable_without_value(arg, shell) == EXIT_FAILURE)
+			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }

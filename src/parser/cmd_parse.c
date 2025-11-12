@@ -6,7 +6,7 @@
 /*   By: dmaya-vi <dmaya-vi@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 15:27:58 by dmaya-vi          #+#    #+#             */
-/*   Updated: 2025/10/03 18:00:02 by dmendoza         ###   ########.fr       */
+/*   Updated: 2025/11/12 16:03:00 by dmaya-vi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,28 +48,14 @@ int	create_cmd(t_command **cmd)
 
 static int	process_token(t_command **cmd, t_token **current, t_shell *shell)
 {
-	t_command	*new_cmd;
-
 	if ((*current)->type == WORD)
 		return (handle_word_token(*cmd, current));
-	else if ((*current)->type == REDIRECT_IN || (*current)->type == HEREDOC)
-		return (add_token_redir_in(*cmd, current, shell));
-	else if ((*current)->type == REDIRECT_OUT || (*current)->type == APPEND_OUT)
-		return (add_token_redir_out(*cmd, current, shell));
+	else if ((*current)->type == REDIRECT_IN || (*current)->type == HEREDOC
+		|| (*current)->type == REDIRECT_OUT || (*current)->type == APPEND_OUT)
+		return (handle_redirection_token(*cmd, current, shell));
 	else if ((*current)->type == PIPE || (*current)->type == AND
 		|| (*current)->type == OR)
-	{
-		if (!handle_logic_token(*cmd, *current, &new_cmd))
-			return (0);
-		*cmd = new_cmd;
-		*current = (*current)->next;
-		if (*current && ((*current)->type == PIPE || (*current)->type == AND
-			|| (*current)->type == OR))
-		{
-			return (handle_syntax_error(shell, (*current)->value));
-		}
-		return (1);
-	}
+		return (handle_logic_operator(cmd, current, shell));
 	else if ((*current)->type == LPAREN)
 		return (handle_lparen(*cmd, current, shell));
 	else if ((*current)->type == RPAREN)
