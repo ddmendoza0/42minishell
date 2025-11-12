@@ -63,6 +63,11 @@ static int	process_token(t_command **cmd, t_token **current, t_shell *shell)
 			return (0);
 		*cmd = new_cmd;
 		*current = (*current)->next;
+		if (*current && ((*current)->type == PIPE || (*current)->type == AND
+			|| (*current)->type == OR))
+		{
+			return (handle_syntax_error(shell, (*current)->value));
+		}
 		return (1);
 	}
 	else if ((*current)->type == LPAREN)
