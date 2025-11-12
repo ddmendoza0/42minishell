@@ -54,7 +54,7 @@ int	add_token_redir_in(t_command *cmd, t_token **token, t_shell *shell)
 	}
 	if (file_token->type != WORD)
 	{
-		*token = redir_token->next;
+		*token = NULL;
 		return (handle_syntax_error(shell, file_token->value));
 	}
 	is_heredoc = (redir_token->type == HEREDOC);
@@ -85,7 +85,7 @@ int	add_token_redir_out(t_command *cmd, t_token **token, t_shell *shell)
 	}
 	if (file_token->type != WORD)
 	{
-		*token = redir_token->next;
+		*token = NULL;
 		return (handle_syntax_error(shell, file_token->value));
 	}
 	append_mode = (redir_token->type == APPEND_OUT);
