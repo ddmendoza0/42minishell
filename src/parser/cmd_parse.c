@@ -94,6 +94,11 @@ t_command	*cmd_builder(t_token **tkn_list, t_shell *shell)
 	if (!tkn_list || !*tkn_list)
 		return (NULL);
 	current = *tkn_list;
+	if (current->type == PIPE || current->type == AND || current->type == OR)
+	{
+		handle_syntax_error(shell, current->value);
+		return (NULL);
+	}
 	if (!create_cmd(&cmd))
 		return (NULL);
 	head = cmd;
