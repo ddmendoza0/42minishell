@@ -22,6 +22,8 @@ int	handle_word_token(t_command *cmd, t_token **current)
 
 int	handle_logic_token(t_command *cmd, t_token *current, t_command **new_cmd)
 {
+	if (!current->next)
+		return (0);
 	if (current->type == AND)
 		cmd->logic = CMD_AND;
 	else if (current->type == OR)

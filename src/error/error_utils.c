@@ -65,7 +65,8 @@ int	handle_syntax_error(t_shell *shell, const char *token)
 	if (token)
 		free(error_msg);
 	exit_code = EXIT_MISUSE;
-	return (set_exit_status(shell, exit_code));
+	set_exit_status(shell, exit_code);
+	return (0);
 }
 
 /* Handle command execution errors */
