@@ -100,7 +100,7 @@ int	builtin_exit(char **argv, t_shell *shell)
 		exit(EXIT_MISUSE);
 	}
 	exit(exit_code);
-}*/
+}
 
 int	builtin_exit(char **argv, t_shell *shell)
 {
@@ -137,5 +137,55 @@ int	builtin_exit(char **argv, t_shell *shell)
 		exit_error(shell, argv[1]);
 		exit(EXIT_MISUSE);
 	}
+	exit(exit_code);
+}*/
+
+int	builtin_exit(char **argv, t_shell *shell)
+{
+	int	exit_code;
+	int	overflow;
+
+	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	
+	// PRIMERO verificar si hay demasiados argumentos
+	// En este caso NO debemos salir
+	if (argv[1] && argv[2])
+	{
+		print_error("minishell: exit", NULL, "too many arguments");
+		return (EXIT_FAILURE);  // Retorna 1, NO sale del programa
+	}
+	
+	// Solo si vamos a salir realmente, entonces limpiamos
+	if (shell->temp_stdin >= 0)
+		close(shell->temp_stdin);
+	if (shell->temp_stdout >= 0)
+		close(shell->temp_stdout);
+	
+	cleanup_shell(shell);
+	rl_clear_history();
+	
+	// Si no hay argumentos, salir con el último exit status
+	if (!argv[1])
+		exit(shell->last_exit_status);
+	
+	// Verificar si es numérico
+	if (!is_numeric_arg(argv[1]))
+	{
+		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+		ft_putstr_fd(argv[1], STDERR_FILENO);
+		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+		exit(2);
+	}
+	
+	// Parsear el código de salida
+	exit_code = parse_exit_code(argv[1], &overflow);
+	if (overflow)
+	{
+		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+		ft_putstr_fd(argv[1], STDERR_FILENO);
+		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+		exit(2);
+	}
+	
 	exit(exit_code);
 }

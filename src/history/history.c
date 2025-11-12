@@ -15,15 +15,15 @@
 int	initialize_history(void)
 {
 	int		hs_fd;
-	char	*line;
-	size_t	len;
+	//char	*line;
+	//size_t	len;
 
-	hs_fd = open(HISTORY_FILE, O_CREAT | O_RDWR, 0644);
+	hs_fd = open(HISTORY_FILE, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (hs_fd == -1)
 	{
 		perror("Error opening history file");
 		return (-1);
-	}
+	}/*
 	while (1)
 	{
 		line = get_next_line(hs_fd);
@@ -37,7 +37,8 @@ int	initialize_history(void)
 	}
 	close(hs_fd);
 	while (history_length > MAX_HISTORY)
-		remove_history(0);
+		remove_history(0);*/
+	close(hs_fd);
 	return (open(HISTORY_FILE, O_RDWR | O_APPEND));
 }
 
