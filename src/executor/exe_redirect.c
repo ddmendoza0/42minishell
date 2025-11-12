@@ -68,7 +68,7 @@ static int	setup_output_redirection(t_redir_file *output_redir, t_shell *shell)
 	return (1);
 }
 
-void	restore_redirections(int saved_stdin, int saved_stdout)
+void	restore_redirections(int saved_stdin, int saved_stdout, t_shell *shell)
 {
 	if (saved_stdin != -1)
 	{
@@ -82,6 +82,8 @@ void	restore_redirections(int saved_stdin, int saved_stdout)
 			perror("restore stdout");
 		close(saved_stdout);
 	}
+	shell->temp_stdin = -1;
+	shell->temp_stdout = -1;
 }
 
 int	save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell)
@@ -97,6 +99,8 @@ int	save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell)
 		handle_system_error(shell, "dup");
 		return (0);
 	}
+	shell->temp_stdin = *s_stdin;
+	shell->temp_stdout = *s_stdout;
 	return (1);
 }
 
@@ -111,7 +115,7 @@ int	app_redir(t_command *cmd, int s_stdin, int s_stdout, t_shell *shell)
 	{
 		if (!setup_input_redirection(input, shell))
 		{
-			restore_redirections(s_stdin, s_stdout);
+			restore_redirections(s_stdin, s_stdout, shell);
 			return (0);
 		}
 	}
@@ -119,7 +123,7 @@ int	app_redir(t_command *cmd, int s_stdin, int s_stdout, t_shell *shell)
 	{
 		if (!setup_output_redirection(output, shell))
 		{
-			restore_redirections(s_stdin, s_stdout);
+			restore_redirections(s_stdin, s_stdout, shell);
 			return (0);
 		}
 	}

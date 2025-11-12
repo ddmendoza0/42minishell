@@ -14,9 +14,9 @@
 
 static int	is_multi_char_operator(const char *input)
 {
-    return (ft_strncmp(input, "&&", 2) == 0 || ft_strncmp(input, "||", 2)
-        == 0 || ft_strncmp(input, ">>", 2) == 0
-        || ft_strncmp(input, "<<", 2) == 0);
+	return (ft_strncmp(input, "&&", 2) == 0 || ft_strncmp(input, "||", 2)
+		== 0 || ft_strncmp(input, ">>", 2) == 0
+		|| ft_strncmp(input, "<<", 2) == 0);
 }
 
 static t_token_type	det_op_type(const char *op)

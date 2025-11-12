@@ -72,6 +72,35 @@ static int	parse_exit_code(const char *str, int *overflow)
 	num *= sign;
 	return ((num % 256 + 256) % 256);
 }
+/*
+int	builtin_exit(char **argv, t_shell *shell)
+{
+	int	exit_code;
+	int	overflow;
+
+	ft_putstr_fd("exit\n", STDOUT_FILENO);
+		cleanup_shell(shell);
+	rl_clear_history();
+	if (!argv[1])
+		exit(shell->last_exit_status);
+	if (!is_numeric_arg(argv[1]))
+	{
+		exit_error(shell, argv[1]);
+		exit(EXIT_MISUSE);
+	}
+	if (argv[2])
+	{
+		print_error("minishell: exit", NULL, "too many arguments");
+		return (set_exit_status(shell, EXIT_FAILURE));
+	}
+	exit_code = parse_exit_code(argv[1], &overflow);
+	if (overflow)
+	{
+		exit_error(shell, argv[1]);
+		exit(EXIT_MISUSE);
+	}
+	exit(exit_code);
+}*/
 
 int	builtin_exit(char **argv, t_shell *shell)
 {
@@ -79,6 +108,17 @@ int	builtin_exit(char **argv, t_shell *shell)
 	int	overflow;
 
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	
+	// Cierra los FDs temporales de redirección si existen
+	if (shell->temp_stdin >= 0)
+		close(shell->temp_stdin);
+	if (shell->temp_stdout >= 0)
+		close(shell->temp_stdout);
+	
+	// Limpia los recursos del shell
+	cleanup_shell(shell);
+	rl_clear_history();
+	
 	if (!argv[1])
 		exit(shell->last_exit_status);
 	if (!is_numeric_arg(argv[1]))

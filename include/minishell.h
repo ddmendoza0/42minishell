@@ -119,6 +119,9 @@ typedef struct s_shell
 	int		last_exit_status;
 	int		stdin_backup;
 	int		stdout_backup;
+	int		temp_stdin;
+	int		temp_stdout;
+	int		history_fd;
 }	t_shell;
 /*SEHLL STRUCTURE*/
 
@@ -286,7 +289,7 @@ int				is_builtin(char *cmd);
 int				execute_builtin(char **argv, t_command *cmd, t_shell *shell);
 char			*find_executable(char *cmd, t_shell *shell);
 int				execute_external(char **argv, t_shell *shell);
-void			restore_redirections(int saved_stdin, int saved_stdout);
+void			restore_redirections(int saved_stdin, int saved_stdout, t_shell *shell);
 int				stp_redir(t_command *cmd, int *s_stdin,
 					int *s_stdout, t_shell *sh);
 int				save_standard_fds(int *s_stdin, int *s_stdout, t_shell *shell);

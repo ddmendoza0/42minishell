@@ -105,7 +105,6 @@ static void	input_loop(int history_fd, t_shell *shell)
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	int		history_fd;
 	t_shell	shell;
 
 	(void)argc;
@@ -115,13 +114,11 @@ int	main(int argc, char *argv[], char *envp[])
 		ft_putstr_fd("Error: Failed to initialize shell\n", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
-	history_fd = initialize_history();
-	if (history_fd == -1)
+	shell.history_fd = initialize_history();
+	if (shell.history_fd == -1)
 		ft_putstr_fd("Warning: Could not initialize history\n", STDERR_FILENO);
 	setup_signals_interactive();
-	input_loop(history_fd, &shell);
-	if (history_fd >= 0)
-		close(history_fd);
+	input_loop(shell.history_fd, &shell);
 	rl_clear_history();
 	cleanup_shell(&shell);
 	return (shell.last_exit_status);

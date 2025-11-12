@@ -29,9 +29,20 @@ void	cleanup_shell(t_shell *shell)
 	if (shell->cwd)
 		free(shell->cwd);
 	if (shell->stdin_backup >= 0)
+	{
 		close(shell->stdin_backup);
+		shell->stdin_backup = -1;
+	}
 	if (shell->stdout_backup >= 0)
+	{
 		close(shell->stdout_backup);
+		shell->stdout_backup = -1;
+	}
+		if (shell->history_fd >= 0)
+	{
+		close(shell->history_fd);
+		shell->history_fd = -1;
+	}
 }
 
 static int	count_env_vars(char **envp)
@@ -91,6 +102,9 @@ static int	init_pwd_and_fds(t_shell *shell, char *current_dir)
 	shell->last_exit_status = 0;
 	shell->stdin_backup = dup(STDIN_FILENO);
 	shell->stdout_backup = dup(STDOUT_FILENO);
+	shell->temp_stdin = -1;
+	shell->temp_stdout = -1;
+	shell->history_fd = -1;
 	if (shell->stdin_backup == -1 || shell->stdout_backup == -1)
 	{
 		perror("minishell: dup");

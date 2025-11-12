@@ -46,7 +46,7 @@ static int	execute_with_redirections(char **clean_argv, t_command *cmd,
 		exit_status = execute_builtin(clean_argv, cmd, shell);
 	else
 		exit_status = execute_external(clean_argv, shell);
-	restore_redirections(saved_stdin, saved_stdout);
+	restore_redirections(saved_stdin, saved_stdout, shell);
 	free_argv(clean_argv);
 	return (set_exit_status(shell, exit_status));
 }
